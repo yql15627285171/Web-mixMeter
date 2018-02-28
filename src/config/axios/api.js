@@ -23,5 +23,9 @@ export default {
 	*userID 用户编号
 	*evalue 加密参数
 	*/
-	menus:'/GetMenusByUserID'
+	menus:'/GetMenusByUserID',
+
+	/**
+	*/
+	remote_area_url:'http://jisuarea.market.alicloudapi.com/area/query',
 }

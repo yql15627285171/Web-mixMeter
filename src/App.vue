@@ -17,6 +17,8 @@ export default {
 	height: 40px;
 	padding: 0;
 	text-align: center;
+  /*color: red;*/
+  /*background-color: blue*/
 }
 .el-table tr{
 	text-align: center

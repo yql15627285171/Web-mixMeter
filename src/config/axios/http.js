@@ -34,7 +34,7 @@ axios.interceptors.response.use(response => {
 
 
 function checkStatus (response) {
-  console.log(response)
+  // console.log(response)
   // 这里可以做一些动作，例如结束菊花
 
   /*
@@ -89,7 +89,8 @@ export default {
       headers: {
         // 'X-Requested-With': 'XMLHttpRequest',
         // "Access-Control-Allow-Origin":"*",
-        'content-type': 'application/x-www-form-urlencoded' 
+        'content-type': 'application/x-www-form-urlencoded',
+        
       }
     }).then(checkStatus).then(checkCode)
   },
@@ -102,9 +103,11 @@ export default {
       params, // get 请求时带的参数
       timeout: 10000,
       headers: {
-        // 'X-Requested-With': 'XMLHttpRequest',
-        "Access-Control-Allow-Origin":"*",
-        "Content-Type":"text/html; charset=UTF8"
+       
+        // "Access-Control-Allow-Origin":"*",
+        "Content-Type":"text/html; charset=UTF8",
+        "Authorization":"APPCODE 459866317d8f4c48b62eb53c3e5d63bd"
+
       }
     }).then(checkStatus).then(checkCode)  
   }

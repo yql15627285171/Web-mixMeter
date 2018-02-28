@@ -35,6 +35,14 @@ export default{
 		*登录
 		*/
 		login(){
+			// var params = {
+			// 	parentid:0,
+			// }
+
+			// this.http.get(this.api.remote_area_url,params).then(res=>{
+			// 	console.log(res)
+			// })
+		
 			var params = {
 				userNo:this.name,
 				userPw:this.password,

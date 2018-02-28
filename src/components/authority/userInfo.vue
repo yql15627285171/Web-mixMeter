@@ -1,124 +1,179 @@
-<!-- 管理员信息维护 -->
+<!-- 这是客户信息维护 -->
 <template>
 	<div>
-		<div class="add">
-			<el-button type="primary" class='add'  @click="dialogVisible = true">添加管理员</el-button>
+		<div>
+			<span>状态选择</span>
+			<el-select v-model="status" placeholder="请选择审核状态">
+			    <el-option
+			      v-for="item in statusSelect"
+			      :key="item.value"
+			      :label="item.label"
+			      :value="item.value">
+			    </el-option>
+			</el-select>
+			<el-button type="primary">查询</el-button>
 		</div>
-		<!-- 对话框 -->
-		<el-dialog title="添加管理员" :visible.sync="dialogVisible">
-		  <el-form :model="form">
-		    <el-form-item label="用户编号" :label-width="formLabelWidth">
-		      <el-input v-model="form.userId" auto-complete="off"></el-input>
-		    </el-form-item>
-		    <el-form-item label="用户名" :label-width="formLabelWidth">
-		      <el-input v-model="form.user" auto-complete="off"></el-input>
-		    </el-form-item>
-		    <el-form-item label="密码" :label-width="formLabelWidth">
-		      <el-input v-model="form.psd" auto-complete="off"></el-input>
-		    </el-form-item>
-		    <el-form-item label="确认密码" :label-width="formLabelWidth">
-		      <el-input v-model="form.checkPsd" auto-complete="off"></el-input>
-		    </el-form-item>
-		      <el-form-item label="所属区域" :label-width="formLabelWidth">
-			      <el-select v-model="form.community" placeholder="请选择区域">
-			        <el-option label="莲塘" value="莲塘"></el-option>
-			        <el-option label="鹏基" value="鹏基"></el-option>
-			      </el-select>
-			  </el-form-item>
-		  </el-form>
-		  <div slot="footer" class="dialog-footer">
-		    <el-button @click="dialogVisible = false">取 消</el-button>
-		    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-		  </div>
-		</el-dialog>
-
-	
-
-		 <el-table
+		<el-table
 		    :data="tableData"
-		    stripe
-		    border	
-		    style="width: 100%;">
-		    <el-table-column 
-		    	v-for="item in tableHead"
-		    	:prop="item.id"
-		    	:label="item.label"
-		    	>		
-		    </el-table-column>
+		    style="width: 100%">
+		    <el-table-column type="expand">
+		      <template slot-scope="props">
+		        <el-form label-position="left" inline	 class="demo-table-expand" >
+		          <el-form-item label="序号">
+		            <span>{{ props.row.ID }}</span>
+		          </el-form-item>
+		          <el-form-item label="用户编号">
+		            <span>{{ props.row.UserId }}</span>
+		          </el-form-item>
+		          <el-form-item label="用户名">
+		            <span>{{ props.row.UserName }}</span>
+		          </el-form-item>
+		          <el-form-item label="姓名">
+		            <span>{{ props.row.Name }}</span>
+		          </el-form-item>
 
-		     <el-table-column 
-		    	label="操作">	
-				<template slot-scope="scope">
-	       			<el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
-	        		<el-button type="text" size="small">删除</el-button>
-     			</template>
+		          <el-form-item label="审核状态">
+		            <span>{{ props.row.CheckFlg }}</span>
+		          </el-form-item>
+		          <el-form-item label="所属区域">
+		            <span>{{ props.row.RegionLevel }}</span>
+		          </el-form-item>
+		          <el-form-item label="微信号">
+		            <span>{{ props.row.WeiXinNo }}</span>
+		          </el-form-item>
+		          <el-form-item label="身份证号">
+		            <span>{{ props.row.IdNum }}</span>
+		       	  </el-form-item>
+		          <el-form-item label="性别">
+		            <span>{{ props.row.Sex }}</span>
+		          </el-form-item>
+		          <el-form-item label="固定电话">
+		            <span>{{ props.row.Telephone }}</span>
+		          </el-form-item>
+		          <el-form-item label="手机号">
+		            <span>{{ props.row.MobilePhone }}</span>
+		          </el-form-item>
+		          <el-form-item label="固定电话">
+		            <span>{{ props.row.address }}</span>
+		          </el-form-item>
+		          <el-form-item label="联系地址">
+		            <span>{{ props.row.Address }}</span>
+		          </el-form-item><el-form-item label="客户类别">
+		            <span>{{ props.row.CustomerTypeId }}</span>
+		          </el-form-item>
+		          <el-form-item label="银行卡号">
+		            <span>{{ props.row.BankCardNum }}</span>
+		          </el-form-item>
+		          <el-form-item label="是否扣款用户">
+		            <span>{{ props.row.ChargebackFlag }}</span>
+		          </el-form-item>
+		        </el-form>
+		      </template>
 		    </el-table-column>
-		   
-		</el-table>
+		    <el-table-column
+		      label="序号"
+		      prop="ID">
+		    </el-table-column>
+		    <el-table-column
+		      label="姓名"
+		      prop="Name">
+		    </el-table-column>
+		    <el-table-column
+		      label="绑定房间"
+		      prop="RegionLevel">
+		    </el-table-column>
+		     <el-table-column label="审核状态">	
+				<template slot-scope="scope">
+	       			<span v-if="scope.row.CheckFlg == '0'">未审核</span>
+	       			<span v-if="scope.row.CheckFlg == '1'">已审核</span>
+     			</template>
+	    	 </el-table-column>
+	         <el-table-column label="操作">	
+				<template slot-scope="scope" >
+					<div v-if="scope.row.CheckFlg == '0'">
+						<el-button @click="handleClick(scope.row)" type="text" size="small">审核</el-button>
+	        			<el-button type="text" size="small">取消</el-button>
+					</div>
+					<div v-else>
+						<el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
+					</div>	
+     			</template>
+	    	 </el-table-column>
+		  </el-table>	
 	</div>
 </template>
 <script>
 export default{
 	data(){
 		return{
-			// 对话框的显示
-			dialogVisible:false,
-			formLabelWidth:'120px',
-			form:{
-				userId:'',//用户编号
-				user:'',//用户名
-				psd:'',//密码
-				checkPsd:'',//确认密码
-				community:'',//所属社区
-			},
-			tableHead:[
+			// 状态选择列表
+			statusSelect:[
 			{
-				label:'序号',
-				id:'index',
+				label:'已审核',
+				value:'已审核'
 			},
 			{
-				label:'用户编号',
-				id:'userId',
-			},
-			{
-				label:'用户名',
-				id:'user',
-			},
-			{
-				label:'密码',
-				id:'psd'
-			},
-			{
-				label:'所属社区',
-				id:'community'
-			}],
+				label:'未审核',
+				value:'未审核'
+			},],
+			status:'',
+			// 表格信息
 			tableData:[
 			{
-				index:'1',//序号
-				userId:'123',//用户编号
-				user:'小王',//用户名
-				psd:'666666',//密码
-				community:'莲塘枫景',//所属社区
+				ID:'1',//编号
+				UserId:'111',//用户编号
+				UserName:'kkk',//用户名
+				Name:'大boss',//姓名
+				CheckFlg:'1',//审核状态
+				RegionLevel:'莲塘枫景/1栋/201',//所属管理区
+				WeiXinNo:'',//微信号
+				IdNum:'',//身份证编号
+				Sex:'男',//性别
+				Telephone:'070222222',//固定电话
+				MobilePhone:'12345678900',//手机号
+				Address:'XXXXX',//联系地址
+				CustomerTypeId:'一般用户',//客户类别
+				BankCardNum:'8888888888',//银行卡号
+				ChargebackFlag:'否',//是否扣款用户
 			},
 			{
-				index:'2',//序号
-				userId:'124',//用户编号
-				user:'小张',//用户名
-				psd:'666666',//密码
-				community:'鹏基工业区',//所属社区
-			}]
+				ID:'2',//编号
+				UserId:'111',//用户编号
+				UserName:'kkk',//用户名
+				Name:'大boss',//姓名
+				CheckFlg:'0',//审核状态
+				RegionLevel:'莲塘枫景/1栋/202',//所属管理区
+				WeiXinNo:'',//微信号
+				IdNum:'',//身份证编号
+				Sex:'男',//性别
+				Telephone:'070222222',//固定电话
+				MobilePhone:'12345678900',//手机号
+				Address:'XXXXX',//联系地址
+				CustomerTypeId:'一般用户',//客户类别
+				BankCardNum:'8888888888',//银行卡号
+				ChargebackFlag:'否',//是否扣款用户
+			}
+			]
 		}
-
-	},
-	methods:{
-		handleClick(row) {
-        	console.log(row);
-      	}
 	}
 }	
 </script>
 <style scoped>
+
 .el-table{
 	margin-top: 10px;
 }
+
+.el-select{
+	margin: 0 10px;
+}
+
 </style>
+
+
+
+
+
+
+
+

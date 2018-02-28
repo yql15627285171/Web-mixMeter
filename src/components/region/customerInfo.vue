@@ -1,4 +1,4 @@
-<!-- 这是客户信息维护 -->
+<!-- 客户信息管理 -->
 <template>
 	<div>
 		<div>
@@ -18,7 +18,7 @@
 		    style="width: 100%">
 		    <el-table-column type="expand">
 		      <template slot-scope="props">
-		        <el-form label-position="left" inline	 class="demo-table-expand" >
+		        <el-form label-position="left" inline class="demo-table-expand" >
 		          <el-form-item label="序号">
 		            <span>{{ props.row.ID }}</span>
 		          </el-form-item>
