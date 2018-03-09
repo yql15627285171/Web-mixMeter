@@ -37,6 +37,16 @@ Vue.prototype.http = http
 import api from './axios/api'
 Vue.prototype.api = api
 
+import data from './axios/data'
+Vue.prototype.data = data
+/**
+*excel导出导入配置
+*/
+import excel from './Excel/excel'
+Vue.prototype.excel = excel
+
+// import excelData from './Excel/excelData'
+// Vue.prototype.excelData = excelData
 
 
 

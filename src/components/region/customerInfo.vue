@@ -2,7 +2,7 @@
 <template>
 	<div>
 		<div>
-			<span>状态选择</span>
+			<!-- <span>状态选择</span> -->
 			<el-select v-model="status" placeholder="请选择审核状态">
 			    <el-option
 			      v-for="item in statusSelect"
@@ -84,8 +84,8 @@
 		    </el-table-column>
 		     <el-table-column label="审核状态">	
 				<template slot-scope="scope">
-	       			<span v-if="scope.row.CheckFlg == '0'">未审核</span>
-	       			<span v-if="scope.row.CheckFlg == '1'">已审核</span>
+	       			<span v-if="scope.row.CheckFlg == '0'" style="color:red">未审核</span>
+	       			<span v-if="scope.row.CheckFlg == '1'" style="color:green">已审核</span>
      			</template>
 	    	 </el-table-column>
 	         <el-table-column label="操作">	
@@ -99,7 +99,18 @@
 					</div>	
      			</template>
 	    	 </el-table-column>
-		  </el-table>	
+		  </el-table>
+
+		  <div class="block pagination">
+		    <!-- <span class="demonstration">显示总数</span> -->
+		    <el-pagination
+		      @current-change="handleCurrentChange"
+
+		      :page-size="10"
+		      layout="total, prev, pager, next,jumper"
+		      :total="tableData.length">
+		    </el-pagination>
+	  	</div>	
 	</div>
 </template>
 <script>
@@ -153,8 +164,18 @@ export default{
 				BankCardNum:'8888888888',//银行卡号
 				ChargebackFlag:'否',//是否扣款用户
 			}
-			]
+			],//总数据源
+			showTableData:[],//显示在页面的数据源
 		}
+	},
+	methods:{
+		/**
+		*分页控制器的方法
+		*/
+      	handleCurrentChange(val) {
+        	console.log(`当前页: ${val}`);
+        	// this.showTableData = this.tableData.slice((val-1)*10, val *10)
+      	},
 	}
 }	
 </script>

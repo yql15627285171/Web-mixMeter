@@ -6,7 +6,8 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+
 }
 </script>
 
@@ -20,7 +21,8 @@ export default {
   /*color: red;*/
   /*background-color: blue*/
 }
-.el-table tr{
+.el-table tr,
+.el-table thead td{
 	text-align: center
 }
   .demo-table-expand {
@@ -35,6 +37,20 @@ export default {
     margin-bottom: 0;
     width: 50%;
     text-align: left;
+  }
+  /*表格箭头下的标签*/
+  label.el-form-item__label{
+      width: 130px;
+  } 
+  form.el-form.demo-table-expand.el-form--label-left.el-form--inline{
+    text-align: left;
+  }
+
+  /*分页控制器*/
+  /*分页控制器*/
+  .pagination{
+    margin-top: 20px;
+    text-align: center;
   }
 
 </style>

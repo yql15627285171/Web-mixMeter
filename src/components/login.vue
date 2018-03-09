@@ -7,11 +7,12 @@
 			<el-input v-model="name" placeholder="请输入姓名"></el-input>
 			<el-input v-model="password" placeholder="请输入密码"></el-input>
 			<div class="event">
-				<span class="span1" @click="toRegister">注册账号</span>
-				<span class="span2">忘记密码</span>
+				<!-- <span class="span1" @click="toRegister">注册账号</span> -->
+				<!-- <span class="span2">忘记密码</span> -->
 			</div>
 	
 			 <el-button type="primary" size="large" @click="login">登 录</el-button>
+			 
 		</div>
 	</div>
 </template>
@@ -28,6 +29,10 @@ export default{
 			name:'Sun',
 			// 密码
 			password:'123',
+			//excel文件的数据
+			// excelData:null,
+			// keys:['序号','集中器地址','测量点号','波特率','通信端口号','通信规约','通讯地址','通讯密码','电表费率数','整数位','小数位','采集器地址','用户大类号','用户小类号'],
+			// file:null,
 		}
 	},
 	methods:{
@@ -35,20 +40,13 @@ export default{
 		*登录
 		*/
 		login(){
-			// var params = {
-			// 	parentid:0,
-			// }
-
-			// this.http.get(this.api.remote_area_url,params).then(res=>{
-			// 	console.log(res)
-			// })
-		
+			
 			var params = {
-				userNo:this.name,
-				userPw:this.password,
+				userId:this.name,
+				userPwd:this.password,
 				evalue:this.$encrypt()
 			}
-			console.log(params)
+			// console.log(params)
 
 			this.loading = true
 
@@ -57,8 +55,26 @@ export default{
 				var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, "")) 
 				console.log(result)
 				if (result.status == '成功') {
-					window.localStorage.setItem('id',this.name)
+					if (result.Flg == 0) {
+						// statement
+						alert('用户网页版功能还没开通，请使用公众号进行业务查询')
+					}else {
+						// 记录登录的用户名
+					window.sessionStorage.setItem('id',this.name)
+					// 记录是否登录
+					window.sessionStorage.setItem('isLogin',true)				
+					// 记录区域编码
+					window.sessionStorage.setItem('RegionCode',result.RegionCode)
+
+ 					// 清空menuName的记录
+ 					window.sessionStorage.removeItem("menuName")
+ 					
+					// console.log(result.RegionCode)
+					// this.$store.dispatch('setIsLogin',true)
+				
 					this.$router.push('main')
+					}
+					
 				}
 				
 			})
@@ -69,7 +85,47 @@ export default{
 		*/
 		toRegister(){
 			this.$router.push('register')
-		}
+		},
+
+		/**
+		*测试接口
+		*/
+		test(){
+			
+			// this.importfxx()
+			
+			// console.log(this.excel.excelData)
+
+			// var params = {
+			// 	jsonValue:JSON.stringify(arr),
+			// 	evalue:this.$encrypt()
+			// }
+			// console.log(this.api.baseUrl+this.api.test)
+			// this.http.post(this.api.baseUrl+this.api.test,params).then(res=>{
+			// 	// this.loading = false
+			// 	console.log(res.data)
+			// 	var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, "")) 
+			// 	console.log(result)
+				
+			// })
+		},
+
+		/**
+		*导入excel文件
+		*/
+		// choseFile(event){
+		// 	this.file = event.currentTarget.files[0]
+		// },
+
+		// importfxx(event) { 
+ 
+		// 	this.file = event.currentTarget.files[0]
+		// 	this.excel.readExcel(this.file,this.keys,result=>{
+		// 		console.log(result)
+		// 	})
+	     	   
+  // 		}
+
 	}
 }
 </script>

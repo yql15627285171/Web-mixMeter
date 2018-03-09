@@ -6,25 +6,38 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+
 export default new Vuex.Store({
 	state:{
-		userNum:'',//用户编号，每次登录时都存在的一个id
+		clickTreeData:null,//点击数的节点
+		treeData:[],
 	},
 	getters:{
-		getUserNum(state){
-			return state.userNum
+		getClickTreeData(state){
+			return state.clickTreeData
+		},
+		getTreeData(state){
+			return state.treeData
 		}
 	},
 	mutations:{
-		setUserNum(state,value){
-			state.userNum = value
+		setClickTreeData(state,value){
+			state.clickTreeData = value
+		},
+		reloadTreeData(state,value){
+			state.treeData = value
 		}
 	},
 	actions:{
-		setUserNum(context,value){
-			console.log(value)
-			context.commit('setUserNum',value)
+		setClickTreeData(context,value){
+			// console.log(value)
+			context.commit('setClickTreeData',value)
+		},
+		// 更新数的数据
+		reloadTreeData(context,value){
+			context.commit('reloadTreeData',value)
 		}
+
 	}
 })
 

@@ -5,7 +5,10 @@
 
 export default{
   install(Vue,options){
-     
+     /**
+     *导入excel文件，返回excel的内容
+     */
+    
  	
 	}
 }

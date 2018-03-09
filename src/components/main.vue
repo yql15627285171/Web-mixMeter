@@ -9,19 +9,60 @@
           </el-col>
           <el-col :span="12">
             <div class="system-setting">
-              <router-link :to="{name:'main'}" class="set">个人中心</router-link>
-              <router-link :to="{name:'main'}" class="set">系统设置</router-link>
-              <router-link :to="{name:'main'}" class="set">退出登录</router-link>
+              <!-- <router-link :to="{name:'main'}" class="set">个人中心</router-link> -->
+              <span class="set" @click="informationDialogVisible=true">个人中心</span>
+              <span class="set" @click="psdDialogVisible = true">密码设置</span>
+              <router-link :to="{name:'login'}" class="set">退出登录</router-link>
             </div>
           </el-col>
         </el-row>
       </el-header>
+
+
+    <!-- 修改个人信息弹出框 -->
+    <el-dialog title="个人信息" :visible.sync="informationDialogVisible">
+      <el-form :model="informationForm">
+        <el-form-item label="姓名" :label-width="formLabelWidth">
+          <el-input v-model="informationForm.name" auto-complete="off" placeholder="请输入姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="联系电话" :label-width="formLabelWidth">
+          <el-input v-model="informationForm.mobilePhone" auto-complete="off" placeholder="请输入联系电话"></el-input>
+        </el-form-item>
+        <el-form-item label="社区地址" :label-width="formLabelWidth">
+          <el-input v-model="informationForm.address" auto-complete="off" placeholder="请确定社区地址"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="changeInformation">修改</el-button>
+      </div>
+    </el-dialog>
+  <!-- 修改密码弹出框 -->
+    <el-dialog title="修改密码" :visible.sync="psdDialogVisible">
+      <el-form :model="informationForm">
+        <el-form-item label="旧的密码" :label-width="formLabelWidth">
+          <el-input v-model="psdForm.oldPsd" auto-complete="off" placeholder="旧密码"></el-input>
+        </el-form-item>
+        <el-form-item label="新的密码" :label-width="formLabelWidth">
+          <el-input v-model="psdForm.newPsd" auto-complete="off" placeholder="新密码"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" :label-width="formLabelWidth">
+          <el-input v-model="psdForm.againPsd" auto-complete="off" placeholder="确定密码"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="changeInformation">修改</el-button>
+      </div>
+    </el-dialog>
+
+
       <!-- body内容 -->
        <el-container v-loading="loading" element-loading-text="拼命加载中">
           <el-aside width='200px' class='content-menus'>
             <!-- 功能菜单栏 -->
             <el-menu 
-            :default-active="menus[0].child[0].index" 
+            :default-active="defaultActive" 
             class="el-menu-vertical-demo" 
             :collapse="isCollapse"
             @open="handleOpen" 
@@ -34,7 +75,10 @@
                   <i class="el-icon-menu"></i>
                   <span>{{item.name}}</span>
                 </template>
-                <router-link v-for='child in item.child' :to="{name:child.index}">
+                <router-link 
+                  v-for='child in item.child' 
+                  :to="{name:child.index}"
+                  @click.native="recordIndex(child.index)">
                   <el-menu-item :index="child.index" style="padding-left:50px;">
                     {{child.name}}
                   </el-menu-item>
@@ -47,8 +91,7 @@
           <!-- 社区房间选择 -->
           <el-aside width='200px'>
             <!-- 地区选择 -->
-            <div class="block">
-              <!-- <span class="demonstration">请选择省市区</span> -->
+            <!-- <div class="block">
               <el-cascader
                 expand-trigger="hover"
                 :options="areaData"
@@ -56,13 +99,22 @@
                 @change="handleChange"
                 placeholder="请选择省市区">
               </el-cascader>
+            </div> -->
+            <div class="selectTree" v-if="showSelect">
+              <img :src="houseImg" @click='houseClick'>
+              <img :src="gateImg" @click='gateClick'>
             </div>
             <!-- 房间号选择 -->
-            <el-tree :data="community" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+            <el-tree  :data="showTreeData" 
+                      :props="defaultProps" 
+                      @node-click="handleNodeClick"
+                      accordion>
+                        
+            </el-tree>
           </el-aside>
           <el-main>
             <keep-alive>
-              <router-view></router-view>
+              <router-view ></router-view>
             </keep-alive>
           </el-main>
        </el-container>
@@ -76,51 +128,50 @@
 export default {
   data () {
     return {
+      // 小图标路径
+      houseImg:require('../assets/house.png'),
+      gateImg:require('../assets/gate_unselect.png'),
+      selectHouse:true,
+      // 菜单栏默认展开的栏目
+      defaultActive:"",
+      // 个人中心弹出框
+      informationDialogVisible:false,
+      informationForm:{
+        name:'',
+        mobilePhone:'',
+        address:''
+      },
+      formLabelWidth:'120px',
+      psdDialogVisible:false,
+      psdForm:{
+        oldPsd:'',
+        newPsd:'',
+        againPsd:''
+      },
+
       // 加载县显示
       loading:false,
       // 菜单是否收起来
       isCollapse:false,
       // 菜单栏显示
       menus:[],
-      // 社区地址的显示
-      community:[
+      // 显示的树的信息
+      showTreeData:[],
+      showSelect:false,
+      //集中器列表
+      LogicAddr:[
       {
-        label: '鹏兴花园',
-          children: [
-          {
-            label: '1栋',
-            children: [
-              {
-                label: '101'
-              },
-              {
-                label:'201'
-              },
-              {
-                label:'301'
-              },
-            ]
-          },
-          {
-            label: '12栋',
-            children: [
-              {
-                label: '301'
-              },
-              {
-                label:'401'
-              },
-              {
-                label:'501'
-              },
-            ]
-          }]
+        label:'123'
+      },
+      {
+        label:'234'
       }],
+      // 社区地址的显示
+      // community:[],
       defaultProps: {
         children: 'children',
         label: 'label'
-      }
-      ,
+      },
       // 省市区级联选择变量
       areaData:[
       {
@@ -154,7 +205,6 @@ export default {
             label:'天河区',
           }
           ]
-
         }]
       }],
       selectedArea:[],
@@ -170,25 +220,43 @@ export default {
       },
       // 树的事件
       handleNodeClick(data) {
-        if (!data.children) {
-          console.log(data.label)
-        }
+        console.log(data)
+        this.$store.dispatch('setClickTreeData',data)
+        
       },
       // 级联选择器事件
        handleChange(value) {
         console.log(value);
       },
+
+      /**
+      *点击小图标
+      */
+      houseClick(){
+       
+          this.houseImg = require('../assets/house.png')
+          this.gateImg= require('../assets/gate_unselect.png')
+          this.showTreeData = this.treeData.Commmunity
+      
+      },
+      gateClick(){
+        this.houseImg = require('../assets/house_unselect.png')
+        this.gateImg= require('../assets/gate.png')
+        this.showTreeData = this.treeData.GWList
+      },
+
       /**
       *每次刷新页面页面都做的网络请求
       *获取菜单信息
       */
       getMenus(){
+        console.log('请求menus')
         this.loading = true
         var params = { 
-          userID:window.localStorage.getItem('id'),
+          UserID:window.sessionStorage.getItem('id'),
           evalue:this.$encrypt()
         }
-        console.log(params)
+        // console.log(params)
         this.http.post(this.api.baseUrl+this.api.menus,params)
         .then(res=>{
           this.loading = false
@@ -197,16 +265,93 @@ export default {
           if (result.status=="成功") {
             // statement
             this.menus = result.menus
+
+            this.defaultActive = window.sessionStorage.getItem('menuName') ? window.sessionStorage.getItem('menuName') : this.menus[0].child[0].index
           }
          
         })
-      }
+      },
 
+      /**
+      *每次刷新页面页面都做的网络请求
+      *获取树的信息
+      */
+
+      getTreeInfo(){
+        
+        // this.community = this.$store.getters.getTreeData
+
+        var that = this
+        this.data.getTreeData({
+          succeed(res){
+            that.$store.dispatch('reloadTreeData',res)
+          }
+        })
+       
+      },
+      /**
+      *修改个人信息
+      */
+      changeInformation(){
+        // window.sessionStorage.setItem('isLogin',false)
+      },
+
+      /**
+      *记录点击的子菜单的名字
+      */
+      recordIndex(name){
+        // console.log(name)
+        window.sessionStorage.setItem('menuName',name)
+
+
+        if (name == 'meterFiles') {
+          this.showSelect = true
+        }else {
+          this.showSelect = false
+        }
+
+        this.showTreeData = this.$store.state.treeData.Commmunity
+        
+
+      },
+      /**
+      *修改账号密码
+      */
+      changePsd(){
+
+      },
+
+      changeChildren(){
+        this.community[0].children = this.LogicAddr
+      }
   },
   mounted(){
-    // console.log(this.$store.getters.getUserNum)
-    // console.log(window.localStorage.ge  tItem('id'))
-    this.getMenus() 
+    
+     if (window.sessionStorage.getItem('menuName') == 'meterFiles') {
+      this.showSelect = true
+    }
+
+    this.getMenus()
+
+
+   
+
+    var that = this
+    setTimeout(function(){
+      that.getTreeInfo()
+    },200) 
+    
+  },
+  computed:{
+    treeData(){
+      console.log('treedata改变')
+      return this.$store.state.treeData
+    }
+  },
+  watch:{
+    treeData(newValue){
+      this.showTreeData = newValue.Commmunity
+    }
   }
 }
 </script>
@@ -246,6 +391,7 @@ export default {
 
 .set{
   margin-left: 10px;
+  cursor: pointer;
 }
 
  .el-menu-vertical-demo:not(.el-menu--collapse) {
@@ -262,6 +408,7 @@ export default {
 }
 
 .el-tree{
+  margin-top: 10px;
   min-height: 800px;
 }
 
@@ -278,5 +425,15 @@ export default {
   text-align: left;
 }
 
+/*选择数的内容的两个图标*/
+.selectTree{
+  text-align: left;
+  margin-left: 16px;
+}
+
+.selectTree img{
+  width: 25px;
+  margin: 10px 30px 0 10px;
+}
 
 </style>

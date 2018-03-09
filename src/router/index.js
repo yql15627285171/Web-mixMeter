@@ -8,104 +8,125 @@ import RemoteControl from '@/components/control/remoteControl'
 import UserInfo from '@/components/authority/userInfo'
 import UserGroup from '@/components/authority/userGroup'
 import SuperAdminInfo from '@/components/authority/SuperAdminInfo'
-// 系统参数定义
-import TierPrice from '@/components/systemconfig/tierPrice'
-import MultiRate from '@/components/systemconfig/multiRate'
-import ChargeWays from '@/components/systemconfig/chargeWays'
+
 // 区域档案管理
 import firstRegion from '@/components/region/firstRegion'
 import customerInfo from '@/components/region/customerInfo'
 import gateway from '@/components/region/gateway'
 import meterFiles from '@/components/region/meterFiles'
 
+// 
+
+
 Vue.use(Router)
 
-export default new Router({
+
+
+const router = new Router({
   model:'history',
   routes: [
     {
       path: '/',
       name: 'login',
+      meta:{
+        requireAuth:false
+      },
       component: Login
     },
     {
       path: '/register',
       name: 'register',
-      component: Register	
+      meta:{
+        requireAuth:false
+      },
+      component: Register 
     },
     {
-    	path:'/main/',
-    	name:'main',
-      redirect:'/main/userGroup',
-    	component:Main,
+      path:'/main/',
+      name:'main',
+      meta:{
+        requireAuth:true
+      },
+      redirect:'/main/SuperAdminInfo',
+      component:Main,
       children:[
       {
         // 远程操控
         path:'remoteControl',
         name:'remoteControl',
+        meta:{
+        requireAuth:true
+        },
         component:RemoteControl
       },
       {
         // 管理员审核
         path:'SuperAdminInfo',
         name:'SuperAdminInfo',
+        meta:{
+        requireAuth:true
+        },
         component:SuperAdminInfo
       },
       {
         // 用户组信息
         path:'userGroup',
         name:'userGroup',
+        meta:{
+        requireAuth:true
+        },
         component:UserGroup
       },
       {
         // 客户审核
         path:'userInfo',
         name:'userInfo',
+        meta:{
+        requireAuth:true
+        },
         component:UserInfo
-      },
-      {
-        // 梯度价格参数配置
-        path:'tierPrice',
-        name:'tierPrice',
-        component:TierPrice
-      },
-      {
-        // 费率价格配置
-        path:'multiRate',
-        name:'multiRate',
-        component:MultiRate
-      },
-      {
-        // 客户类计费方式配置
-        path:'chargeWays',
-        name:'chargeWays',
-        component:ChargeWays
       },
       {
         // 区域管理
         path:'firstRegion',
         name:'firstRegion',
+        meta:{
+        requireAuth:true
+        },
         component:firstRegion
       },
       {
         // 网关资产管理
         path:'gateway',
         name:'gateway',
+        meta:{
+        requireAuth:true
+        },
         component:gateway
       },
       {
         // 计量表档案管理
         path:'meterFiles',
         name:'meterFiles',
+        meta:{
+        requireAuth:true
+        },
         component:meterFiles
       },
       {
         // 客户信息管理
         path:'customerInfo',
         name:'customerInfo',
+        meta:{
+        requireAuth:true
+        },
         component:customerInfo
       }]
     },
 
   ]
 })
+
+
+
+export default router
