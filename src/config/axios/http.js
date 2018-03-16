@@ -85,7 +85,7 @@ export default {
       url:url,
       baseURL: 'https://www.stsidea.com/weixin.asmx',
       data: qs.stringify(data),
-      timeout: 10000,
+      timeout: 60000,
       headers: {
         // 'X-Requested-With': 'XMLHttpRequest',
         // "Access-Control-Allow-Origin":"*",

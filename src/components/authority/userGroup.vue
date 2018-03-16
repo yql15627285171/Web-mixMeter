@@ -1,8 +1,12 @@
 <!-- 用户组信息维护 -->
 <template>
 	<div>
-		<div class="add">
-			<el-button type="primary" class='add'  @click="dialogVisible = true">添加组</el-button>
+		
+		<div class="condition">
+			<div class='add'>
+				<el-button type="primary"   @click="dialogVisible = true">添加组</el-button>
+			</div>
+			
 		</div>
 		<!-- 对话框 -->
 		<el-dialog title="组信息添加/修改" :visible.sync="dialogVisible">
@@ -28,6 +32,7 @@
 
 		<el-table
 		    :data="tableData"
+		    :header-cell-class-name="tableheaderClassName"
 		    stripe
 		    border	
 		    style="width: 100%;"
@@ -111,6 +116,13 @@ export default{
 	},
 	methods:{
 		/**
+		*为表格的各部分命名
+		*/
+		 tableheaderClassName({ row, rowIndex }) {
+          return "table-head-th";
+        },
+
+		/**
 		*修改权限
 		*/
 		changeAuthority(row){
@@ -125,8 +137,13 @@ export default{
 .el-table{
 	margin-top: 10px;
 }
+
+.condition{
+	overflow: hidden
+}
+
 .add{
-	/*text-align: right;*/
+	text-align: right;
 	margin-right: 10px;
 }
 .authoritySetting{

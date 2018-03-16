@@ -10,7 +10,9 @@ function getTreeData(obj){
           RegionCode:window.sessionStorage.getItem('RegionCode'),
           evalue:myAES.encrypt()
         }
+
         console.log(api.baseUrl+api.QureyAllHouseInfoForFile)
+        console.log(params)
         http.post(api.baseUrl+api.QureyAllHouseInfoForFile,params)
         .then(res=>{
           // console.log(res.data)       

@@ -3,15 +3,7 @@
 	<div v-loading="allLoading" element-loading-text="拼命加载中">
 		<div class="condition">
 			
-			<!-- <el-select v-model="logicAddr" placeholder="请选择逻辑地址">
-			    <el-option
-			      v-for="item in tableData"
-			      :key="item.LogicAddr"
-			      :label="item.LogicAddr"
-			      :value="item.LogicAddr">
-			    </el-option>
-			</el-select>
-			<el-button type="primary">查询</el-button> -->
+
 
 			<div class="right">
 				<input id="upload" type="file" @change="importExcel($event)"  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" style="display:none" />
@@ -29,6 +21,7 @@
 			</div>
 			<el-table 
 				:data="excelData"
+				:header-cell-class-name="tableheaderClassName"
 				style="width: 100%;"
 				stripe
 				>
@@ -66,6 +59,8 @@
 
 		<el-table
 		    :data="showTableData"
+		    :header-cell-class-name="tableheaderClassName"
+		    :cell-class-name="tableCellName"
 		    style="width: 100%">
 		    <el-table-column type="expand">
 		      <template slot-scope="props">
@@ -93,33 +88,14 @@
 		      </template>
 		    </el-table-column>
 		    <el-table-column
-		      label="序号"
-		      prop="index"
-		      width='50'>
+		      v-for="(item,index) in tableHead"
+		      v-if="index <= 4"
+		      :label="item.label"
+		      :prop="item.id"
+		      :width="item.width"
+		      >
 		    </el-table-column>
-		    <el-table-column
-		      label="资产编号"
-		      prop="ConAssetsCode">
-		    </el-table-column>
-		    <el-table-column
-		      label="逻辑地址"
-		      prop="LogicAddr">
-		    </el-table-column>
-		    <el-table-column
-		      label="安装地址"
-		      prop="InstallAddr">
-		    </el-table-column>
-		     <el-table-column label="状态">	
-				<template slot-scope="scope">
-	       			<span v-if="scope.row.UseStatus == '0'" style="color:red;">停用</span>
-	       			<span v-if="scope.row.UseStatus == '1'" style="color:green;">运行</span>
-     			</template>
-	    	 </el-table-column>
-	    	<!--  <el-table-column
-		      	label="最后在线时间"
-		      	prop="LastTime">
-		   	 </el-table-column> -->
-	         <el-table-column label="操作">	
+	  	     <el-table-column label="操作">	
 				<template slot-scope="scope" >
 					<div>
 						<el-button @click="changeGateInfo(scope.row)" type="text" size="small">修改</el-button>
@@ -132,6 +108,7 @@
 		    <!-- <span class="demonstration">显示总数</span> -->
 		    <el-pagination
 		      @current-change="handleCurrentChange"
+		      :current-page.sync="currentPage"
 		      :page-size="10"
 		      layout="total, prev, pager, next,jumper"
 		      :total="tableData.length">
@@ -143,6 +120,7 @@
 export default{
 	data(){
 		return{
+			isSuper:'0',
 			// 菊花
 			allLoading:false,
 
@@ -165,6 +143,7 @@ export default{
 			{
 				label:'序号',
 				id:'index',
+				width:50
 			},
 			{
 				label:'资产编号',
@@ -175,13 +154,13 @@ export default{
 				id:'LogicAddr',
 			},
 			{
-				label:'状态',
-				id:'UseStatus'
-			},
-			{
 				label:'安装地址',
 				id:'InstallAddr'
 			},
+			{
+				label:'状态',
+				id:'UseStatus'
+			},	
 			{
 				label:'安装时间',
 				id:'InstallTime'
@@ -210,9 +189,32 @@ export default{
 			showTableData:[],//显示在页面的数据
 
 			changeRow:[],//记录点击要修改的行的所有信息
+
+			currentPage:1,//当前页数
 		}
 	},
 	methods:{
+		/**
+		*为表格的各部分命名
+		*/
+		 tableheaderClassName({ row, rowIndex }) {
+          return "table-head-th";
+        },
+
+        tableCellName({row, column, rowIndex, columnIndex}){
+			if (columnIndex == 5) {
+				var status = this.showTableData[rowIndex][column.property]
+				if (status == '运行') {
+					return 'normal'
+				}else if (status == '停用') {
+					return 'error'
+				}else{
+					return 'warning'
+				}				
+			}
+	
+		},
+
 		/**
 		*分页控制器的方法
 		*/
@@ -257,6 +259,8 @@ export default{
 	          if (result.status=="成功") {
 	          	this.tableData = result.data
 	          	this.showTableData = this.tableData.slice(0, 10)
+
+	          	this.currentPage = 1
 	          }
 	        }) 
 		},
@@ -284,7 +288,14 @@ export default{
 	          console.log('上传文件')
 	           console.log(result)
 	          if (result.status=="成功") {
+
+	          	this.$message({
+            		type: 'success',
+           			message: '操作成功!'
+         		});
+	          	
 	          	this.updateTreeData()
+
 	          	setTimeout(function(){
 					that.getAllGWInfo()
 				}, 500)
@@ -368,6 +379,8 @@ export default{
 	},
 	mounted(){
 		var that = this
+		this.isSuper = window.sessionStorage.getItem('isSuper')
+		
 		setTimeout(function(){
 			that.getAllGWInfo()
 		}, 500)

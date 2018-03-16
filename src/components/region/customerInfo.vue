@@ -1,8 +1,7 @@
 <!-- 客户信息管理 -->
 <template>
 	<div>
-		<div>
-			<!-- <span>状态选择</span> -->
+		<!-- <div>
 			<el-select v-model="status" placeholder="请选择审核状态">
 			    <el-option
 			      v-for="item in statusSelect"
@@ -12,9 +11,10 @@
 			    </el-option>
 			</el-select>
 			<el-button type="primary">查询</el-button>
-		</div>
+		</div> -->
 		<el-table
 		    :data="tableData"
+		    :header-cell-class-name="tableheaderClassName"
 		    style="width: 100%">
 		    <el-table-column type="expand">
 		      <template slot-scope="props">
@@ -169,6 +169,13 @@ export default{
 		}
 	},
 	methods:{
+		/**
+		*为表格的各部分命名
+		*/
+		 tableheaderClassName({ row, rowIndex }) {
+          return "table-head-th";
+        },
+
 		/**
 		*分页控制器的方法
 		*/

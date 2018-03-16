@@ -1,7 +1,7 @@
 <!-- 这是用于管理员管理区域信息的页面 -->
 <template>
 	<div v-loading="allLoading" element-loading-text="拼命加载中">
-		<div class="condition"  >
+		<div class="condition">
 			<div class="add">
 				<input id="upload" type="file" @change="importExcel($event)"  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" style="display:none" />
 				<el-button type="primary" @click="choseFile">批量添加</el-button>
@@ -17,6 +17,7 @@
 			</div>
 			<el-table 
 				:data="excelData"
+				:header-cell-class-name="tableheaderClassName"
 				style="width: 100%;"
 				stripe
 				>
@@ -36,13 +37,14 @@
 		<div>
 		<el-table
 		    :data="showTableData"
+		    :header-cell-class-name="tableheaderClassName"
 		    stripe
-		    border	
 		    style="width: 100%;">
 		    <el-table-column 
 		    	v-for="item in tableHead"
 		    	:prop="item.id"
 		    	:label="item.label"
+		    	:width='item.width'
 		    	>		
 		    </el-table-column>
 
@@ -58,7 +60,7 @@
 		    <!-- <span class="demonstration">显示总数</span> -->
 		    <el-pagination
 		      @current-change="handleCurrentChange"
-
+			  :current-page.sync="currentPage"
 		      :page-size="10"
 		      layout="total, prev, pager, next,jumper"
 		      :total="partOfTableData.length">
@@ -72,6 +74,7 @@
 export default{
 	data(){
 		return{
+			isSuper:'0',
 			//菊花 
 			allLoading:false,
 			dialogLoading:false,
@@ -92,6 +95,7 @@ export default{
 			{
 				label:'序号',
 				id:'index',
+				width:50
 			},
 			{
 				label:'栋',
@@ -108,10 +112,19 @@ export default{
 			tableData:[],
 			partOfTableData:[],//筛选完条件之后的数据源
 			showTableData:[],//显示在页面的数据源
+
+			currentPage:1,
 		}
 	},
 	methods:{
-		
+
+		tableheaderClassName({row, column, rowIndex, columnIndex}) {
+
+          return "table-head-th";
+        },
+
+
+
 		/**
 		*分页控制器的方法
 		*/
@@ -167,7 +180,11 @@ export default{
 	          console.log('添加房间')
 	           console.log(result)
 	          if (result.status=="成功") {
-	          	alert('添加成功')
+	          	
+	          	this.$message({
+            		type: 'success',
+           			message: '操作成功!'
+         		});
 
 	          	setTimeout(function(){
 	          		that.getRoomInfo()
@@ -201,6 +218,8 @@ export default{
 	          	this.tableData = result.Commmunity
 	          	this.partOfTableData = this.tableData
 	          	this.showTableData = this.tableData.slice(0, 10)
+
+	          	this.currentPage = 1
 	          }
 	        }) 
 		},
@@ -237,13 +256,23 @@ export default{
 	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
 	           console.log(result)
 	          if (result.status=="成功") {
-	          	// alert('删除成功')
+	          	this.$message({
+            			type: 'success',
+           			 	message: '操作成功!'
+         			 });
 	            
 	            this.updateTreeData()
 	            setTimeout(function(){
 					that.getRoomInfo()
-				},500)              	          }
-	        }) 	
+				},500)              	          
+	        }else{
+	        	this.$message({
+          			showClose: true,
+          			message: '操作失败',
+          			type: 'error'
+        		});
+	        }
+	      }) 	
       	},
 
       	/**
@@ -253,7 +282,9 @@ export default{
       		if (window.sessionStorage.getItem('menuName') == 'firstRegion') {
       			
       			if(node.level == "4"){
-      				this.partOfTableData = this.tableData
+      				this.partOfTableData = this.tableData.filter(element=>{
+      					return (element.FourthRegionCode == node.code)
+      				});
       			}else if(node.level == "5"){
       				
       				this.partOfTableData = this.tableData.filter(element=>{
@@ -270,7 +301,6 @@ export default{
       			}
       			this.showTableData = this.partOfTableData.slice(0, 10)
       			
-
       		}
       	},
 	},
@@ -285,6 +315,9 @@ export default{
 		}
 	},
 	mounted(){
+
+		this.isSuper = window.sessionStorage.getItem('isSuper')
+
 		var that = this
 		setTimeout(function(){
 			that.getRoomInfo()
@@ -296,7 +329,12 @@ export default{
 <style scoped>
 .el-table{
 	margin-top: 10px;
+	
 }
+
+
+
+
 .area{
 	width: 100px;
 }
@@ -306,6 +344,7 @@ export default{
 .condition{
 	overflow: hidden;
 }
+
 
 
 </style>

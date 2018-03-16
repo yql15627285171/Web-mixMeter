@@ -1,7 +1,6 @@
-<!-- 网关终端时钟抄设 -->
 <template>
 	<div>
-		网关终端时钟抄设 
+		充值缴费
 	</div>
 </template>
 <script>

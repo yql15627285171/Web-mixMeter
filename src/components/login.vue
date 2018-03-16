@@ -26,7 +26,7 @@ export default{
 			loading:false,
 
 			// 用户名
-			name:'Sun',
+			name:'trj01',
 			// 密码
 			password:'123',
 			//excel文件的数据
@@ -55,7 +55,13 @@ export default{
 				var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, "")) 
 				console.log(result)
 				if (result.status == '成功') {
-					if (result.Flg == 0) {
+
+					var flg = parseInt(result.Flg)
+					// 超级用户：10-19，目前是只用10
+					// 社区用户：20-29，目前是只用20
+					// 普通用户：30-39，目前是只用30
+
+					if (flg >= 30 && flg <= 39) {
 						// statement
 						alert('用户网页版功能还没开通，请使用公众号进行业务查询')
 					}else {
@@ -69,12 +75,28 @@ export default{
  					// 清空menuName的记录
  					window.sessionStorage.removeItem("menuName")
  					
+ 			
+ 					// 记录是否超级管理员
+ 					if (flg >= 10 && flg <= 19) {
+ 						window.sessionStorage.setItem('isSuper',"1")
+ 						this.$router.push('main')
+ 					}else{
+ 						window.sessionStorage.setItem('isSuper',"0")
+ 						this.$router.push("main/firstRegion")
+ 					}
+ 					
+
 					// console.log(result.RegionCode)
 					// this.$store.dispatch('setIsLogin',true)
 				
-					this.$router.push('main')
+					
 					}
 					
+				}else{
+					this.$message({
+            		type: 'error',
+           			message: result.data         		
+           		  });
 				}
 				
 			})

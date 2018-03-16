@@ -90,25 +90,24 @@
           </el-aside>
           <!-- 社区房间选择 -->
           <el-aside width='200px'>
-            <!-- 地区选择 -->
-            <!-- <div class="block">
-              <el-cascader
-                expand-trigger="hover"
-                :options="areaData"
-                v-model="selectedArea"
-                @change="handleChange"
-                placeholder="请选择省市区">
-              </el-cascader>
-            </div> -->
+            
             <div class="selectTree" v-if="showSelect">
               <img :src="houseImg" @click='houseClick'>
               <img :src="gateImg" @click='gateClick'>
             </div>
+
+            <el-input
+            style="margin-top:15px"
+              placeholder="输入关键字进行搜索"
+              v-model="filterText">
+            </el-input>
             <!-- 房间号选择 -->
             <el-tree  :data="showTreeData" 
                       :props="defaultProps" 
                       @node-click="handleNodeClick"
-                      accordion>
+                      accordion
+                      :filter-node-method="filterNode"
+                      ref="tree">
                         
             </el-tree>
           </el-aside>
@@ -119,7 +118,15 @@
           </el-main>
        </el-container>
       <!-- 脚部 -->
-      <el-footer>Footer</el-footer>
+      <el-footer>
+      
+        
+          <span>CopyRight © 2018 深圳市航天泰瑞捷电子有限公司 版权所有</span>
+          <a href="http://www.miitbeian.gov.cn/" style="color:#fff">|粤ICP备17141636号-1</a>
+          <a href="http://www.miitbeian.gov.cn/" >
+          <img src="@/assets/ba.png" class="gongan"></a>
+      
+      </el-footer>
     </el-container>
   </div>
 </template>
@@ -128,8 +135,9 @@
 export default {
   data () {
     return {
-      // 小图标路径
-      houseImg:require('../assets/house.png'),
+      filterText:'',//搜索的关键字
+     
+      houseImg:require('../assets/house.png'), // 小图标路径
       gateImg:require('../assets/gate_unselect.png'),
       selectHouse:true,
       // 菜单栏默认展开的栏目
@@ -172,41 +180,6 @@ export default {
         children: 'children',
         label: 'label'
       },
-      // 省市区级联选择变量
-      areaData:[
-      {
-        value:'广东省',
-        label:'广东省',
-        children:[
-        {
-          value:'深圳市',
-          label:'深圳市',
-          children:[
-          {
-            value:'罗湖区',
-            label:'罗湖区',
-          },
-          {
-            value:'南山区',
-            label:'南山区',
-          }
-          ]
-        },
-        {
-          value:'广州市',
-          label:'广州市',
-          children:[
-          {
-            value:'白云区',
-            label:'白云区',
-          },
-          {
-            value:'天河区',
-            label:'天河区',
-          }
-          ]
-        }]
-      }],
       selectedArea:[],
     }
   },
@@ -224,6 +197,12 @@ export default {
         this.$store.dispatch('setClickTreeData',data)
         
       },
+      // 树的搜索框
+      filterNode(value, data) {
+        if (!value) return true;
+        return data.label.indexOf(value) !== -1;
+      },
+
       // 级联选择器事件
        handleChange(value) {
         console.log(value);
@@ -285,6 +264,9 @@ export default {
         this.data.getTreeData({
           succeed(res){
             that.$store.dispatch('reloadTreeData',res)
+
+            // 当刷新的时候也要判断该记录的页面
+            that.recordIndex(window.sessionStorage.getItem('menuName'))
           }
         })
        
@@ -298,20 +280,31 @@ export default {
 
       /**
       *记录点击的子菜单的名字
+      *页面刷新也调用此方法
       */
       recordIndex(name){
         // console.log(name)
         window.sessionStorage.setItem('menuName',name)
 
-
-        if (name == 'meterFiles') {
+        // 在区域档案->计量表档案管理 和 终端操作的->表计控制的时候 ，数列表可选
+        if (name == 'meterFiles' || name == 'MeterReadAndSet') {
           this.showSelect = true
+          // 重新进入的时候都默认选择房间
+          this.houseImg = require('../assets/house.png')
+          this.gateImg= require('../assets/gate_unselect.png')
         }else {
           this.showSelect = false
         }
 
-        this.showTreeData = this.$store.state.treeData.Commmunity
+        if (name == "GateWayControl") {
+          console.log('网关数')
+          this.showTreeData = this.$store.state.treeData.GWList
+        }else{
+          this.showTreeData = this.$store.state.treeData.Commmunity
+        }
         
+        
+        // 在终端操作 网关控制的时候，数列表只显示集中器，其他地方树列表显示房屋
 
       },
       /**
@@ -350,9 +343,20 @@ export default {
   },
   watch:{
     treeData(newValue){
-      this.showTreeData = newValue.Commmunity
-    }
+      if (window.sessionStorage.getItem("menuName") == "GateWayControl") {
+        this.showTreeData = newValue.GWList
+      }else{
+        this.showTreeData = newValue.Commmunity
+      }
+      
+    },
+    // 搜索框搜索
+    filterText(val) {
+        this.$refs.tree.filter(val);
+      }
+
   }
+
 }
 </script>
 
@@ -360,8 +364,8 @@ export default {
 <style scoped>
 
 .el-header, .el-footer {
-  background-color: #B3C0D1;
-  color: #333;
+  background-color: #363636;
+  color: #fff;
   text-align: center;
   line-height: 60px;
 }
@@ -369,8 +373,7 @@ export default {
 .el-aside {
   background-color: #fff;
   color: #333;
-  text-align: center;
-  /*line-height: 200px;*/
+  text-align: center
 }
 
 .el-main {
@@ -391,6 +394,7 @@ export default {
 
 .set{
   margin-left: 10px;
+  color: #fff;
   cursor: pointer;
 }
 
@@ -410,6 +414,10 @@ export default {
 .el-tree{
   margin-top: 10px;
   min-height: 800px;
+
+  min-height:250px;
+  overflow-y:auto;
+  max-height:600px;
 }
 
 .block{

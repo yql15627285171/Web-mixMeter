@@ -5,7 +5,7 @@ import Login from '@/components/login'
 import Register from '@/components/register'
 import RemoteControl from '@/components/control/remoteControl'
 // 权限管理
-import UserInfo from '@/components/authority/userInfo'
+// import UserInfo from '@/components/authority/userInfo'
 import UserGroup from '@/components/authority/userGroup'
 import SuperAdminInfo from '@/components/authority/SuperAdminInfo'
 
@@ -15,8 +15,16 @@ import customerInfo from '@/components/region/customerInfo'
 import gateway from '@/components/region/gateway'
 import meterFiles from '@/components/region/meterFiles'
 
-// 
+// 终端操作
+import GateWayControl from '@/components/getewayParaOprt/GateWayControl'
+import MeterReadAndSet from '@/components/getewayParaOprt/MeterReadAndSet'
+import electric from '@/components/getewayParaOprt/meter/electric'
 
+// 费用管理
+import RechargeFeeRefund from '@/components/costManagement/RechargeFeeRefund'
+import BillingReport from '@/components/costManagement/BillingReport'
+import AccoundReconciliation from '@/components/costManagement/AccoundReconciliation'
+import monthElectric from '@/components/costManagement/time/monthElectric'
 
 Vue.use(Router)
 
@@ -47,27 +55,9 @@ const router = new Router({
       meta:{
         requireAuth:true
       },
-      redirect:'/main/SuperAdminInfo',
+      redirect:'/main/userGroup',
       component:Main,
-      children:[
-      {
-        // 远程操控
-        path:'remoteControl',
-        name:'remoteControl',
-        meta:{
-        requireAuth:true
-        },
-        component:RemoteControl
-      },
-      {
-        // 管理员审核
-        path:'SuperAdminInfo',
-        name:'SuperAdminInfo',
-        meta:{
-        requireAuth:true
-        },
-        component:SuperAdminInfo
-      },
+      children:[ 
       {
         // 用户组信息
         path:'userGroup',
@@ -76,15 +66,15 @@ const router = new Router({
         requireAuth:true
         },
         component:UserGroup
-      },
+      },      
       {
-        // 客户审核
-        path:'userInfo',
-        name:'userInfo',
+        // 管理员审核
+        path:'SuperAdminInfo',
+        name:'SuperAdminInfo',
         meta:{
         requireAuth:true
         },
-        component:UserInfo
+        component:SuperAdminInfo
       },
       {
         // 区域管理
@@ -121,6 +111,73 @@ const router = new Router({
         requireAuth:true
         },
         component:customerInfo
+      },
+      {
+        // 网关控制
+        path:'GateWayControl',
+        name:'GateWayControl',
+        meta:{
+        requireAuth:true
+        },
+        component:GateWayControl
+      },
+      {
+        // 表计抄设
+        path:'MeterReadAndSet',
+        name:'MeterReadAndSet',
+        redirect:'/main/MeterReadAndSet/electric',
+        meta:{
+        requireAuth:true
+        },
+        component:MeterReadAndSet,
+        children:[
+        {
+          // 电
+          path:'electric',
+          name:'electric',
+          meta:{
+            requireAuth:true
+          },
+          component:electric
+        }]
+      },
+      {
+        // 充值退费
+        path:'RechargeFeeRefund',
+        name:'RechargeFeeRefund',
+        meta:{
+            requireAuth:true
+          },
+        component:RechargeFeeRefund
+      },
+      {
+        // 结算报表
+        path:'BillingReport',
+        name:'BillingReport',
+        redirect:'/main/BillingReport/monthElectric',
+        meta:{
+            requireAuth:true
+          },
+        component:BillingReport,
+        children:[
+        {
+          // 月度
+          path:'monthElectric',
+          name:'monthElectric',
+          meta:{
+            requireAuth:true
+          },
+          component:monthElectric
+        }]
+      },
+      {
+        // 财务对账
+        path:'AccoundReconciliation',
+        name:'AccoundReconciliation',
+        meta:{
+            requireAuth:true
+          },
+        component:AccoundReconciliation
       }]
     },
 

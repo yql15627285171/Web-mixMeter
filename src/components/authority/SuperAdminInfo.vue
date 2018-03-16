@@ -3,7 +3,7 @@
 	<div v-loading="loading" element-loading-text="拼命加载中">
 		<div class="condition">
 
-			<el-select v-model="status" placeholder="请选择状态">
+			<el-select v-model.lazy="status" placeholder="请选择状态" @change="selectChange">
 			    <el-option
 			      v-for="item in statusSelect"
 			      :key="item.value"
@@ -13,7 +13,6 @@
 			</el-select>
 			<el-button type="primary">查询</el-button>
 			<div class="add">
-				<!-- <el-button type="primary">批量添加</el-button> -->
 				<el-button type="primary" @click="addDialogVisible = true">添加管理员</el-button>
 			</div>
 			
@@ -91,6 +90,8 @@
 
 		 <el-table
 		    :data="showTableData"
+		    :header-cell-class-name="tableheaderClassName"
+		    :cell-class-name='tableCellName'
 		    stripe
 		    style="width: 100%;">
 		    <el-table-column type="expand">
@@ -103,29 +104,21 @@
 		        </el-form>
 		      </template>
 		    </el-table-column>
-		    <el-table-column
-		      label="序号"
-		      prop="index"
-		      width='50'>
+		    <el-table-column 
+		    	v-for="(item,index) in tableHead"
+		    	v-if="index <= 4"
+		    	:prop="item.id"
+		    	:label="item.label"
+		    	:width='item.width'
+		    	>		
 		    </el-table-column>
-		    <el-table-column
-		      label="用户名"
-		      prop="UserId">
-		    </el-table-column>
-		    <el-table-column
-		      label="电话"
-		      prop="MobilePhone">
-		    </el-table-column>
-		    <el-table-column
-		      label="所属社区"
-		      prop="FourthRegionName">
-		    </el-table-column>
+	
 		     <el-table-column label="状态">	
 				<template slot-scope="scope">
 	       			<span v-if="scope.row.ValidFlg == '1'" style="color:green;">有效</span>
 	       			<span v-else style="color:red;">无效</span>
      			</template>
-	    	 </el-table-column>
+	    	 </el-table-column> -->
 
 		     <el-table-column 
 		    	label="操作">	
@@ -140,10 +133,10 @@
 		    <!-- <span class="demonstration">显示总数</span> -->
 		    <el-pagination
 		      @current-change="handleCurrentChange"
-
+			  :current-page.sync="currentPage"
 		      :page-size="10"
 		      layout="total, prev, pager, next,jumper"
-		      :total="tableData.length">
+		      :total="partOfTableData.length">
 		    </el-pagination>
 	  	</div>
 	</div>
@@ -167,6 +160,10 @@ export default{
 			// 状态
 			statusSelect:[
 			{
+				label:'全部',
+				value:'全部'
+			},
+			{
 				label:'有效',
 				value:'有效'
 			},
@@ -174,7 +171,7 @@ export default{
 				label:'无效',
 				value:'无效'
 			},],
-			status:'',
+			status:'全部',
 			// 对话框的显示
 			addDialogVisible:false,
 			changeDialogVisible:false,
@@ -209,6 +206,7 @@ export default{
 			{
 				label:'序号',
 				id:'index',
+				width:50
 			},
 			{
 				label:'用户编号',
@@ -249,19 +247,68 @@ export default{
 			],
 			tableData:[],//所有数据源
 
+			partOfTableData:[],//可以显示的数据
+
 			showTableData:[],//显示在当前页的数据
 
-			
+			currentPage:1,//分页控制器的当前页
 		}
 
 	},
 	methods:{
 		/**
+		*为表格的各部分命名
+		*/
+		 tableheaderClassName({ row, rowIndex }) {
+          return "table-head-th";
+        },
+
+        tableCellName({row, column, rowIndex, columnIndex}){
+			if (columnIndex == 5) {
+				var status = this.showTableData[rowIndex][column.property]
+				if (status == '有效' || status == '1') {
+					return 'normal'
+				}else if (status == '无效' || status == '0') {
+					return 'error'
+				}else{
+					return 'warning'
+				}				
+			}
+	
+		},
+
+		/**
 		*分页控制器的方法
 		*/
       	handleCurrentChange(val) {
         	console.log(`当前页: ${val}`);
-        	this.showTableData = this.tableData.slice((val-1)*10, val *10)
+        	this.showTableData = this.partOfTableData.slice((val-1)*10, val *10)
+      	},
+
+
+      	/**
+      	*选择改变
+      	*/
+      	selectChange(val){
+
+      		if (val == "全部") {
+      			this.partOfTableData = this.tableData
+      		}else if (val == "有效") {
+      		
+      			this.partOfTableData = this.tableData.filter(element=>{
+      				return (element.ValidFlg == "1" || element.ValidFlg == "有效")
+      			});
+      		}else if(val == "无效"){
+      			this.partOfTableData = this.tableData.filter(element=>{
+      				return (element.ValidFlg == "0" || element.ValidFlg == null ||element.ValidFlg == "无效")
+      			});
+      		}
+
+      		for (var i = 0; i < this.partOfTableData.length; i++) {
+      				this.partOfTableData[i].index = (i+1).toString()
+      			}
+      			this.showTableData = this.partOfTableData.slice(0, 10)
+
       	},
       	/**
       	*省名请求
@@ -320,7 +367,11 @@ export default{
 		          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
 		           console.log(result)
 		          if (result.status=="成功") {
-		          	alert('添加成功')
+		          	
+		          	this.$message({
+            			type: 'success',
+           			 	message: '操作成功!'
+         			 });
 		            
 		            this.getAllAdminInfo()
 		          }else{
@@ -351,7 +402,7 @@ export default{
         	
         	this.changeForm.GroupId = row.GroupId
         	this.changeForm.RegionLevel = row.RegionLevel 
-        	if (row.ValidFlg == '1') {
+        	if (row.ValidFlg == '1' || row.ValidFlg=='有效') {
         		// statement
         		this.changeForm.Effective = true
         	}else {
@@ -366,6 +417,7 @@ export default{
         	this.loading = true
         	var that= this
 	      	var params = {
+	      		AdminId:window.sessionStorage.getItem("id"),
 	      		UserId:this.changeForm.UserId,
 	      		FirstRegionName:this.changeForm.FirstRegionName,
 	      		SecondRegionName:this.changeForm.SecondRegionName,
@@ -376,6 +428,9 @@ export default{
 	      		ValidFlg:this.changeForm.Effective ? '1':'0',
 	        	evalue:this.$encrypt()
 	        }
+
+	        console.log(params)
+
 	        this.http.post(this.api.baseUrl+this.api.UpdateCommmunity,params)
 	        .then(res=>{
 	          this.loading = false
@@ -383,7 +438,11 @@ export default{
 	           console.log(result)
 	          if (result.status=="成功") {
 	          	
-	            alert('修改成功')
+            	this.$message({
+        			type: 'success',
+       			 	message: '操作成功!'
+     			 });
+
 	            setTimeout(function(){
 					that.getAllAdminInfo()
 				}, 500)
@@ -409,8 +468,13 @@ export default{
 	           console.log(result)
 	          if (result.status=="成功") {
 	            this.tableData = result.data
+	            this.partOfTableData = this.tableData
 	            // 显示当前页的数据
-	            this.showTableData = this.tableData.slice(0, 10)
+	            this.showTableData = this.partOfTableData.slice(0, 10)
+
+	            this.status = '全部'
+
+	            this.currentPage = 1
 	          }
 	        })
 	    },
