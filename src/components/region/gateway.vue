@@ -14,25 +14,30 @@
 		</div>
 
 		<!-- 弹出框,显示excel表格的内容 -->
-		<el-dialog  :visible.sync="excelVisible">
+		<el-dialog  :visible.sync="excelVisible" class='excelDialog'>
 			<div style="overflow:hidden">
 				<span>要上传的excel表格的信息</span>
 				<el-button type="primary" style="float:right" @click='sureUploadExcel'>上传</el-button>
 			</div>
-			<el-table 
+			
+				<el-table 
 				:data="excelData"
 				:header-cell-class-name="tableheaderClassName"
 				style="width: 100%;"
+				height="350"
 				stripe
 				>
 
 				<el-table-column 
-		    	v-for="item in excelHead"
+		    	v-for="(item,index) in excelHead"
 		    	:prop="item"
 		    	:label="item"
 		    	width='150'
 		    	>		
-		    </el-table-column>
+		   		 </el-table-column>
+				
+			</el-table>
+	
 				
 			</el-table>
 		</el-dialog>

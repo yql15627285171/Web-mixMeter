@@ -69,4 +69,9 @@ export default {
     text-align: center;
   }
 
+  div.el-dialog{
+    max-height: 800px;
+    overflow-y: auto;
+  }
+
 </style>

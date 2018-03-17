@@ -12,27 +12,30 @@
 		</div>
 		
 		<!-- excel表格导入对话框 -->
-		<el-dialog  :visible.sync="excelVisible">
+		<el-dialog  :visible.sync="excelVisible" class='excelDialog'>
 			<div style="overflow:hidden">
 				<el-button type="primary" style="float:right" @click="sureUpload">上传</el-button>
 			</div>
 			
-			<el-table 
+			
+				<el-table 
 				:data="excelData"
 				:header-cell-class-name="tableheaderClassName"
 				style="width: 100%;"
+				height="350"
 				stripe
 				>
 
 				<el-table-column 
-		    	v-for="item in excelHead"
+		    	v-for="(item,index) in excelHead"
 		    	:prop="item"
 		    	:label="item"
-		    	width='100'
+		    	width='150'
 		    	>		
-		    </el-table-column>
+		   		 </el-table-column>
 				
 			</el-table>
+		
 		</el-dialog>
 
 		<!-- 修改对话框 -->

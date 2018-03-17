@@ -1,8 +1,8 @@
 <template>
-  <div class="main">
+  <div class="main" v-loading="loading" element-loading-text="拼命加载中">
     <el-container>
       <!-- 头部 -->
-      <el-header>
+      <el-header >
         <el-row type="flex" justify='space-between'>
           <el-col :span="12">
             <div class="system-name">社区服务管理系统</div>
@@ -12,7 +12,7 @@
               <!-- <router-link :to="{name:'main'}" class="set">个人中心</router-link> -->
               <span class="set" @click="informationDialogVisible=true">个人中心</span>
               <span class="set" @click="psdDialogVisible = true">密码设置</span>
-              <router-link :to="{name:'login'}" class="set">退出登录</router-link>
+              <span class="set" @click="logout">退出登录</span>
             </div>
           </el-col>
         </el-row>
@@ -56,11 +56,41 @@
       </div>
     </el-dialog>
 
+    <el-header class="headerMenus">
+
+       <el-col :offset="1" :span="23">
+            <el-menu 
+            :default-active="defaultActive" 
+            mode="horizontal"
+            v-if="menus.length>0"
+             background-color="#909399"
+            text-color="#fff"
+            active-text-color="#ffd04b"
+             @select="handleSelect">
+           
+              <el-submenu v-for="item in menus" :index="item.index">
+                <template slot="title">{{item.name}}</template>
+                <router-link 
+                  v-for='child in item.child' 
+                  :to="{name:child.index}"
+                  @click.native="recordIndex(child.index)">
+                  <el-menu-item :index="child.index">
+                    {{child.name}}
+                  </el-menu-item>
+                </router-link>
+                
+              </el-submenu>
+            </el-menu>  
+       </el-col>
+        
+    </el-header>
+
+
 
       <!-- body内容 -->
-       <el-container v-loading="loading" element-loading-text="拼命加载中">
-          <el-aside width='200px' class='content-menus'>
-            <!-- 功能菜单栏 -->
+       <el-container>
+ <!--          <el-aside width='200px' class='content-menus'>
+       
             <el-menu 
             :default-active="defaultActive" 
             class="el-menu-vertical-demo" 
@@ -87,10 +117,19 @@
               </el-submenu>
             </el-menu>
 
-          </el-aside>
+          </el-aside> -->
           <!-- 社区房间选择 -->
           <el-aside width='200px'>
+            <div>
+              <i class="el-icon-location" style="margin-left: -30px;color:#409EFF"></i>
+              <el-breadcrumb separator-class="el-icon-arrow-right" style="margin-top:20px;font-size: 12px; display: inline-block;text-align:left">
+
+                <el-breadcrumb-item>{{fatherName}}</el-breadcrumb-item>
+                <el-breadcrumb-item>{{childName}}</el-breadcrumb-item>
+              </el-breadcrumb>
+            </div>
             
+
             <div class="selectTree" v-if="showSelect">
               <img :src="houseImg" @click='houseClick'>
               <img :src="gateImg" @click='gateClick'>
@@ -135,6 +174,8 @@
 export default {
   data () {
     return {
+      fatherName:'',//功能路径名
+      childName:'',//功能路径名
       filterText:'',//搜索的关键字
      
       houseImg:require('../assets/house.png'), // 小图标路径
@@ -185,11 +226,23 @@ export default {
   },
   methods:{
       // 菜单栏事件
-      handleOpen(key, keyPath) {
+       handleSelect(key, keyPath) {
         console.log(keyPath);
-      },
-      handleClose(key, keyPath) {
-        console.log(keyPath);
+        var selectFatherItem = this.menus.filter(element=> {
+          return (element.index == keyPath[0]);
+        });
+        this.fatherName = selectFatherItem[0].name
+
+        var selectChildItem = selectFatherItem[0].child.filter(element=> {
+          return (element.index == keyPath[1]);
+        });
+
+        this.childName = selectChildItem[0].name
+      
+      window.sessionStorage.setItem('fatherName',this.fatherName)
+      window.sessionStorage.setItem('childName',this.childName)
+
+
       },
       // 树的事件
       handleNodeClick(data) {
@@ -246,6 +299,15 @@ export default {
             this.menus = result.menus
 
             this.defaultActive = window.sessionStorage.getItem('menuName') ? window.sessionStorage.getItem('menuName') : this.menus[0].child[0].index
+
+            // 取路径
+            if (window.sessionStorage.getItem('fatherName') != null) {
+              this.fatherName = window.sessionStorage.getItem('fatherName')
+              this.childName = window.sessionStorage.getItem('childName')
+            }else{
+              this.fatherName = this.menus[0].name
+              this.childName = this.menus[0].child[0].name
+            }
           }
          
         })
@@ -316,7 +378,18 @@ export default {
 
       changeChildren(){
         this.community[0].children = this.LogicAddr
+      },
+
+      /**
+      *退出登录
+      */
+      logout(){
+        this.$router.push({name:'login'})
+        window.sessionStorage.clear();
       }
+
+
+
   },
   mounted(){
     
@@ -326,13 +399,12 @@ export default {
 
     this.getMenus()
 
-
-   
-
     var that = this
     setTimeout(function(){
       that.getTreeInfo()
     },200) 
+
+    
     
   },
   computed:{
@@ -379,6 +451,7 @@ export default {
 .el-main {
   background-color: #E9EEF3;
   color: #333;
+  min-height: 800px;
   /*text-align: center;*/
   /*line-height: 160px;*/
 }
@@ -398,20 +471,29 @@ export default {
   cursor: pointer;
 }
 
- .el-menu-vertical-demo:not(.el-menu--collapse) {
-    /*width: px;*/
-    min-height: 800px;
+/* .el-menu-vertical-demo:not(.el-menu--collapse) {
+     min-height: 800px;
   }
   
   .el-submenu{
     text-align: left;
   }
 
-.el-menu-item{
-  text-align: left;
-}
+*/
+
+ .headerMenus{
+    background:#909399;
+
+  }
+  li.el-menu-item{
+    text-align: left;
+
+  }
+  
+ 
 
 .el-tree{
+  padding-left: 10px;
   margin-top: 10px;
   min-height: 800px;
 
@@ -443,5 +525,6 @@ export default {
   width: 25px;
   margin: 10px 30px 0 10px;
 }
+
 
 </style>

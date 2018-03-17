@@ -1,7 +1,7 @@
 <!-- 网关控制 -->
 <!-- 电表 -->
 <template>
-	<div v-loading="loading" element-loading-text="拼命加载中">
+	<div v-loading="loading" element-loading-text="拼命加载中" style="padding-left:100px">
 		<div class="info">
 			<h1 class="title">基本信息</h1>
 			<div class="infoContent">
