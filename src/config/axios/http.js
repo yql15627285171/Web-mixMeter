@@ -40,6 +40,7 @@ function checkStatus (response) {
   /*
   没有响应数据的时候为空
   */
+
   if (response == null) {
     // statement
     alert("无法连接到服务器,请联系管理员")
@@ -49,15 +50,21 @@ function checkStatus (response) {
       data:'无法连接到服务器'
     }
   }
+
+  // console.log(response.data)
   
   // 如果http状态码正常，则直接返回数据
   if (response && (response.status === 200 || response.status === 304 || response.status === 400)) {
-    return response
-    // 如果不需要除了data之外的数据，可以直接 return response.data
+    if (response.data.msg=='ok') {
+      return response
+    }else{
+      return JSON.parse(response.data.replace(/<[^>]+>/g, "").replace(/[\r\n]/g,"")) 
+    }
+        // 如果不需要除了data之外的数据，可以直接 return response.data
   }else {
 
     // 异常状态下，把错误信息返回去
-  // 因为前面我们把错误扶正了，不然像404 500 这样的错误走不到这里
+    // 因为前面我们把错误扶正了，不然像404 500 这样的错误走不到这里
     return {
       status: -404,
       msg: response.statusText,
@@ -83,13 +90,13 @@ export default {
     return axios({
       method: 'post',
       url:url,
-      baseURL: 'https://www.stsidea.com/weixin.asmx',
       data: qs.stringify(data),
       timeout: 60000,
       headers: {
         // 'X-Requested-With': 'XMLHttpRequest',
         // "Access-Control-Allow-Origin":"*",
         'content-type': 'application/x-www-form-urlencoded',
+  
         
       }
     }).then(checkStatus).then(checkCode)

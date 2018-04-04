@@ -1,6 +1,6 @@
 <!-- 客户信息管理 -->
 <template>
-	<div>
+	<div v-loading="loading" element-loading-text="拼命加载中">
 		<!-- <div>
 			<el-select v-model="status" placeholder="请选择审核状态">
 			    <el-option
@@ -13,89 +13,33 @@
 			<el-button type="primary">查询</el-button>
 		</div> -->
 		<el-table
-		    :data="tableData"
+		    :data="showTableData"
 		    :header-cell-class-name="tableheaderClassName"
+		    :cell-class-name="tableCellName"
 		    style="width: 100%">
-		    <el-table-column type="expand">
+<!-- 		    <el-table-column type="expand">
 		      <template slot-scope="props">
 		        <el-form label-position="left" inline class="demo-table-expand" >
-		          <el-form-item label="序号">
-		            <span>{{ props.row.ID }}</span>
-		          </el-form-item>
-		          <el-form-item label="用户编号">
-		            <span>{{ props.row.UserId }}</span>
-		          </el-form-item>
+		          
 		          <el-form-item label="用户名">
 		            <span>{{ props.row.UserName }}</span>
 		          </el-form-item>
-		          <el-form-item label="姓名">
-		            <span>{{ props.row.Name }}</span>
-		          </el-form-item>
 
-		          <el-form-item label="审核状态">
-		            <span>{{ props.row.CheckFlg }}</span>
-		          </el-form-item>
-		          <el-form-item label="所属区域">
-		            <span>{{ props.row.RegionLevel }}</span>
-		          </el-form-item>
-		          <el-form-item label="微信号">
-		            <span>{{ props.row.WeiXinNo }}</span>
-		          </el-form-item>
-		          <el-form-item label="身份证号">
-		            <span>{{ props.row.IdNum }}</span>
-		       	  </el-form-item>
-		          <el-form-item label="性别">
-		            <span>{{ props.row.Sex }}</span>
-		          </el-form-item>
-		          <el-form-item label="固定电话">
-		            <span>{{ props.row.Telephone }}</span>
-		          </el-form-item>
-		          <el-form-item label="手机号">
-		            <span>{{ props.row.MobilePhone }}</span>
-		          </el-form-item>
-		          <el-form-item label="固定电话">
-		            <span>{{ props.row.address }}</span>
-		          </el-form-item>
-		          <el-form-item label="联系地址">
-		            <span>{{ props.row.Address }}</span>
-		          </el-form-item><el-form-item label="客户类别">
-		            <span>{{ props.row.CustomerTypeId }}</span>
-		          </el-form-item>
-		          <el-form-item label="银行卡号">
-		            <span>{{ props.row.BankCardNum }}</span>
-		          </el-form-item>
-		          <el-form-item label="是否扣款用户">
-		            <span>{{ props.row.ChargebackFlag }}</span>
-		          </el-form-item>
 		        </el-form>
 		      </template>
+		    </el-table-column> -->
+		    <el-table-column 
+		      v-for="item in tableHead"
+		      :label="item.label"
+		      :prop="item.id"
+		      :width='item.width'>
 		    </el-table-column>
-		    <el-table-column
-		      label="序号"
-		      prop="ID">
-		    </el-table-column>
-		    <el-table-column
-		      label="姓名"
-		      prop="Name">
-		    </el-table-column>
-		    <el-table-column
-		      label="绑定房间"
-		      prop="RegionLevel">
-		    </el-table-column>
-		     <el-table-column label="审核状态">	
-				<template slot-scope="scope">
-	       			<span v-if="scope.row.CheckFlg == '0'" style="color:red">未审核</span>
-	       			<span v-if="scope.row.CheckFlg == '1'" style="color:green">已审核</span>
-     			</template>
-	    	 </el-table-column>
+
 	         <el-table-column label="操作">	
 				<template slot-scope="scope" >
-					<div v-if="scope.row.CheckFlg == '0'">
-						<el-button @click="handleClick(scope.row)" type="text" size="small">审核</el-button>
-	        			<el-button type="text" size="small">取消</el-button>
-					</div>
-					<div v-else>
-						<el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
+					<div v-if="scope.row.Memo == '0'">
+						<el-button @click="ReviewAccessHouseInfo(scope.row)" type="text" size="small">审核</el-button>
+	        			<el-button type="text" size="small" @click="ApplyForRemoveHouseInfo(scope.row)">取消</el-button>
 					</div>	
      			</template>
 	    	 </el-table-column>
@@ -105,7 +49,7 @@
 		    <!-- <span class="demonstration">显示总数</span> -->
 		    <el-pagination
 		      @current-change="handleCurrentChange"
-
+			  :current-page.sync="currentPage"
 		      :page-size="10"
 		      layout="total, prev, pager, next,jumper"
 		      :total="tableData.length">
@@ -117,54 +61,35 @@
 export default{
 	data(){
 		return{
-			// 状态选择列表
-			statusSelect:[
-			{
-				label:'已审核',
-				value:'已审核'
-			},
-			{
-				label:'未审核',
-				value:'未审核'
-			},],
-			status:'',
+			loading:false,
+			currentPage:1,//当前页
+		
 			// 表格信息
-			tableData:[
+			tableHead:[
 			{
-				ID:'1',//编号
-				UserId:'111',//用户编号
-				UserName:'kkk',//用户名
-				Name:'大boss',//姓名
-				CheckFlg:'1',//审核状态
-				RegionLevel:'莲塘枫景/1栋/201',//所属管理区
-				WeiXinNo:'',//微信号
-				IdNum:'',//身份证编号
-				Sex:'男',//性别
-				Telephone:'070222222',//固定电话
-				MobilePhone:'12345678900',//手机号
-				Address:'XXXXX',//联系地址
-				CustomerTypeId:'一般用户',//客户类别
-				BankCardNum:'8888888888',//银行卡号
-				ChargebackFlag:'否',//是否扣款用户
+				label:'序号',
+				id:'index',
+				width:70
 			},
 			{
-				ID:'2',//编号
-				UserId:'111',//用户编号
-				UserName:'kkk',//用户名
-				Name:'大boss',//姓名
-				CheckFlg:'0',//审核状态
-				RegionLevel:'莲塘枫景/1栋/202',//所属管理区
-				WeiXinNo:'',//微信号
-				IdNum:'',//身份证编号
-				Sex:'男',//性别
-				Telephone:'070222222',//固定电话
-				MobilePhone:'12345678900',//手机号
-				Address:'XXXXX',//联系地址
-				CustomerTypeId:'一般用户',//客户类别
-				BankCardNum:'8888888888',//银行卡号
-				ChargebackFlag:'否',//是否扣款用户
-			}
-			],//总数据源
+				label:'房间信息',
+				id:'HouseName',
+			},
+			{
+				label:'姓名',
+				id:'UserName'
+			},
+			{
+				label:'电话',
+				id:'MobilePhone'
+			},
+			{
+				label:'审核状态',
+				id:'Memo'
+			}],
+			tableData:[],//总数据源
+			areaTableData:[],
+			partOfTableData:[],
 			showTableData:[],//显示在页面的数据源
 		}
 	},
@@ -176,13 +101,199 @@ export default{
           return "table-head-th";
         },
 
+        tableCellName({row, column, rowIndex, columnIndex}){
+			if (columnIndex == 4) {
+				var status = this.showTableData[rowIndex][column.property]
+				if (status == '1') {
+					return 'normal'
+				}else {
+					return 'error'
+				}			
+			}
+	
+		},
 		/**
 		*分页控制器的方法
 		*/
       	handleCurrentChange(val) {
         	console.log(`当前页: ${val}`);
-        	// this.showTableData = this.tableData.slice((val-1)*10, val *10)
+        	this.showTableData = this.partOfTableData.slice((val-1)*10, val *10)
       	},
+      	/**
+      	*数据源条件筛选
+      	*/
+      	filterTableData(node){
+      		if (window.sessionStorage.getItem('menuName') == 'customerInfo') {
+      			
+      			if(node.level == "4"){
+      				this.areaTableData = this.tableData.filter(element=>{
+      					return (element.FourthRegionCode == node.code)
+      				});
+      			}else if(node.level == "5"){
+      				
+      				this.areaTableData = this.tableData.filter(element=>{
+      					return (element.FifthRegionCode == node.code)
+      				})
+      			}else if(node.level == "6"){
+      				this.areaTableData = this.tableData.filter(element=>{
+      					return (element.HouseRegionCode == node.code)
+      				})
+      			}
+
+      			this.partOfTableData = this.areaTableData
+
+      			for (var i = 0; i < this.partOfTableData.length; i++) {
+      				this.partOfTableData[i].index = (i+1).toString()
+      			}
+      			this.showTableData = this.partOfTableData.slice(0, 10)
+      			
+      		}
+      	},
+
+      	/**
+      	*获取房间审核信息
+      	*/
+      	QureyHouseApplyInfo(){
+      		this.loading = true
+		      var params = {
+		        FourthRegionCode:window.sessionStorage.getItem('RegionCode'),
+		        AdminId:window.sessionStorage.getItem('id'),
+		        ApplyStatus:'',
+		        time:this.dataUtil.formatTime1(new Date())
+		      }
+
+		      console.log(params);
+		      
+		      var encryptParams = {
+		        evalue:this.$encrypt(JSON.stringify(params))
+		      }
+
+		      console.log(this.$encrypt(JSON.stringify(params)))
+
+		      this.http.post(this.api.baseUrl+this.api.QureyHouseApplyInfo,encryptParams)
+		      .then(result=>{
+		      	this.loading = false
+		      	console.log(result)
+		      	if (result.status == '成功') {
+		      		this.tableData = result.data
+		      		this.areaTableData = this.tableData
+		      		this.partOfTableData = this.areaTableData
+		      		this.showTableData = this.partOfTableData.slice(0,10)
+		      		this.currentPage = 1
+		      	}
+		        
+		        
+		                
+		      })
+      	},
+
+      	/**
+      	*进行审核
+      	*/
+      	ReviewAccessHouseInfo(row){
+      		this.loading = true
+		      var params = {
+		        HouseRegionCode:row.HouseRegionCode,
+		        AdminId:window.sessionStorage.getItem('id'),
+		        UserId:row.UserId,
+		        time:this.dataUtil.formatTime1(new Date())
+		      }
+
+		      console.log(params);
+		      
+		      var encryptParams = {
+		        evalue:this.$encrypt(JSON.stringify(params))
+		      }
+
+		      console.log(this.$encrypt(JSON.stringify(params)))
+
+		      this.http.post(this.api.baseUrl+this.api.ReviewAccessHouseInfo,encryptParams)
+		      .then(result=>{
+		      	this.loading = false
+		      	console.log(result)
+		      	if (result.status == '成功') {
+		      		this.QureyHouseApplyInfo()
+
+		      		this.$message({
+            			type: 'success',
+           			 	message: '审核成功!'
+         			 });
+
+		      	}else{
+
+		      		this.$message({
+	          			showClose: true,
+	          			message: result.data,
+	          			type: 'error'
+	        		});
+		      	}		        
+		                
+		      })
+      	},
+
+      	/**
+      	*取消审核
+      	*/
+      	ApplyForRemoveHouseInfo(row){
+      		this.loading = true
+		      var params = {
+		        HouseRegionCode:row.HouseRegionCode,
+		        UserId:row.UserId,
+		        time:this.dataUtil.formatTime1(new Date())
+		      }
+
+		      console.log('取消审核')
+		      console.log(params);
+		      
+		      var encryptParams = {
+		        evalue:this.$encrypt(JSON.stringify(params))
+		      }
+
+		      console.log(this.$encrypt(JSON.stringify(params)))
+
+		      this.http.post(this.api.baseUrl+this.api.ApplyForRemoveHouseInfo,encryptParams)
+		      .then(result=>{
+		      	this.loading = false
+		      	console.log(result)
+		      	if (result.status == '成功') {
+		      		this.QureyHouseApplyInfo()
+
+		      		this.$message({
+            			type: 'success',
+           			 	message: '取消成功!'
+         			 });
+
+		      	}else{
+
+		      		this.$message({
+	          			showClose: true,
+	          			message: result.data,
+	          			type: 'error'
+	        		});
+		      	}		        
+		                
+		      })
+      	},
+
+	},
+
+	
+
+	computed:{
+		treeNode(){
+			return this.$store.state.clickTreeData
+		}
+	},
+	watch:{
+		treeNode(newVal){
+			this.filterTableData(newVal)
+		}
+	},
+	mounted(){
+		var that = this 
+		setTimeout(function(){
+			that.QureyHouseApplyInfo()
+		},500)
 	}
 }	
 </script>

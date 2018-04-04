@@ -45,8 +45,11 @@ Vue.prototype.data = data
 import excel from './Excel/excel'
 Vue.prototype.excel = excel
 
-// import excelData from './Excel/excelData'
-// Vue.prototype.excelData = excelData
+/**
+*格式化时间
+*/
+import dataUtil from './AES/Date'
+Vue.prototype.dataUtil = dataUtil
 
 
 

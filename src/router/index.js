@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Main from '@/components/main'
 import Login from '@/components/login'
 import Register from '@/components/register'
-import RemoteControl from '@/components/control/remoteControl'
+// import RemoteControl from '@/components/control/remoteControl'
 // 权限管理
 // import UserInfo from '@/components/authority/userInfo'
 import UserGroup from '@/components/authority/userGroup'
@@ -25,6 +25,17 @@ import RechargeFeeRefund from '@/components/costManagement/RechargeFeeRefund'
 import BillingReport from '@/components/costManagement/BillingReport'
 import AccoundReconciliation from '@/components/costManagement/AccoundReconciliation'
 import monthElectric from '@/components/costManagement/time/monthElectric'
+
+// 日志管理
+import LoadLog from '@/components/logManagement/LoadLog'
+import OprtLog from '@/components/logManagement/OprtLog'
+
+// 历史数据
+import QueryDayFreezingData from '@/components/queryHistoryData/QueryDayFreezingData'
+import QueryMeterAlarmEvent from '@/components/queryHistoryData/QueryMeterAlarmEvent'
+import QueryPrepaymentMoney from '@/components/queryHistoryData/QueryPrepaymentMoney'
+import dayFreezing from '@/components/queryHistoryData/electricityMeter/day'
+import monthFreezing from '@/components/queryHistoryData/electricityMeter/month'
 
 Vue.use(Router)
 
@@ -178,6 +189,68 @@ const router = new Router({
             requireAuth:true
           },
         component:AccoundReconciliation
+      },
+      {
+        // 登录日志
+        path:'LoadLog',
+        name:'LoadLog',
+        meta:{
+            requireAuth:true
+          },
+        component:LoadLog
+      },
+      {
+        // 操作日志
+        path:'OprtLog',
+        name:'OprtLog',
+        meta:{
+            requireAuth:true
+          },
+        component:OprtLog
+      },
+      {
+        // 电表冻结数据
+        path:'QueryDayFreezingData',
+        name:'QueryDayFreezingData',
+        meta:{
+            requireAuth:true
+          },
+        component:QueryDayFreezingData,
+        children:[
+        // 电表日冻结
+        {
+          path:'dayFreezing',
+          name:'dayFreezing',
+          meta:{
+            requireAuth:true
+          },
+          component:dayFreezing,
+        },
+        // 电表月冻结
+        {
+          path:'monthFreezing',
+          name:'monthFreezing',
+          meta:{
+            requireAuth:true
+          },
+          component:monthFreezing,
+        }]
+      },
+      {
+        path:'QueryMeterAlarmEvent',
+        name:'QueryMeterAlarmEvent',
+        meta:{
+            requireAuth:true
+          },
+        component:QueryMeterAlarmEvent
+      },
+      {
+        path:'QueryPrepaymentMoney',
+        name:'QueryPrepaymentMoney',
+        meta:{
+            requireAuth:true
+          },
+        component:QueryPrepaymentMoney
       }]
     },
 

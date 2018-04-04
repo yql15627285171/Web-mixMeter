@@ -1,19 +1,26 @@
 <template>
 	<div class="login" v-loading="loading" element-loading-text="拼命加载中">
-		<div class="form">
-			<h1 class="title">
-				社区服务管理系统登录
-			</h1>
-			<el-input v-model="name" placeholder="请输入姓名"></el-input>
-			<el-input v-model="password" placeholder="请输入密码"></el-input>
-			<div class="event">
-				<!-- <span class="span1" @click="toRegister">注册账号</span> -->
-				<!-- <span class="span2">忘记密码</span> -->
-			</div>
-	
-			 <el-button type="primary" size="large" @click="login">登 录</el-button>
+		<div class="wrapForm">
+			<div class="form">
+				<h1 class="title">
+					社区服务管理系统登录
+				</h1>
+				<el-input v-model.trim="name" placeholder="请输入姓名"></el-input>
+				<el-input v-model.trim="password" placeholder="请输入密码" type='password'></el-input>
+				
+				<div class="event">
+					<el-input v-model.trim="verifyCode" placeholder="请输入验证码" ></el-input>
+				
+					<el-button  id="code" @click="createCode" size="medium">{{checkCode}}</el-button>
+					<!-- <span class="span1" @click="toRegister">注册账号</span> -->
+					<!-- <span class="span2">忘记密码</span> -->
+				</div>
+				
+				 <el-button type="primary" size="large" @click="login">登 录</el-button>
 			 
+			</div>
 		</div>
+		
 	</div>
 </template>
 <script>
@@ -26,9 +33,14 @@ export default{
 			loading:false,
 
 			// 用户名
-			name:'trj01',
+			name:'',
 			// 密码
-			password:'123',
+			password:'',
+
+			verifyCode:'',//验证码
+
+			checkCode:'',//随机生成的验证码
+
 			//excel文件的数据
 			// excelData:null,
 			// keys:['序号','集中器地址','测量点号','波特率','通信端口号','通信规约','通讯地址','通讯密码','电表费率数','整数位','小数位','采集器地址','用户大类号','用户小类号'],
@@ -41,18 +53,34 @@ export default{
 		*/
 		login(){
 			
+			if(this.name == "" || this.password == ''){
+				this.$message({
+            		type: 'error',
+           			message: '账号密码不能为空'         		
+           		  });
+				return
+			}else if (!this.matchCode()) {
+				this.createCode()
+				this.$message({
+            		type: 'error',
+           			message: '验证码不正确'         		
+           		  });
+				
+				return
+			}
+
 			var params = {
 				userId:this.name,
-				userPwd:this.password,
+				userPwd:this.$encryptPsd(this.password),
 				evalue:this.$encrypt()
 			}
-			// console.log(params)
+			console.log(params)
 
 			this.loading = true
 
-			this.http.post(this.api.baseUrl+this.api.login,params).then(res=>{
+			this.http.post(this.api.baseUrl+this.api.login,params).then(result=>{
 				this.loading = false
-				var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, "")) 
+				// var result= res
 				console.log(result)
 				if (result.status == '成功') {
 
@@ -63,7 +91,11 @@ export default{
 
 					if (flg >= 30 && flg <= 39) {
 						// statement
-						alert('用户网页版功能还没开通，请使用公众号进行业务查询')
+						this.$message({
+		            		type: 'warning',
+		           			message: '用户网页版功能还没开通，请使用公众号进行业务查询'         	
+		           		  });
+						this.createCode();
 					}else {
 						// 记录登录的用户名
 					window.sessionStorage.setItem('id',this.name)
@@ -88,15 +120,16 @@ export default{
 
 					// console.log(result.RegionCode)
 					// this.$store.dispatch('setIsLogin',true)
-				
-					
+			
 					}
 					
 				}else{
+					this.createCode()
 					this.$message({
             		type: 'error',
            			message: result.data         		
            		  });
+
 				}
 				
 			})
@@ -113,41 +146,43 @@ export default{
 		*测试接口
 		*/
 		test(){
-			
-			// this.importfxx()
-			
-			// console.log(this.excel.excelData)
-
-			// var params = {
-			// 	jsonValue:JSON.stringify(arr),
-			// 	evalue:this.$encrypt()
-			// }
-			// console.log(this.api.baseUrl+this.api.test)
-			// this.http.post(this.api.baseUrl+this.api.test,params).then(res=>{
-			// 	// this.loading = false
-			// 	console.log(res.data)
-			// 	var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, "")) 
-			// 	console.log(result)
-				
-			// })
+			var params = {
+				evalue:''
+			}
+			console.log(this.api.baseUrl+'/HelloWorld');
+			this.http.post(this.api.baseUrl+'/HelloWorld',params)
+		      .then(res=>{
+		        var result= JSON.parse(res.data.replace(/<[^>]+>/g, ""))
+		          console.log(result);
+		      })
 		},
 
-		/**
-		*导入excel文件
-		*/
-		// choseFile(event){
-		// 	this.file = event.currentTarget.files[0]
-		// },
+		 // 图片验证码
+	    createCode(){
+          var code = "";    
+          var codeLength = 4;//验证码的长度   
+          var random = new Array(0,1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');//随机数   
+          for(var i = 0; i < codeLength; i++) {//循环操作   
+              var index = Math.floor(Math.random()*61);//取得随机数的索引（0~61）   
+              code += random[index];//根据索引取得随机数加到code上   
+          }   
+              this.checkCode = code;//把code值赋给验证码 
+           
+	    },
 
-		// importfxx(event) { 
- 
-		// 	this.file = event.currentTarget.files[0]
-		// 	this.excel.readExcel(this.file,this.keys,result=>{
-		// 		console.log(result)
-		// 	})
-	     	   
-  // 		}
+	    // 判断验证码
+	    matchCode(){
+	    	if(this.verifyCode.toUpperCase() != this.checkCode.toUpperCase()){
+	    		return false
+	    	}
 
+	    	return true
+	    }
+
+	},
+	mounted(){
+		// this.test()
+		this.createCode()
 	}
 }
 </script>
@@ -161,11 +196,18 @@ export default{
 	bottom: 0;
 }	
 
+.wrapForm{
+	width: 600px;
+	/*background-color: #EFE8E5;*/
+	margin: 100px auto;
+}
+
 .form{
 	width: 300px;
 	height: 400px;
 	margin: 100px auto;
-	text-align: center
+	padding-top: 30px;
+	text-align: center;
 }
 
 .title{
@@ -182,7 +224,7 @@ export default{
 .event{
 	display: flex;
 	justify-content: space-between;
-	margin-top: 10px;
+	/*margin-top: 10px;*/
 }
 
 .span1{
@@ -199,6 +241,15 @@ export default{
 .el-button{
 	width: 100%;
 	margin-top: 20px;
+}
+
+#code{
+    font-size: 16px;
+    letter-spacing:4px;
+    color: #EB5413;
+    background: #f2f2f5;
+    margin-left: 10px;
+    width: 140px;
 }
 
 </style>

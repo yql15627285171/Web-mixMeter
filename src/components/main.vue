@@ -1,18 +1,43 @@
 <template>
-  <div class="main" v-loading="loading" element-loading-text="拼命加载中">
+  <div class="main" >
     <el-container>
       <!-- 头部 -->
       <el-header >
         <el-row type="flex" justify='space-between'>
-          <el-col :span="12">
-            <div class="system-name">社区服务管理系统</div>
+          <el-col :span="12" style="text-align:left">
+            <span class="system-name">社区服务系统</span>
+            
           </el-col>
           <el-col :span="12">
             <div class="system-setting">
               <!-- <router-link :to="{name:'main'}" class="set">个人中心</router-link> -->
-              <span class="set" @click="informationDialogVisible=true">个人中心</span>
-              <span class="set" @click="psdDialogVisible = true">密码设置</span>
-              <span class="set" @click="logout">退出登录</span>
+              
+              <span class="set" @click="getInfo">
+                <el-tooltip class="item" effect="light" content="修改个人信息" placement="bottom">
+                  <img src="../assets/edit.png" style="width:20px;">
+                </el-tooltip>
+                
+              </span>
+              <span class="set" @click="psdDialogVisible = true">
+                <el-tooltip class="item" effect="light" content="修改密码" placement="bottom">
+                  <img src="../assets/psd.png" style="width:20px;">
+                </el-tooltip>
+                
+              </span>
+              <span class="set" @click="logout">
+                <el-tooltip class="item" effect="light" content="退出登录" placement="bottom">
+                  <img src="../assets/logout.png" style="width:20px;">
+                </el-tooltip>
+              </span>
+
+              <div style="display:inline-block">
+              <div class="account">
+                <img src="../assets/account.png" style='padding:0 5px 0 20px;'>
+              <span >{{account}}</span>
+              </div>
+              
+            </div>
+            
             </div>
           </el-col>
         </el-row>
@@ -21,38 +46,41 @@
 
     <!-- 修改个人信息弹出框 -->
     <el-dialog title="个人信息" :visible.sync="informationDialogVisible">
-      <el-form :model="informationForm">
+      <el-form :model="informationForm" :rules="infoRules" ref="informationForm" class="demo-ruleForm">
+
         <el-form-item label="姓名" :label-width="formLabelWidth">
-          <el-input v-model="informationForm.name" auto-complete="off" placeholder="请输入姓名"></el-input>
+          <el-input v-model.trim="informationForm.name"  placeholder="请输入姓名"></el-input>
         </el-form-item>
-        <el-form-item label="联系电话" :label-width="formLabelWidth">
-          <el-input v-model="informationForm.mobilePhone" auto-complete="off" placeholder="请输入联系电话"></el-input>
+        <el-form-item label="联系电话" :label-width="formLabelWidth" prop="mobilePhone">
+          <el-input v-model.trim="informationForm.mobilePhone"  placeholder="请输入联系电话"></el-input>
         </el-form-item>
         <el-form-item label="社区地址" :label-width="formLabelWidth">
-          <el-input v-model="informationForm.address" auto-complete="off" placeholder="请确定社区地址"></el-input>
+          <el-input v-model.trim="informationForm.address"  placeholder="请确定社区地址"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addDialogVisible = false">取 消</el-button>
+        <el-button @click="informationDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="changeInformation">修改</el-button>
       </div>
     </el-dialog>
   <!-- 修改密码弹出框 -->
     <el-dialog title="修改密码" :visible.sync="psdDialogVisible">
-      <el-form :model="informationForm">
-        <el-form-item label="旧的密码" :label-width="formLabelWidth">
-          <el-input v-model="psdForm.oldPsd" auto-complete="off" placeholder="旧密码"></el-input>
+
+      <el-form :model="psdForm" :rules="psdRules" ref="psdForm" class="demo-ruleForm">
+
+        <el-form-item label="旧的密码" :label-width="formLabelWidth" prop="oldPsd">
+          <el-input v-model.trim="psdForm.oldPsd"  placeholder="旧密码" type="password"></el-input>
         </el-form-item>
-        <el-form-item label="新的密码" :label-width="formLabelWidth">
-          <el-input v-model="psdForm.newPsd" auto-complete="off" placeholder="新密码"></el-input>
+        <el-form-item label="新的密码" :label-width="formLabelWidth" prop="newPsd">
+          <el-input v-model.trim="psdForm.newPsd"  placeholder="新密码" type="password"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" :label-width="formLabelWidth">
-          <el-input v-model="psdForm.againPsd" auto-complete="off" placeholder="确定密码"></el-input>
+        <el-form-item label="确认密码" :label-width="formLabelWidth" prop="againPsd">
+          <el-input v-model.trim="psdForm.againPsd"  placeholder="确定密码" type="password"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="changeInformation">修改</el-button>
+        <el-button @click="psdDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="changePsd">修改</el-button>
       </div>
     </el-dialog>
 
@@ -65,7 +93,7 @@
             v-if="menus.length>0"
              background-color="#909399"
             text-color="#fff"
-            active-text-color="#ffd04b"
+            active-text-color="#ffd04b"  
              @select="handleSelect">
            
               <el-submenu v-for="item in menus" :index="item.index">
@@ -88,7 +116,7 @@
 
 
       <!-- body内容 -->
-       <el-container>
+       <el-container >
  <!--          <el-aside width='200px' class='content-menus'>
        
             <el-menu 
@@ -150,7 +178,7 @@
                         
             </el-tree>
           </el-aside>
-          <el-main>
+          <el-main v-loading="loading" element-loading-text="拼命加载中">
             <keep-alive>
               <router-view ></router-view>
             </keep-alive>
@@ -173,7 +201,28 @@
 <script>
 export default {
   data () {
+    // 密码的变量
+    var validatePass2 = (rule, value, callback) => {
+      // value = value.trim()
+      if (value === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (value !== this.psdForm.newPsd) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
+    var validatePhone = (rule, value, callback) => {
+      if (value.length != 11) {
+        callback(new Error('必须是11位数'));
+      }else if(isNaN(parseInt(value))) {
+        callback(new Error('必须数字'));
+      }else {
+        callback();
+      }
+    };
     return {
+      account:window.sessionStorage.getItem('id'),
       fatherName:'',//功能路径名
       childName:'',//功能路径名
       filterText:'',//搜索的关键字
@@ -190,6 +239,15 @@ export default {
         mobilePhone:'',
         address:''
       },
+
+      infoRules:{
+        mobilePhone:[
+          {validator: validatePhone},
+   
+        ],
+
+      },
+
       formLabelWidth:'120px',
       psdDialogVisible:false,
       psdForm:{
@@ -197,7 +255,11 @@ export default {
         newPsd:'',
         againPsd:''
       },
-
+      psdRules:{
+        oldPsd:[{required: true, message: '密码不能为空', trigger: 'blur'}],
+        newPsd:[{required: true, message: '密码不能为空', trigger: 'blur'}],
+        againPsd:[{required:true, validator: validatePass2, trigger: 'blur' }],
+      },
       // 加载县显示
       loading:false,
       // 菜单是否收起来
@@ -208,13 +270,7 @@ export default {
       showTreeData:[],
       showSelect:false,
       //集中器列表
-      LogicAddr:[
-      {
-        label:'123'
-      },
-      {
-        label:'234'
-      }],
+      LogicAddr:[],
       // 社区地址的显示
       // community:[],
       defaultProps: {
@@ -226,6 +282,7 @@ export default {
   },
   methods:{
       // 菜单栏事件
+
        handleSelect(key, keyPath) {
         console.log(keyPath);
         var selectFatherItem = this.menus.filter(element=> {
@@ -290,9 +347,9 @@ export default {
         }
         // console.log(params)
         this.http.post(this.api.baseUrl+this.api.menus,params)
-        .then(res=>{
+        .then(result=>{
           this.loading = false
-          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+          // var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
            console.log(result)
           if (result.status=="成功") {
             // statement
@@ -333,11 +390,87 @@ export default {
         })
        
       },
+
+      /**
+      *获取个人信息
+      */
+      getInfo(){
+
+        this.informationDialogVisible=true
+        var params = {
+          UserId:window.sessionStorage.getItem('id'),
+          time:this.dataUtil.formatTime1(new Date())
+        }
+        console.log(params)
+
+        var encryptParams = {
+            evalue:this.$encrypt(JSON.stringify(params))
+          }
+
+        console.log(this.$encrypt(JSON.stringify(params)))
+
+        this.http.post(this.api.baseUrl + this.api.QueryUserInfoByID,encryptParams)
+        .then(result=>{
+          console.log(result)
+          if (result.status == '成功') {
+            this.informationForm.name = result.data[0].UserName 
+            this.informationForm.mobilePhone = result.data[0].MobilePhone 
+            this.informationForm.address = result.data[0].CustomerAddress
+          }else{
+            this.$message({
+                  type: 'error',
+                  message: result.data
+               });
+          }
+        })
+
+      },
+
       /**
       *修改个人信息
       */
       changeInformation(){
         // window.sessionStorage.setItem('isLogin',false)
+        this.informationDialogVisible = false
+          this.loading = true
+          var params = {
+            MobilePhone:this.informationForm.mobilePhone,
+            UserId :window.sessionStorage.getItem('id'),
+            UserName:this.informationForm.name,
+            CustomerAddress:this.informationForm.address,
+            time:this.dataUtil.formatTime1(new Date())
+          }
+
+          console.log(params);
+          
+          var encryptParams = {
+            evalue:this.$encrypt(JSON.stringify(params))
+          }
+
+          console.log(this.$encrypt(JSON.stringify(params)))
+
+          this.http.post(this.api.baseUrl+this.api.UpdateUserInfo,encryptParams)
+          .then(result=>{
+            this.loading = false
+            console.log(result)
+            if (result.status == '成功') {
+                this.$message({
+                  type: 'success',
+                  message: '操作成功!'
+               });
+            }else{
+
+              this.$message({
+                  type: 'error',
+                  message: result.data
+               });
+
+            }
+            
+            
+                    
+          })
+
       },
 
       /**
@@ -374,6 +507,53 @@ export default {
       */
       changePsd(){
 
+        if (this.psdForm.oldPsd == '' || this.psdForm.newPsd != this.psdForm.againPsd || this.psdForm.newPsd == '') {
+                this.$message({
+                  type: 'warning',
+                  message: '请填写好信息!'
+               });
+            return
+        }
+
+        this.psdDialogVisible = false
+          this.loading = true
+          var params = {
+            UserPwdOld:this.$encryptPsd(this.psdForm.oldPsd),
+            UserPwd:this.$encryptPsd(this.psdForm.newPsd),
+            UserId :window.sessionStorage.getItem('id'),
+            time:this.dataUtil.formatTime1(new Date())
+          }
+
+          console.log(params);
+          
+          var encryptParams = {
+            evalue:this.$encrypt(JSON.stringify(params))
+          }
+
+          console.log(this.$encrypt(JSON.stringify(params)))
+
+          this.http.post(this.api.baseUrl+this.api.UpdateUserPassWord,encryptParams)
+          .then(result=>{
+            this.loading = false
+            console.log(result)
+            if (result.status == '成功') {
+                this.$message({
+                  type: 'success',
+                  message: '操作成功!'
+               });
+
+            }else{
+
+              this.$message({
+                  type: 'error',
+                  message: result.data
+               });
+
+            }
+            
+            
+                    
+          })
       },
 
       changeChildren(){
@@ -500,6 +680,7 @@ export default {
   min-height:250px;
   overflow-y:auto;
   max-height:600px;
+  /*background-color: #A6BA9B;*/
 }
 
 .block{
@@ -526,5 +707,10 @@ export default {
   margin: 10px 30px 0 10px;
 }
 
+/*头像*/
+.account{
+  display: flex;
+  align-items: center;
+}
 
 </style>

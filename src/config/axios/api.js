@@ -4,8 +4,11 @@ export default {
 	/**
 	*基本路径
 	*/
-	baseUrl:'http://iot.trj-china.com/WebIOT.asmx',
+   // 申特
+	// baseUrl:'https://www.trjiot.com/webiot.asmx',
 
+   // 泰瑞捷
+   baseUrl:'http://api.smart.trjiot.com/webiot.asmx',
 
 	
 
@@ -21,6 +24,37 @@ export default {
 	*	③evalue ：加密
 	*/
 	login:'/UserLoad',
+
+   /**
+   *获取个人信息： 名称、电话、地址
+   *UserId             用户名
+   *time               时间格式与以前相同 不用加密
+   **返回参数**           
+   *MobilePhone        电话
+   *UserName           姓名
+   *CustomerAddress    地址
+   */
+   QueryUserInfoByID:'/QueryUserInfoByID',
+
+   /**
+   *修改个人密码
+   *UserPwdOld         原密码
+   *UserPwd            密码
+   *UserId             用户名
+   *time               时间格式与以前相同 不用加密
+   */
+   UpdateUserPassWord:'/UpdateUserPassWord',
+
+   /**
+   *修改个人信息： 名称、电话、地址
+   *MobilePhone        电话
+   *UserId             用户名
+   *UserName           姓名
+   *CustomerAddress    地址
+   *time               时间格式与以前相同 不用加密
+   */
+   UpdateUserInfo:'/UpdateUserInfo',
+
 
 	/**
 	*获取用户具有的菜单功能选项
@@ -144,8 +178,7 @@ export default {
    *删除表计档案
    *UserId 		用户号
    *LogicAddr 	集中器逻辑地址
-   *MeterAddr 	表计逻辑地址
-   *Seq 		测量点
+   *MeasureId 		测量点
    *evalue 		加密参数
    */
 
@@ -224,32 +257,22 @@ export default {
 
    ReadMeterValueByCode:'/ReadMeterValueByCode',
 
-   /**
-   *读当前有功总电量
-   *UserId   用户号
-   *HouseRegionCode    房间编号
-   *evalue   加密参数
-   */
-   ReadMeterCurrentPower:'/ReadMeterCurrentPower',
 
    /**
-   *远程跳闸指令
-   *UserId   			用户号
-   *HouseRegionCode    	房间编号
-   *MeterKindId     	电表类别：1、2、3、4
-   *evalue   			加密参数
+   *读取当前值
+   *UserId             微信openid
+   *HouseRegionCode    房间编号     
+   *ctrlType           指令类型：1当前电量，2剩余金额，3当前状态
    */
-
-   CtrlMeterToTiaoZ:'/CtrlMeterToTiaoZ',
+   ReadEMCurrentPara:'/ReadEMCurrentPara',
 
    /**
-   *远程合闸指令
-   *UserId   			用户号
-   *HouseRegionCode    	房间编号
-   *MeterKindId     	电表类别：1、2、3、4
-   *evalue   			加密参数
+   *费控接口 用于电表拉合闸、报警、保电
+   *UserId             用户号
+   *HouseRegionCode    房间编号     
+   *ctrlType           指令类型：1拉闸，2合闸，3报警，4报警解除，5保电，6保电解除
    */
-   CtrlMeterToHeZ:'/CtrlMeterToHeZ',
+   CtrlEMRelayStatu:'/CtrlEMRelayStatu',
 
    /**
    *读当电表当前状态值
@@ -259,6 +282,77 @@ export default {
    *evalue             加密参数
    */
    QureyMeterCurrentStatusByRegionCode:'/QureyMeterCurrentStatusByRegionCode',
+
+   /**
+   *查看审核的房间
+   *FourthRegionCode   社区区域编码
+   *AdminId            管理员账号
+   *ApplyStatus        状态："":空值标识获取全部信息，"0"：申请状态待审核，"1"：审核通过的
+   *time               时间格式与以前相同 不用加密
+   */
+   QureyHouseApplyInfo:'/QureyHouseApplyInfo',
+
+   /**
+   *审核房间的绑定信息
+   *HouseRegionCode    房间编码
+   *AdminId            管理员账号
+   *UserId             用户名
+   *time               时间格式与以前相同 不用加密
+   */
+   ReviewAccessHouseInfo:'/ReviewAccessHouseInfo',
+
+
+   /**
+   *取消申请审核房间信息
+   *HouseRegionCode         房间编码
+   *UserId             用户名
+   *time               时间格式与以前相同 不用加密
+   */
+   ApplyForRemoveHouseInfo:'/ApplyForRemoveHouseInfo',
+
+   /**
+   *日冻结数据
+   *FourthRegionCode       四级code
+   *TimeStart              起始时间（无格式要求）
+   *TimeEnd                截止时间（无格式要求）
+   *time        时间
+   **返回参数**           
+   */
+   QureyEFDayData:'/QureyEFDayData',
+
+   /**
+   *月冻结数据
+   *FourthRegionCode       四级code
+   *TimeStart              起始时间（无格式要求）
+   *TimeEnd                截止时间（无格式要求）
+   *time        时间
+   **返回参数**           
+      **FifthRegionCode  5级区域码
+      **HouseRegionCode  6级区域码 
+      **FifthRegionCodeName  房间名      
+      **LogicAddr    集中器地址（下拉显示）
+      **MeterAddr    表计地址（下拉显示）
+      **FreezeMonth  月结时标
+      **FreezeDate   结算日时标
+      **FreezeTotal  结算日总值
+      **Freeze1      结算日值_尖（下拉显示）
+      **Freeze2      结算日值_峰（下拉显示）
+      **Freeze3      结算日值_平（下拉显示）
+      **Freeze4      结算日值_谷（下拉显示）
+      **LastFreezeDate  上结算日时标
+      **LastFreezeTotal 上结算日总值 
+      **LastFreeze1     结算日值_尖（下拉显示）
+      **LastFreeze2     结算日值_峰（下拉显示）
+      **LastFreeze3     结算日值_平（下拉显示）
+      **LastFreeze4     结算日值_谷（下拉显示）
+      **MonthPowerTotal 月用电总量
+      **MonthPower1     月用电量_尖（下拉显示）
+      **MonthPower2     月用电量_峰（下拉显示）
+      **MonthPower3     月用电量_平（下拉显示）
+      **MonthPower4     月用电量_谷（下拉显示）
+      **UpdateTime       数据更新时间
+   */
+   QureyMonthData:'/QureyMonthData'
 
 }
 

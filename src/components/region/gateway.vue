@@ -148,7 +148,7 @@ export default{
 			{
 				label:'序号',
 				id:'index',
-				width:50
+				width:70
 			},
 			{
 				label:'资产编号',
@@ -256,9 +256,9 @@ export default{
         	console.log(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode)
         	console.log(params);
         	this.http.post(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.allLoading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+	        
 	          console.log('获取网关信息')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -287,9 +287,9 @@ export default{
 
         	console.log(this.api.baseUrl+this.api.InputGWInfo)
         	this.http.post(this.api.baseUrl+this.api.InputGWInfo,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.allLoading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+	        
 	          console.log('上传文件')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -304,6 +304,11 @@ export default{
 	          	setTimeout(function(){
 					that.getAllGWInfo()
 				}, 500)
+	          }else{
+	          	this.$message({
+            		type: 'error',
+           			message: JSON.stringify(result.data)
+         		});
 	          }
 	        }) 
 		},
@@ -331,9 +336,9 @@ export default{
 
         	console.log(this.api.baseUrl+this.api.DeleteGWInfo)
         	this.http.post(this.api.baseUrl+this.api.DeleteGWInfo,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.allLoading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+	      
 	          console.log('删除成功')
 	           console.log(result)
 	          if (result.status=="成功") {

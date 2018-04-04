@@ -134,11 +134,11 @@ export default{
         	console.log(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode)
         	console.log(params);
         	this.http.post(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode,params)
-	        .then(res=>{
+	        .then(result=>{
 
 	          this.loading = false
 
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+
 	          console.log('获取网关信息')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -191,9 +191,9 @@ export default{
 	        	console.log(this.api.baseUrl+this.api.ResetGW)
 	        	console.log(params);
 	        	this.http.post(this.api.baseUrl+this.api.ResetGW,params)
-		        .then(res=>{
+		        .then(result=>{
 		          this.loading = false
-		          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+		 
 		          console.log('复位')
 		           console.log(result)
 		          if (result.status=="成功") {
@@ -203,7 +203,14 @@ export default{
             			type: 'success',
            			 	message: '复位成功!'
          			 });
+		          }else{
+		          	this.$message({
+	          			showClose: true,
+	          			message: result.data,
+	          			type: 'error'
+        			});
 		          }
+
 		        })
 	         }).catch(() => {
 	          	this.$message({
@@ -231,9 +238,9 @@ export default{
         	console.log(this.api.baseUrl+this.api.GetGWTime)
         	console.log(params);
         	this.http.post(this.api.baseUrl+this.api.GetGWTime,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.loading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, ""))
+	         
 	          console.log('获取时钟')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -249,7 +256,7 @@ export default{
 	        	
 	        	this.$message({
           			showClose: true,
-          			message: '读取失败',
+          			message: result.data,
           			type: 'error'
         		});
 	          }
@@ -271,9 +278,9 @@ export default{
         	}
         	console.log(this.api.baseUrl+this.api.SetGWTime)
         	this.http.post(this.api.baseUrl+this.api.SetGWTime,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.loading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, ""))
+	      
 	          console.log('设置时钟')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -287,7 +294,7 @@ export default{
 	          }else{
 	          	this.$message({
           			showClose: true,
-          			message: '设置失败',
+          			message: result.data,
           			type: 'error'
         		});
 	          }
@@ -310,9 +317,9 @@ export default{
         	
         
         	this.http.post(this.api.baseUrl+this.api.GetGWHeartTime,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.loading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, ""))
+	         
 	          console.log('获取心跳')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -326,7 +333,7 @@ export default{
 	          }else{
 	          	this.$message({
           			showClose: true,
-          			message: '读取失败',
+          			message: result.data,
           			type: 'error'
         		});
 	          }
@@ -347,9 +354,9 @@ export default{
         	}
         	
         	this.http.post(this.api.baseUrl+this.api.SetGWHeartTime,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.loading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, ""))
+	          // var result= JSON.parse(res.data.replace(/<[^>]+>/g, ""))
 	          console.log('设置心跳')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -363,7 +370,7 @@ export default{
 	          }else{
 	          	this.$message({
           			showClose: true,
-          			message: '设置失败',
+          			message: result.data,
           			type: 'error'
         		});
 	          }

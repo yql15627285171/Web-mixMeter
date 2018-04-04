@@ -14,9 +14,9 @@ function getTreeData(obj){
         console.log(api.baseUrl+api.QureyAllHouseInfoForFile)
         console.log(params)
         http.post(api.baseUrl+api.QureyAllHouseInfoForFile,params)
-        .then(res=>{
+        .then(result=>{
           // console.log(res.data)       
-          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+          // var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
            console.log(result )
           if (result.status=="成功") {
             obj.succeed(result) 

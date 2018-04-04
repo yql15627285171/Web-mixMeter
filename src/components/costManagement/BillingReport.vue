@@ -1,12 +1,13 @@
 <!-- 结算报表 -->
 <template>
 	<div >
-	
-		<el-tabs v-model="activeName1" @tab-click="timeSelect">
-		    <el-tab-pane label="月度" name="month"></el-tab-pane>
-		    <el-tab-pane label="季度" name="season"></el-tab-pane>
-		    <el-tab-pane label="年度" name="year"></el-tab-pane>
-		</el-tabs>
+
+			<el-tabs v-model="activeName1" @tab-click="timeSelect" >
+			    <el-tab-pane label="月度" name="month"></el-tab-pane>
+			    <el-tab-pane label="季度" name="season"></el-tab-pane>
+			    <el-tab-pane label="年度" name="year"></el-tab-pane>
+			</el-tabs>
+			
 
 		<el-tabs v-model="activeName2" @tab-click="typeSelect">
 		    <el-tab-pane label="电费" name="electric"></el-tab-pane>

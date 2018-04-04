@@ -113,12 +113,12 @@
 		    	>		
 		    </el-table-column>
 	
-		     <el-table-column label="状态">	
+		     <!-- <el-table-column label="状态">	
 				<template slot-scope="scope">
 	       			<span v-if="scope.row.ValidFlg == '1'" style="color:green;">有效</span>
 	       			<span v-else style="color:red;">无效</span>
      			</template>
-	    	 </el-table-column> -->
+	    	 </el-table-column> --> -->
 
 		     <el-table-column 
 		    	label="操作">	
@@ -206,7 +206,7 @@ export default{
 			{
 				label:'序号',
 				id:'index',
-				width:50
+				width:70
 			},
 			{
 				label:'用户编号',
@@ -319,6 +319,7 @@ export default{
 			}
 
 			this.http.get(this.api.remote_area_url,params).then(res=>{
+				console.log('省')
 				this.FirstRegion = res.data.result
 			})
       	},
@@ -357,14 +358,14 @@ export default{
       		if (this.addForm.userId !=''&&this.addForm.psd !=''&&this.addForm.psd==this.addForm.checkPsd) {
       			var params = { 
       				UserId:this.addForm.userId,
-      				UserPwd:this.addForm.psd,
+      				UserPwd:this.$encryptPsd(this.addForm.psd),
 	          		evalue:this.$encrypt()
 	        	}
 	        	this.http.post(this.api.baseUrl+this.api.AddNewCommmunity,params)
-		        .then(res=>{
+		        .then(result=>{
 		        	console.log('添加管理员')
 		          this.loading = false
-		          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+
 		           console.log(result)
 		          if (result.status=="成功") {
 		          	
@@ -432,9 +433,9 @@ export default{
 	        console.log(params)
 
 	        this.http.post(this.api.baseUrl+this.api.UpdateCommmunity,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.loading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+	        
 	           console.log(result)
 	          if (result.status=="成功") {
 	          	
@@ -462,9 +463,9 @@ export default{
 	          evalue:this.$encrypt()
 	        }
 	        this.http.post(this.api.baseUrl+this.api.QureyAllAdminInfo,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.loading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+	    
 	           console.log(result)
 	          if (result.status=="成功") {
 	            this.tableData = result.data
@@ -494,15 +495,15 @@ export default{
 	},
 	computed:{
 		province:function(){
-			this.SecondRegion = [],
-			this.ThirdRegion = [],
+			this.SecondRegion = []
+			this.ThirdRegion = []
 			this.changeForm.SecondRegionName = ""
 			this.changeForm.ThirdRegionName = ""
 			this.changeForm.FourthRegionName = ""
 			return this.changeForm.FirstRegionName
 		},
 		city:function(){
-			this.ThirdRegion = [],
+			this.ThirdRegion = []
 			this.changeForm.ThirdRegionName = ""
 			this.changeForm.FourthRegionName = ""
 			return this.changeForm.SecondRegionName
@@ -555,11 +556,14 @@ export default{
 		town:function(newvalue){},
 	},
 	mounted(){
+		console.log('请求省')
 		if (this.FirstRegion.length==0) {
-			this.FirstRegionRequest()
+			setTimeout(()=>{
+				this.FirstRegionRequest()
+			},1000)
 		}
 		// 获取所有社区管理员信息
-		// this.getAllAdminInfo()
+	
 		var that = this
 		setTimeout(function(){
 			that.getAllAdminInfo()

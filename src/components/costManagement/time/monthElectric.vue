@@ -5,6 +5,7 @@
 			<el-button type="primary" class='right'>导出表格</el-button>
 		</div>
 		<el-table
+			id='table'
 		    :data="showTableData"
 		    :header-cell-class-name="tableheaderClassName"
 		    :cell-class-name='tableCellName'
@@ -63,7 +64,7 @@ export default{
 			{
 				label:'序号',
 				id:'index',
-				width:50
+				width:70
 			},
 			{
 				label:'房间',
@@ -114,6 +115,22 @@ export default{
         	console.log(`当前页: ${val}`);
         	this.showTableData = this.partOfTableData.slice((val-1)*10, val *10)
       	},
+
+      	/**
+      	*打印
+      	*/
+      	doPrint(){
+      		var table_print = document.getElementById('table')
+      		var newstr = table_print.innerHTML
+      		var oldstr = document.body.innerHTML
+      		document.body.innerHTML = newstr
+      		window.print();
+      		// document.body.innerHTML = oldstr
+      		window.location.reload()
+      		
+      		// return false
+      	}
+
 	},
 	mounted(){
 		this.partOfTableData = this.tableData

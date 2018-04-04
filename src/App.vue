@@ -40,9 +40,15 @@ export default {
 .el-table tr{
 	text-align: center;
   font-size: 13px;
-  line-height:40px;
-  height: 40px;
+}
 
+.el-table td, .el-table th{
+  padding: 8px 0;
+  height: 40px;
+}
+
+.monthTable .el-table td,.monthTable .el-table th{
+  height: 48px;
 }
 
 /*表格箭头下的标签*/
@@ -51,6 +57,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
   }
+  
   .demo-table-expand label {
     width: 130px;
     color: #99a9bf;
@@ -73,5 +80,22 @@ export default {
     max-height: 800px;
     overflow-y: auto;
   }
+
+  /*日期选择*/
+  .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner{
+    width: 250px;
+  }
+
+  .month .el-date-editor.el-input{
+    width: 120px;
+  }
+
+  .day .el-date-editor .el-range-input{
+    width: 90px;
+}
+
+  .day .el-date-editor .el-range-separator{
+  width: 26px;
+}
 
 </style>

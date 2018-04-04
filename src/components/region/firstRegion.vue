@@ -5,7 +5,7 @@
 			<div class="add">
 				<input id="upload" type="file" @change="importExcel($event)"  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" style="display:none" />
 				<el-button type="primary" @click="choseFile">批量添加</el-button>
-				<!-- <el-button type="primary">导出</el-button> -->
+				<!-- <el-button type="primary" @click='doPrint'>打印</el-button> -->
 			</div>
 		</div>
 		
@@ -40,19 +40,24 @@
 
 		<div>
 		<el-table
+			id='table'
 		    :data="showTableData"
 		    :header-cell-class-name="tableheaderClassName"
 		    stripe
-		    style="width: 100%;">
+		    border
+		 
+		    >
 		    <el-table-column 
 		    	v-for="item in tableHead"
 		    	:prop="item.id"
 		    	:label="item.label"
 		    	:width='item.width'
+
 		    	>		
 		    </el-table-column>
 
-		     <el-table-column 
+		     <el-table-column
+				width='150'
 		    	label="操作">	
 				<template slot-scope="scope">
 	       			<el-button @click="deleteHouse(scope.row)" type="text" size="small">删除</el-button>
@@ -99,19 +104,22 @@ export default{
 			{
 				label:'序号',
 				id:'index',
-				width:50,
+				width:70,
 			},
 			{
 				label:'栋',
 				id:'FifthRegionName',
+			
 			},
 			{
 				label:'房间',
-				id:'HouseRegionName'
+				id:'HouseRegionName',
+			
 			},
 			{
 				label:'面积(㎡)',
-				id:'HouseAera'
+				id:'HouseAera',
+				
 			}],
 			tableData:[],
 			partOfTableData:[],//筛选完条件之后的数据源
@@ -135,6 +143,26 @@ export default{
       	handleCurrentChange(val) {
         	console.log(`当前页: ${val}`);
         	this.showTableData = this.partOfTableData.slice((val-1)*10, val *10)
+      	},
+
+      	/**
+      	*打印
+      	*/
+      	doPrint(){
+      		this.showTableData = this.partOfTableData
+
+      		setTimeout(function(){
+      			var table_print = document.getElementById('table')
+      		var newstr = table_print.innerHTML
+      		var oldstr = document.body.innerHTML
+      		document.body.innerHTML = newstr
+      		window.print();
+      
+      		window.location.reload()
+      	}, 50)
+      		
+      		
+      
       	},
 
       	/**
@@ -178,9 +206,9 @@ export default{
         	// console.log(params)
         	
         	this.http.post(this.api.baseUrl+this.api.AddHouseInfo,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.allLoading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+	      
 	          console.log('添加房间')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -196,6 +224,13 @@ export default{
 
 	            // 更新树
 	            this.updateTreeData()
+	          }else{
+
+	          	this.$message({
+            		type: 'error',
+           			message: JSON.stringify(result.data)
+         		});
+
 	          }
 	        }) 			
 		},
@@ -214,9 +249,9 @@ export default{
         	console.log(params);
 
         	this.http.post(this.api.baseUrl+this.api.QureyAllHouseInfoForForm,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.allLoading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+	        
 	           console.log(result)
 	          if (result.status=="成功") {
 	          	this.tableData = result.Commmunity
@@ -255,9 +290,9 @@ export default{
         	}
 
         	this.http.post(this.api.baseUrl+this.api.DeleteHouseInfo,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.allLoading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+	         
 	           console.log(result)
 	          if (result.status=="成功") {
 	          	this.$message({
@@ -332,11 +367,9 @@ export default{
 </script>
 <style scoped>
 .el-table{
-	margin-top: 10px;
-	
+	margin: 10px auto;
+	/*width: 850px;*/
 }
-
-
 
 
 .area{

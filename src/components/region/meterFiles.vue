@@ -151,7 +151,7 @@ export default{
 			{
 				label:'序号',
 				id:'index',
-				width:50
+				width:70
 			},
 			{
 				label:'表地址',
@@ -392,9 +392,9 @@ export default{
         	console.log(JSON.stringify(jsonVal))
         	console.log(this.api.baseUrl+this.api.InputMeterInfo)
         	this.http.post(this.api.baseUrl+this.api.InputMeterInfo,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.allLoading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+	          
 	          
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -408,6 +408,11 @@ export default{
 	            this.queryMeterInfo()
 
 	          }else{
+
+	          	this.$message({
+            		type: 'error',
+           			message: JSON.stringify(result.data)
+         		});
 
 	          }
 	        })
@@ -431,9 +436,9 @@ export default{
         	console.log(params)
         	
         	this.http.post(this.api.baseUrl+this.api.QureyAllMeterInfoByRegionCode,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.allLoading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+	       
 	          console.log('查询表计')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -457,17 +462,16 @@ export default{
   			var params = {
   				UserId:window.sessionStorage.getItem("id"),
   				LogicAddr:row.LogicAddr,
-  				MeterAddr:row.MeterAddr, 
-  				Seq:row.Seq,
+  				MeasureId:row.MeasureId,
           		evalue:this.$encrypt()
         	}
 
         	console.log(this.api.baseUrl+this.api.DeleteMeterInfo)
         	
         	this.http.post(this.api.baseUrl+this.api.DeleteMeterInfo,params)
-	        .then(res=>{
+	        .then(result=>{
 	          this.allLoading = false
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
+	     
 	          console.log('删除表计')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -498,9 +502,9 @@ export default{
         	console.log(this.api.baseUrl+this.api.SetMeterFilesByDataBaseToGW)
         	
         	this.http.post(this.api.baseUrl+this.api.SetMeterFilesByDataBaseToGW,params)
-	        .then(res=>{
+	        .then(result=>{
 	       
-	          var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))     
+	         
 	           console.log(result)
 	          
 
