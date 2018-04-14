@@ -6,6 +6,13 @@ import router from './router'
 import './config/root'
 import store from './store/store'
 
+// es6适用于ie9以上的操作
+// import "babel-polyfill"
+
+// axios兼容ie9
+import promise from 'es6-promise';
+promise.polyfill();
+
 // 限制登录
 router.beforeEach((to, from, next) => {
   // console.log('XXXX'+JSON.stringify(to))

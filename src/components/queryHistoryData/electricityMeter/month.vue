@@ -6,9 +6,7 @@
 			    <el-date-picker
 			      v-model="startMonth"
 			      type="month"
-			      range-separator="至"
-			      start-placeholder="开始月份"
-			      end-placeholder="结束月份"
+			      placeholder="开始月份"			 
 			      value-format='yyyy-MM'>
 			    </el-date-picker>
 
@@ -17,9 +15,7 @@
 			    <el-date-picker
 			      v-model="endMonth"
 			      type="month"
-			      range-separator="至"
-			      start-placeholder="开始月份"
-			      end-placeholder="结束月份"
+			      placeholder="结束月份"
 			      value-format='yyyy-MM'>
 			    </el-date-picker>
 	  		</div>
@@ -80,8 +76,8 @@ export default{
 		return{
 			loading:false,
 			currentPage:1,
-			startMonth:'',
-			endMonth:'',
+			startMonth:this.dataUtil.lastMonth(),
+			endMonth:this.dataUtil.thisMonth(),
 			tableHead:[
 			{
 				label:'序号',
@@ -290,9 +286,6 @@ export default{
 
 		window.sessionStorage.setItem('freezingData','month')
 
-		var lastMonth = this.dataUtil.formatTime3(new Date()) 
-		this.startMonth = lastMonth
-		this.endMonth = lastMonth
 		setTimeout(()=>{
 			this.checkFreezingData()
 		}, 500)

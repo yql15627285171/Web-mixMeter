@@ -325,34 +325,107 @@ export default {
    *FourthRegionCode       四级code
    *TimeStart              起始时间（无格式要求）
    *TimeEnd                截止时间（无格式要求）
+   *time                   时间
+   */
+   QureyMonthData:'/QureyMonthData',
+
+   /**
+   *对账查询
+   *RegionCode             四级或五级或六级code
+   *UserId                 操作者ID
+   *TimeStart              起始时间（无格式要求）
+   *TimeEnd                截止时间（无格式要求）
+   *time                   时间
+   */
+   QureyTransactionFile:'/QureyTransactionFile',
+
+   /**
+   *交易订单审核
+   *TransactionOrder       交易订单号
+   *UserId                 操作者ID
+   */
+   AuditTransaction:'/AuditTransaction',
+
+   /**
+   *登录日志查询
+   *UserId       用户ID
+   *TimeStart              起始时间（到秒）默认请求前48小时
+   *TimeEnd                截止时间（到秒）默认请求时刻
    *time        时间
    **返回参数**           
-      **FifthRegionCode  5级区域码
-      **HouseRegionCode  6级区域码 
-      **FifthRegionCodeName  房间名      
-      **LogicAddr    集中器地址（下拉显示）
-      **MeterAddr    表计地址（下拉显示）
-      **FreezeMonth  月结时标
-      **FreezeDate   结算日时标
-      **FreezeTotal  结算日总值
-      **Freeze1      结算日值_尖（下拉显示）
-      **Freeze2      结算日值_峰（下拉显示）
-      **Freeze3      结算日值_平（下拉显示）
-      **Freeze4      结算日值_谷（下拉显示）
-      **LastFreezeDate  上结算日时标
-      **LastFreezeTotal 上结算日总值 
-      **LastFreeze1     结算日值_尖（下拉显示）
-      **LastFreeze2     结算日值_峰（下拉显示）
-      **LastFreeze3     结算日值_平（下拉显示）
-      **LastFreeze4     结算日值_谷（下拉显示）
-      **MonthPowerTotal 月用电总量
-      **MonthPower1     月用电量_尖（下拉显示）
-      **MonthPower2     月用电量_峰（下拉显示）
-      **MonthPower3     月用电量_平（下拉显示）
-      **MonthPower4     月用电量_谷（下拉显示）
-      **UpdateTime       数据更新时间
    */
-   QureyMonthData:'/QureyMonthData'
+   QueryLoginInfo:'/QueryLoginInfo',
+
+/**
+   *操作日志查询
+   *UserId       用户ID
+   *TimeStart              起始时间（到秒）默认请求前48小时
+   *TimeEnd                截止时间（到秒）默认请求时刻
+   *time        时间
+   **返回参数**           
+   */
+   QueryOprtcord:'/QueryOprtcord',
+
+
+   /**
+   *开户
+   *HouseRegionCode 房间编号
+   *Amount          充值金额 单位元
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *TransactionType  0充值1退费
+   *TransactionMode  0 射频卡，1蓝牙，2 远程
+   *TransactionMethod 0现金、1、微信2、支付宝3：银联4：其它
+   *time               当前时间
+   **返回参数**    
+   *PAN               PAN
+   *EK               密钥报文未分割
+   *OAF              开户报文未分割       
+   */
+   GetFrameOpenAccountByPANForRF:'/GetFrameOpenAccountByPANForRF',
+
+
+   /**
+   *充值
+   *PAN         PAN值
+   *Amount          充值金额 单位元
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *TransactionType  0充值1退费
+   *TransactionMode  0 射频卡，1蓝牙，2 远程
+   *TransactionMethod 0现金、1、微信2、支付宝3：银联4：其它
+   *time               当前时间
+   **返回参数**    
+   *EK               密钥报文未分割
+   *RC               充值报文未分割       
+   */
+   GetFrameRechargeByPANForRF:'/GetFrameRechargeByPANForRF',
+
+
+
+   /**
+   *设置变比
+   *UserId       用户ID
+   *CT           电流互感器变比
+   *PT           电压互感器变比
+   *HouseRegionCode 房间号
+   *time        时间
+   **返回参数**
+   成功或失败+异常信息           
+   */
+   SetEMValuePTAndCT:'/SetEMValuePTAndCT',
+
+   /**
+   *抄读变比
+   *UserId       用户ID
+   *HouseRegionCode 房间号
+   *time        时间
+   **返回参数**   
+   *date
+   **CT           电流互感器变比
+   **PT           电压互感器变比
+   */
+   QueryOprtcord:'/QueryOprtcord',
 
 }
 

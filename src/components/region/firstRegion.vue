@@ -19,6 +19,7 @@
 			<el-table 
 				:data="excelData"
 				:header-cell-class-name="tableheaderClassName"
+				:cell-class-name="tableCellName"
 				style="width: 100%;"
 				height="350"
 				stripe
@@ -44,7 +45,6 @@
 		    :data="showTableData"
 		    :header-cell-class-name="tableheaderClassName"
 		    stripe
-		    border
 		 
 		    >
 		    <el-table-column 
@@ -55,6 +55,7 @@
 
 		    	>		
 		    </el-table-column>
+
 
 		     <el-table-column
 				width='150'
@@ -135,7 +136,9 @@ export default{
           return "table-head-th";
         },
 
-
+         tableCellName({row, column, rowIndex, columnIndex}){
+			return 'tableRow'
+		},
 
 		/**
 		*分页控制器的方法

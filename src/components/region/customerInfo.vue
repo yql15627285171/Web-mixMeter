@@ -17,17 +17,7 @@
 		    :header-cell-class-name="tableheaderClassName"
 		    :cell-class-name="tableCellName"
 		    style="width: 100%">
-<!-- 		    <el-table-column type="expand">
-		      <template slot-scope="props">
-		        <el-form label-position="left" inline class="demo-table-expand" >
-		          
-		          <el-form-item label="用户名">
-		            <span>{{ props.row.UserName }}</span>
-		          </el-form-item>
 
-		        </el-form>
-		      </template>
-		    </el-table-column> -->
 		    <el-table-column 
 		      v-for="item in tableHead"
 		      :label="item.label"

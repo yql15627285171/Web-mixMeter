@@ -24,9 +24,11 @@ function formatTime1(date){
   return [year, month, day].map(formatNumber).join('-') + ' ' + [hour, minute, second].map(formatNumber).join(':')
 } 
 
-// 获取上一天
-function formatTime2(date){
 
+// 获取上一天
+function yesterday(){
+
+  var date = new Date()
   date.setTime(date.getTime()-24*60*60*1000);
 
   var year = date.getFullYear()
@@ -36,7 +38,32 @@ function formatTime2(date){
   return [year, month, day].map(formatNumber).join('-')
 }
 
-function formatTime3(date){
+// 今天
+function today(){
+   var date = new Date()
+
+  var year = date.getFullYear()
+  var month = date.getMonth() + 1
+  var day = date.getDate()
+
+  return [year, month, day].map(formatNumber).join('-')
+}
+
+// 今个月
+function thisMonth(){
+   var date = new Date()
+
+  var year = date.getFullYear()
+  var month = date.getMonth() + 1
+
+  return [year, month].map(formatNumber).join('-')
+}
+
+
+// 上一个月
+function lastMonth(){
+
+    var date = new Date()
 
     var daysInMonth = new Array([0],[31],[28],[31],[30],[31],[30],[31],[31],[30],[31],[30],[31]);  
 
@@ -93,6 +120,7 @@ function formatTime3(date){
     return datastr;  
 }
 
+
 function formatNumber(n) {
   n = n.toString()
   return n[1] ? n : '0' + n
@@ -101,6 +129,8 @@ function formatNumber(n) {
 export default{
   formatTime: formatTime,
   formatTime1: formatTime1,
-  formatTime2: formatTime2,
-  formatTime3: formatTime3
+  yesterday: yesterday,
+  today: today,
+  thisMonth:thisMonth,
+  lastMonth:lastMonth,
 }

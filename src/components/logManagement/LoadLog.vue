@@ -1,32 +1,55 @@
 <!-- 用户登陆日志查看 -->
 <template>
-	<div>
-			<el-table
-		    :data="showTableData"
-		    :header-cell-class-name="tableheaderClassName"
-		    :cell-class-name='tableCellName'
-		    style="width: 100%">
+	<div v-loading="loading" element-loading-text="拼命加载中">
+		
+		<div class="condition">
 
-		    <el-table-column
-		      v-for="(item,index) in tableHead"
-		      :label="item.label"
-		      :prop="item.id"
-		      :width="item.width"
-		      >
-		    </el-table-column>
+			<div class="block left ">
+			    <el-date-picker
+			      v-model="startDate"
+			      type="datetime"
+			      placeholder="开始日期"
+			      format='yyyy-MM-dd HH:mm:ss'>
+			    </el-date-picker>
+
+			    <span>至</span>
+
+			    <el-date-picker
+			      v-model="endDate"
+			      type="datetime"
+			      placeholder="结束日期"
+			      format='yyyy-MM-dd HH:mm:ss'>
+			    </el-date-picker>
+	  		</div>
+			<el-button type="primary" @click='QueryLoginInfo()'>查询</el-button>
+		</div>
+
+		<el-table
+	    :data="showTableData"
+	    :header-cell-class-name="tableheaderClassName"
+	    :cell-class-name='tableCellName'
+	    style="width: 100%">
+
+	    <el-table-column
+	      v-for="(item,index) in tableHead"
+	      :label="item.label"
+	      :prop="item.id"
+	      :width="item.width"
+	      >
+	    </el-table-column>
 
 
-		  </el-table>
+	  </el-table>
 
-		  <div class="block pagination">
-		    <el-pagination
-		      @current-change="handleCurrentChange"
-		      :current-page.sync="currentPage"
-		      :page-size="10"
-		      layout="total, prev, pager, next,jumper"
-		      :total="tableData.length">
-		    </el-pagination>
-	  	  </div>
+	  <div class="block pagination">
+	    <el-pagination
+	      @current-change="handleCurrentChange"
+	      :current-page.sync="currentPage"
+	      :page-size="10"
+	      layout="total, prev, pager, next,jumper"
+	      :total="partOfTableData.length">
+	    </el-pagination>
+  	  </div>
 	</div>
 </template>
 <script>
@@ -35,42 +58,27 @@ export default{
 		return{
 			loading:false,
 			currentPage:1,
+			startDate:'',
+			endDate:'',
 			tableHead:[
 			{
 				label:'序号',
 				id:'index',
 				width:70
-			},
-			{
-				label:'房间',
-				id:'houseName',
-			},
+			},		
 			{
 				label:'用户号',
 				id:'UserId'
 			},
 			{
-				label:'手机号',
-				id:'MobilePhone'
-			},
-			{
-				label:'时间',
-				id:'Time'
+				label:'登录时间',
+				id:'LoginTime'
 			},
 			{
 				label:'IP地址',
-				id:'IPAddress'
+				id:'Memo'
 			}],
-			tableData:[
-			{
-				index:'1',
-				houseName:'彭兴花园>101',
-				UserId:'Sun',
-				MobilePhone:'129********',
-				Time:'2018-03-08 12:00:00',
-				IPAddress:'192.168.8.9'
-			}],
-			areaTableData:[],
+			tableData:[],
 			partOfTableData:[],
 			showTableData:[],
 
@@ -101,14 +109,87 @@ export default{
         	this.showTableData = this.partOfTableData.slice((val-1)*10, val *10)
       	},
 
+      	/**
+      	*查询登录日志
+      	*/
+      	QueryLoginInfo(){
+      		if (this.startDate > this.endDate) {
+				this.$message({
+                  type: 'warning',
+                  message: '请确保时间范围的正确'
+               });
+				return
+			}
+
+      		this.loading = true
+      		var params = {     
+      			UserId:window.sessionStorage.getItem('id'),
+      			TimeStart:this.dataUtil.formatTime1(this.startDate),
+      			TimeEnd:this.dataUtil.formatTime1(this.endDate),
+      			time:this.dataUtil.formatTime1(new Date()) 
+      		}
+
+      		  console.log(params);
+          
+	          var encryptParams = {
+	            evalue:this.$encrypt(JSON.stringify(params))
+	          }
+
+	          console.log(this.$encrypt(JSON.stringify(params)))
+
+	          this.http.post(this.api.baseUrl+this.api.QueryLoginInfo,encryptParams)
+	          .then(result=>{
+	            this.loading = false
+	            console.log(result)
+	            if (result.status == '成功') {
+	            	
+	                this.$message({
+	                  type: 'success',
+	                  message: '查询成功!'
+	               });
+
+	                this.tableData = result.data
+	                this.partOfTableData = this.tableData.slice(0)
+	                this.showTableData = this.partOfTableData.slice(0, 10)
+
+	            }else{
+
+	              this.$message({
+	                  type: 'error',
+	                  message: result.data
+	               });
+
+	            }
+	            
+	            
+	                    
+	          })
+      	}
+
+
+
 	},
 	mounted(){
-		this.areaTableData = this.tableData,
-		this.partOfTableData = this.areaTableData,
-		this.showTableData = this.partOfTableData.slice(0,10)
+		var date = new Date()
+		
+		this.startDate = new Date(date.getTime()-2*24*60*60*1000)
+
+		this.endDate = new Date()
+		setTimeout(()=>{
+			this.QueryLoginInfo()
+		},500)
 	}
 }
 </script>
-<style>
-	
+<style scoped>
+.left{
+	float: left;
+	margin-right: 20px;
+}
+.el-table{
+	margin-top: 10px;
+}
+.condition{
+	overflow: hidden;
+}
 </style>

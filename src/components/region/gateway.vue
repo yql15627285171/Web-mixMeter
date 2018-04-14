@@ -26,7 +26,10 @@
 				style="width: 100%;"
 				height="350"
 				stripe
+			
 				>
+				
+
 
 				<el-table-column 
 		    	v-for="(item,index) in excelHead"
@@ -66,7 +69,10 @@
 		    :data="showTableData"
 		    :header-cell-class-name="tableheaderClassName"
 		    :cell-class-name="tableCellName"
-		    style="width: 100%">
+		    style="width: 100%"
+		    >
+
+
 		    <el-table-column type="expand">
 		      <template slot-scope="props">
 		        <el-form label-position="left" inline class="demo-table-expand" >
@@ -100,6 +106,7 @@
 		      :width="item.width"
 		      >
 		    </el-table-column>
+		    
 	  	     <el-table-column label="操作">	
 				<template slot-scope="scope" >
 					<div>
@@ -108,6 +115,7 @@
 					</div>	
      			</template>
 	    	 </el-table-column>
+
 		  </el-table>
 		  <div class="block pagination">
 		    <!-- <span class="demonstration">显示总数</span> -->
@@ -216,6 +224,8 @@ export default{
 				}else{
 					return 'warning'
 				}				
+			}else{
+				// return 'tableRow'
 			}
 	
 		},

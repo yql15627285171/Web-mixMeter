@@ -4,17 +4,12 @@
 
 import Vue from 'vue'
 
-/**
-*全局变量，指令，方法
-*/
-import index from './global'
-Vue.use(index)
 
 /**
 *导入css的重置文件
 */
 import './style/reset.css'
-
+import './style/app.css'
 
 /**
 *导入element-ui框架
@@ -52,7 +47,9 @@ import dataUtil from './AES/Date'
 Vue.prototype.dataUtil = dataUtil
 
 
-
+// iC开充值
+import ICCard from './ICCard'
+Vue.prototype.ICCard = ICCard
 
 
 

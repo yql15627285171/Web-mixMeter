@@ -146,15 +146,7 @@ export default{
 		*测试接口
 		*/
 		test(){
-			var params = {
-				evalue:''
-			}
-			console.log(this.api.baseUrl+'/HelloWorld');
-			this.http.post(this.api.baseUrl+'/HelloWorld',params)
-		      .then(res=>{
-		        var result= JSON.parse(res.data.replace(/<[^>]+>/g, ""))
-		          console.log(result);
-		      })
+			this.ICCard.readerOpen()
 		},
 
 		 // 图片验证码

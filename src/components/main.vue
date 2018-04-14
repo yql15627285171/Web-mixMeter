@@ -1,6 +1,7 @@
 <template>
   <div class="main" >
-    <el-container>
+    <div>
+      <el-container>
       <!-- 头部 -->
       <el-header >
         <el-row type="flex" justify='space-between'>
@@ -12,23 +13,23 @@
             <div class="system-setting">
               <!-- <router-link :to="{name:'main'}" class="set">个人中心</router-link> -->
               
-              <span class="set" @click="getInfo">
-                <el-tooltip class="item" effect="light" content="修改个人信息" placement="bottom">
-                  <img src="../assets/edit.png" style="width:20px;">
+              <!-- <div class="set"> -->
+                <el-tooltip class="item set" effect="light" content="修改个人信息" placement="bottom" >
+                  <img src="../assets/edit.png" style="width:20px;height:20px;outline: none"  @click="getInfo">
+                </el-tooltip>
+              <!-- </div> -->
+
+              <!-- <span class="set" > -->
+                <el-tooltip class="item set" effect="light" content="修改密码" placement="bottom" >
+                  <img src="../assets/psd.png" style="width:20px;height:20px;outline: none"@click="psdDialogVisible = true">
                 </el-tooltip>
                 
-              </span>
-              <span class="set" @click="psdDialogVisible = true">
-                <el-tooltip class="item" effect="light" content="修改密码" placement="bottom">
-                  <img src="../assets/psd.png" style="width:20px;">
+              <!-- </span> -->
+              <!-- <span class="set" @click="logout"> -->
+                <el-tooltip class="item set" effect="light" content="退出登录" placement="bottom">
+                  <img src="../assets/logout.png" style="width:20px;height:20px;outline: none" @click="logout">
                 </el-tooltip>
-                
-              </span>
-              <span class="set" @click="logout">
-                <el-tooltip class="item" effect="light" content="退出登录" placement="bottom">
-                  <img src="../assets/logout.png" style="width:20px;">
-                </el-tooltip>
-              </span>
+              <!-- </span> -->
 
               <div style="display:inline-block">
               <div class="account">
@@ -43,6 +44,105 @@
         </el-row>
       </el-header>
 
+      <el-main class='contentMain'>
+        <el-header class="headerMenus">
+
+         <el-col :offset="1" :span="23">
+              <el-menu
+              menu-trigger='hover'
+              :default-active="defaultActive" 
+              mode="horizontal"
+              v-if="menus.length>0"
+              background-color="#909399"
+              text-color="#fff"
+              active-text-color="#ffd04b"  
+              @select="handleSelect">
+             
+                <el-submenu v-for="(subitem,subIndex) in menus" :index="subitem.index">
+                  <template slot="title">{{subitem.name}}</template>
+                  <router-link 
+                    v-for='child in subitem.child' 
+                    :to="{name:child.index}"
+                    @click.native="recordIndex(child.index,subIndex)">
+                    <el-menu-item :index="child.index">
+                      {{child.name}}
+                    </el-menu-item>
+                  </router-link>
+                  
+                </el-submenu>
+              </el-menu>  
+         </el-col>
+          
+        </el-header>
+
+            <!-- body内容 -->
+      <el-container >
+
+          <!-- 社区房间选择 -->
+          <el-aside width='200px'>
+            <div>
+              <i class="el-icon-location" style="margin-left: -30px;color:#409EFF"></i>
+              <el-breadcrumb separator-class="el-icon-arrow-right" style="margin-top:20px;font-size: 12px; display: inline-block;text-align:left">
+
+                <el-breadcrumb-item>{{fatherName}}</el-breadcrumb-item>
+                <el-breadcrumb-item>{{childName}}</el-breadcrumb-item>
+              </el-breadcrumb>
+            </div>
+            
+
+            <div class="selectTree" v-if="showSelect">
+              <img :src="houseImg" @click='houseClick'>
+              <img :src="gateImg" @click='gateClick'>
+            </div>
+
+            <el-input
+            style="margin-top:15px"
+              placeholder="输入关键字进行搜索"
+              v-model="filterText">
+            </el-input>
+            <!-- 房间号选择 -->
+            <el-tree  :data="showTreeData" 
+                      :props="defaultProps" 
+                      @node-click="handleNodeClick"
+                      accordion
+                      :filter-node-method="filterNode"
+                      ref="tree">
+                        
+            </el-tree>
+          </el-aside>
+          <el-main class='contentTable'>
+            <keep-alive>
+              <router-view ></router-view>
+            </keep-alive>
+          </el-main>
+        </el-container>
+      </el-main>
+
+      
+
+
+
+  
+      <!-- 脚部 -->
+      <el-footer>
+      
+        
+          <span>CopyRight © 2018 深圳市航天泰瑞捷电子有限公司 版权所有</span>
+          <a href="http://www.miitbeian.gov.cn/" style="color:#fff">|粤ICP备17141636号-1</a>
+          <a href="http://www.miitbeian.gov.cn/" >
+          <img src="@/assets/ba.png" class="gongan"></a>
+      
+      </el-footer>
+    </el-container>
+    </div>
+    
+
+  <!--   <div class="footer">
+          <span>CopyRight © 2018 深圳市航天泰瑞捷电子有限公司 版权所有</span>
+          <a href="http://www.miitbeian.gov.cn/" style="color:#fff">|粤ICP备17141636号-1</a>
+          <a href="http://www.miitbeian.gov.cn/" >
+          <img src="@/assets/ba.png" class="gongan"></a>
+    </div> -->
 
     <!-- 修改个人信息弹出框 -->
     <el-dialog title="个人信息" :visible.sync="informationDialogVisible">
@@ -83,118 +183,6 @@
         <el-button type="primary" @click="changePsd">修改</el-button>
       </div>
     </el-dialog>
-
-    <el-header class="headerMenus">
-
-       <el-col :offset="1" :span="23">
-            <el-menu 
-            :default-active="defaultActive" 
-            mode="horizontal"
-            v-if="menus.length>0"
-             background-color="#909399"
-            text-color="#fff"
-            active-text-color="#ffd04b"  
-             @select="handleSelect">
-           
-              <el-submenu v-for="item in menus" :index="item.index">
-                <template slot="title">{{item.name}}</template>
-                <router-link 
-                  v-for='child in item.child' 
-                  :to="{name:child.index}"
-                  @click.native="recordIndex(child.index)">
-                  <el-menu-item :index="child.index">
-                    {{child.name}}
-                  </el-menu-item>
-                </router-link>
-                
-              </el-submenu>
-            </el-menu>  
-       </el-col>
-        
-    </el-header>
-
-
-
-      <!-- body内容 -->
-       <el-container >
- <!--          <el-aside width='200px' class='content-menus'>
-       
-            <el-menu 
-            :default-active="defaultActive" 
-            class="el-menu-vertical-demo" 
-            :collapse="isCollapse"
-            @open="handleOpen" 
-            @close="handleClose"
-            v-if="menus.length>0"
-            unique-opened>
-            
-              <el-submenu v-for="item in menus" :index="item.index">
-                <template slot="title">
-                  <i class="el-icon-menu"></i>
-                  <span>{{item.name}}</span>
-                </template>
-                <router-link 
-                  v-for='child in item.child' 
-                  :to="{name:child.index}"
-                  @click.native="recordIndex(child.index)">
-                  <el-menu-item :index="child.index" style="padding-left:50px;">
-                    {{child.name}}
-                  </el-menu-item>
-                </router-link>
-                
-              </el-submenu>
-            </el-menu>
-
-          </el-aside> -->
-          <!-- 社区房间选择 -->
-          <el-aside width='200px'>
-            <div>
-              <i class="el-icon-location" style="margin-left: -30px;color:#409EFF"></i>
-              <el-breadcrumb separator-class="el-icon-arrow-right" style="margin-top:20px;font-size: 12px; display: inline-block;text-align:left">
-
-                <el-breadcrumb-item>{{fatherName}}</el-breadcrumb-item>
-                <el-breadcrumb-item>{{childName}}</el-breadcrumb-item>
-              </el-breadcrumb>
-            </div>
-            
-
-            <div class="selectTree" v-if="showSelect">
-              <img :src="houseImg" @click='houseClick'>
-              <img :src="gateImg" @click='gateClick'>
-            </div>
-
-            <el-input
-            style="margin-top:15px"
-              placeholder="输入关键字进行搜索"
-              v-model="filterText">
-            </el-input>
-            <!-- 房间号选择 -->
-            <el-tree  :data="showTreeData" 
-                      :props="defaultProps" 
-                      @node-click="handleNodeClick"
-                      accordion
-                      :filter-node-method="filterNode"
-                      ref="tree">
-                        
-            </el-tree>
-          </el-aside>
-          <el-main v-loading="loading" element-loading-text="拼命加载中">
-            <keep-alive>
-              <router-view ></router-view>
-            </keep-alive>
-          </el-main>
-       </el-container>
-      <!-- 脚部 -->
-      <el-footer>
-      
-        
-          <span>CopyRight © 2018 深圳市航天泰瑞捷电子有限公司 版权所有</span>
-          <a href="http://www.miitbeian.gov.cn/" style="color:#fff">|粤ICP备17141636号-1</a>
-          <a href="http://www.miitbeian.gov.cn/" >
-          <img src="@/assets/ba.png" class="gongan"></a>
-      
-      </el-footer>
-    </el-container>
   </div>
 </template>
 
@@ -301,6 +289,7 @@ export default {
 
 
       },
+ 
       // 树的事件
       handleNodeClick(data) {
         console.log(data)
@@ -477,9 +466,15 @@ export default {
       *记录点击的子菜单的名字
       *页面刷新也调用此方法
       */
-      recordIndex(name){
+      recordIndex(name,index){
         // console.log(name)
         window.sessionStorage.setItem('menuName',name)
+
+        // 解决ie上点击后菜单栏子菜单不消失的问题
+        var father = document.getElementsByClassName("el-submenu")
+        father[index].lastChild.style.display = "none"
+        
+      
 
         // 在区域档案->计量表档案管理 和 终端操作的->表计控制的时候 ，数列表可选
         if (name == 'meterFiles' || name == 'MeterReadAndSet') {
@@ -566,6 +561,8 @@ export default {
       logout(){
         this.$router.push({name:'login'})
         window.sessionStorage.clear();
+
+        // document.getElementById('menu').open(1)
       }
 
 
@@ -576,6 +573,8 @@ export default {
      if (window.sessionStorage.getItem('menuName') == 'meterFiles') {
       this.showSelect = true
     }
+
+
 
     this.getMenus()
 
@@ -615,51 +614,69 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
+  .el-container{
+    position: relative
+  }
+
 .el-header, .el-footer {
   background-color: #363636;
   color: #fff;
   text-align: center;
   line-height: 60px;
 }
+
+.el-header div{
+  height: 60px;
+}
+
+.el-footer{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
   
 .el-aside {
   background-color: #fff;
   color: #333;
-  text-align: center
+  text-align: center;
+  min-height: 800px;
 }
 
-.el-main {
+.contentTable {
   background-color: #E9EEF3;
   color: #333;
   min-height: 800px;
-  /*text-align: center;*/
-  /*line-height: 160px;*/
 }
 
+.contentMain{
+  padding: 0;
+  min-height: 860px;
+}
 .system-name{
   text-align: left;
   font-size: 20px;
+
 }
 
 .system-setting{
+  height: 100%;
   text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
 }
 
 .set{
   margin-left: 10px;
   color: #fff;
   cursor: pointer;
+  /*display: inline-block;*/
+
 }
 
-/* .el-menu-vertical-demo:not(.el-menu--collapse) {
-     min-height: 800px;
-  }
-  
-  .el-submenu{
-    text-align: left;
-  }
-
-*/
 
  .headerMenus{
     background:#909399;

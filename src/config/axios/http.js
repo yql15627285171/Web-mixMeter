@@ -91,7 +91,7 @@ export default {
       method: 'post',
       url:url,
       data: qs.stringify(data),
-      timeout: 60000,
+      timeout: 110000,
       headers: {
         // 'X-Requested-With': 'XMLHttpRequest',
         // "Access-Control-Allow-Origin":"*",

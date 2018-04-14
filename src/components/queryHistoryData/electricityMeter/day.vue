@@ -3,17 +3,21 @@
 	<div v-loading="loading" element-loading-text="拼命加载中">
 		<div class="condition">
 			<div class="block left day">
-		   
 			    <el-date-picker
-			      v-model="value"
-			      type="daterange"
-			      range-separator="至"
-			      start-placeholder="开始日期"
-			      end-placeholder="结束日期"
-			      value-format='yyyy-MM-dd'
-			      :picker-options="pickerOptions2">
+			      v-model="startDate"
+			      type="date"			   
+			      placeholder="开始日期"
+			      value-format='yyyy-MM-dd'>
 			    </el-date-picker>
 
+			    <span>至</span>
+
+			    <el-date-picker
+			      v-model="endDate"
+			      type="date"
+			      placeholder="结束日期"
+			      value-format='yyyy-MM-dd'>
+			    </el-date-picker>
 	  		</div>
 
 	  		<el-button type="primary" style="margin-left:20px;" @click='checkFreezingData'>查询</el-button>
@@ -70,7 +74,8 @@ export default{
 		return{
 			loading:false,
 			currentPage:1,
-			value: [],
+			startDate:this.dataUtil.yesterday(),
+			endDate:this.dataUtil.today(),
 			tableHead:[
 			{
 				label:'序号',
@@ -142,30 +147,6 @@ export default{
 			partOfTableData:[],
 			showTableData:[],
 
-			// 快捷键
-
-			pickerOptions2: {
-	          shortcuts: [
-	          {
-	            text: '最近三天',
-	            onClick(picker) {
-	              const end = new Date();
-	              const start = new Date();
-	              start.setTime(start.getTime() - 3600 * 1000 * 24 * 3);
-	              picker.$emit('pick', [start, end]);
-	            }
-	          }, 
-	          {
-	            text: '最近七天',
-	            onClick(picker) {
-	              const end = new Date();
-	              const start = new Date();
-	              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-	              picker.$emit('pick', [start, end]);
-	            }
-	          }]
-			}
-
 		}
 	},
 	methods:{
@@ -183,15 +164,23 @@ export default{
         	this.showTableData = this.partOfTableData.slice((val-1)*10, val *10)
       	},
 
-      	// 查询冻结数据
+      	// 查询日冻结数据
 		checkFreezingData(){
 
+			if (this.startDate > this.endDate) {
+				this.$message({
+                  type: 'warning',
+                  message: '请确保时间范围的正确'
+               });
+				return
+			}
+			
 			this.loading = true
 
           var params = {           
        		FourthRegionCode :window.sessionStorage.getItem('RegionCode'),
-       		TimeStart:this.value[0],
-       		TimeEnd:this.value[1],
+       		TimeStart:this.startDate,
+       		TimeEnd:this.endDate,
        		time:this.dataUtil.formatTime1(new Date())      
           }
 
@@ -273,9 +262,7 @@ export default{
 
 		// 记录此页面是日冻结
 		window.sessionStorage.setItem('freezingData','day')
-
-		var lastDay = this.dataUtil.formatTime2(new Date()) 
-		this.value = [lastDay,lastDay]
+	
 	
 		setTimeout(()=>{
 			this.checkFreezingData()
