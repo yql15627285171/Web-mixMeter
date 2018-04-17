@@ -384,6 +384,20 @@ export default {
    */
    GetFrameOpenAccountByPANForRF:'/GetFrameOpenAccountByPANForRF',
 
+   /**
+   *卡验证
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *PAN         PAN值
+   *FrameRF         RF卡内容
+   *time               当前时间
+   **返回参数**    
+   *CustomerInfo       用户信息    （成功失败均返回用户信息，可能为空） 
+   *CardInfo           卡当前的状态 （成功失败均返回
+   *data                失败信息，失败是传回
+   */
+   QueryRFCodeStatus:'/QueryRFCodeStatus',
+
 
    /**
    *充值
@@ -400,6 +414,45 @@ export default {
    *RC               充值报文未分割       
    */
    GetFrameRechargeByPANForRF:'/GetFrameRechargeByPANForRF',
+
+
+   /**
+   *异常清卡结算
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *PAN         PAN值
+   *FrameRF         RF卡内容
+   *time               当前时间
+   **返回参数**    
+   *CustomerInfo       用户信息    （成功失败均返回用户信息，可能为空） 
+   *Money              退款金额 元（成功时返回
+   *data                失败信息，失败是传回
+   */
+   SettlementAndClearCard:'/SettlementAndClearCard',
+
+   /**
+   *销户
+   *PAN         PAN值
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *time               当前时间
+   **返回参数**    
+   *CA               销户报文未分割       
+   */
+   GetFrameCancelAccountByPANForRF:'/GetFrameCancelAccountByPANForRF',
+
+   /**
+   *销户退费
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *PAN         PAN值
+   *FrameRF         RF卡内容
+   *time               当前时间
+   **返回参数**    
+   *Money              退款金额 元（成功时返回
+   *data                失败信息，失败是传回
+   */
+    SettlementAndCancelAccountByPANForRF:'/SettlementAndCancelAccountByPANForRF',
 
 
 
