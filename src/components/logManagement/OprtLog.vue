@@ -68,15 +68,22 @@ export default{
 			},
 			{
 				label:'操作时间',
-				id:'OprtTime'
+				id:'OprtTime',
+				width:160
 			},
 			{
 				label:'操作项目',
 				id:'OprtMenu'
 			},
 			{
-				label:'操作类型',
-				id:'OprtType'
+				label:'操作类容',
+				id:'OprtConstant',
+				// width:400
+			},
+			{
+				label:'操作结果',
+				id:'Memo',
+
 			}],
 			tableData:[],
 			partOfTableData:[],
@@ -94,9 +101,12 @@ export default{
 
         tableCellName({row, column, rowIndex, columnIndex}){
 			if (columnIndex == 4) {
-				return 'normal'
-			}else if (columnIndex == 5) {
-				return 'error'
+				var status = this.showTableData[rowIndex][column.property]
+				if (status == '成功') {
+					return 'normal'
+				}else {
+					return 'error'
+				}			
 			}
 	
 		},

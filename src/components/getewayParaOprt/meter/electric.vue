@@ -27,14 +27,14 @@
 					<i class="el-icon-edit-outline"></i>
 					<span>取消保电</span>
 				</div>
-				<div @click="ReadEMCurrentPara('1')">
+	<!-- 			<div @click="ReadEMCurrentPara('1')">
 					<i class="el-icon-edit-outline"></i>
 					<span>读电量</span>
 				</div>
 				<div @click="ReadEMCurrentPara('2')">
 					<i class="el-icon-edit-outline"></i>
 					<span>读金额</span>
-				</div>
+				</div> -->
 				<div @click="ReadEMCurrentPara('3')">
 					<i class="el-icon-edit-outline"></i>
 					<span>读状态</span>
@@ -154,7 +154,7 @@ export default{
 
 			currentPage:1,//当前页数
 
-			selectionData:{},
+			selectionData:[],
 		}
 	},
 	methods:{
@@ -167,11 +167,22 @@ export default{
         },
 
 		tableCellName({row, column, rowIndex, columnIndex}){
+
+			if (columnIndex == 7) {
+				var money = this.showTableData[rowIndex][column.property]
+				if (parseFloat(money) < 0) {
+					return 'error'
+				}else{
+					return 'normal'
+				}				
+			}
+
+
 			if (columnIndex == 8) {
 				var status = this.showTableData[rowIndex][column.property]
 				if (status == '报警') {
 					return 'warning'
-				}else if (status == '欠费') {
+				}else if (status == '透支') {
 					return 'error'
 				}else{
 					return 'normal'
@@ -179,7 +190,7 @@ export default{
 			}
 			if (columnIndex == 9) {
 				var status = this.showTableData[rowIndex][column.property]
-				if (status == '拉闸') {
+				if (status == '跳闸') {
 					return 'error'
 				}else{
 					return 'normal'
@@ -198,23 +209,24 @@ export default{
 		*表格选中的行发生改变
 		*/
 		handleSelectionChange(val){
-		
-			if (val.length > 2 || (val.length == 2 && this.tableData.length ==2)) {
-				alert('不能全选')
-				this.$refs.multipleTable.clearSelection();
-				return
-			}
+			this.selectionData = val 
+	
+			// if (val.length > 2 || (val.length == 2 && this.tableData.length ==2)) {
+			// 	alert('不能全选')
+			// 	this.$refs.multipleTable.clearSelection();
+			// 	return
+			// }
 
-			if (val.length == 2 && this.tableData.length !=2) {
-				this.$refs.multipleTable.clearSelection();
-				this.$refs.multipleTable.toggleRowSelection(val[1]);
+			// if (val.length == 2 && this.tableData.length !=2) {
+			// 	this.$refs.multipleTable.clearSelection();
+			// 	this.$refs.multipleTable.toggleRowSelection(val[1]);
 
-				this.selectionData = val[1]
+			// 	this.selectionData = val[1]
 
-				return
-			}
+			// 	return
+			// }
 
-			this.selectionData = val[0]
+			// this.selectionData = val[0]
 		},
 
 		/**
@@ -265,64 +277,75 @@ export default{
 	   	*ctrlType           指令类型：1当前电量，2剩余金额，3当前状态
 	   	*/
    		ReadEMCurrentPara(type){
-   	
 
-   			if ("undefined" == typeof(this.selectionData)  || !this.selectionData.HouseRegionCode) {
+   			if (this.selectionData.length == 0) {
 				this.$message({
             			type: 'warning',
            			 	message: '请选择表!',
          			 });
 				return
 			}
-	   		this.loading = true
+			// this.loading = true
+			for (var i = 0; i < this.selectionData.length; i++) {
 
-	   		// this.selectionData.HouseRegionCode = '0101001002004005'
-
-          var params = {           
-            UserId :window.sessionStorage.getItem('id'),
-       		// HouseRegionCode:this.selectionData.HouseRegionCode,
-       		HouseRegionCode:JSON.stringify(this.selectionData),
-       		ctrlType:type,
-       		time:this.dataUtil.formatTime1(new Date())      
-          }
-
-          console.log(params);
-          
-          var encryptParams = {
-            evalue:this.$encrypt(JSON.stringify(params))
-          }
-
-          console.log(this.$encrypt(JSON.stringify(params)))
-
-          this.http.post(this.api.baseUrl+this.api.ReadEMCurrentPara,encryptParams)
-          .then(result=>{
-            this.loading = false
-            console.log(result)
-            if (result.status == '成功') {
-            	
-            	this.resetData(this.tableData,result.data)
-   				this.resetData(this.showTableData,result.data)
-   				this.resetData(this.partOfTableData,result.data)
-
-                this.$message({
-                  type: 'success',
-                  message: '操作成功!'
-               });
-            }else{
-
-              this.$message({
-                  type: 'error',
-                  message: result.data
-               });
-
-            }
-            
-            
-                    
-          })
+				this.readEM(this.selectionData[i],type)
+				
+			}
+	   		
+     
    		},
 
+		/**
+	   	*读取当前值
+	   	*UserId             微信openid
+	   	*HouseRegionCode    房间编号     
+	   	*ctrlType           指令类型：1当前电量，2剩余金额，3当前状态
+	   	*/
+	   	readEM(selectData,type){
+	   		this.loading = true
+	   		var housename =  selectData.HouseName
+	   		var params = {           
+		            UserId :window.sessionStorage.getItem('id'),
+		       		// HouseRegionCode:this.selectionData.HouseRegionCode,
+		       		HouseRegionCode:JSON.stringify(selectData),
+		       		ctrlType:type,
+		       		time:this.dataUtil.formatTime1(new Date())      
+		          }
 
+		          console.log(params);
+		          
+		          var encryptParams = {
+		            evalue:this.$encrypt(JSON.stringify(params))
+		          }
+
+		          console.log(this.$encrypt(JSON.stringify(params)))
+
+		          this.http.post(this.api.baseUrl+this.api.ReadEMCurrentPara,encryptParams)
+		          .then(result=>{
+		            this.loading = false
+		            console.log(result)
+		            if (result.status == '成功') {
+		            	
+		            	this.resetData(this.tableData,result.data)
+		   				this.resetData(this.showTableData,result.data)
+		   				this.resetData(this.partOfTableData,result.data)
+
+		                 this.$notify({
+				          	title: housename,
+				          	message: '读取成功',
+				          	type: 'success'
+				          })
+
+		            }else{
+		            	
+		              	this.$notify({
+				          title: housename,
+				          message: result.data,
+				          type: 'error'
+				       })
+		            }		                       
+		          })
+		},
 		/**
 	   *费控接口 用于电表拉合闸、报警、保电
 	   *UserId             用户号
@@ -332,13 +355,23 @@ export default{
 	   	CtrlEMRelayStatu(code){
 	   		// this.tableData
 
-	   		if ("undefined" == typeof(this.selectionData)  || !this.selectionData.HouseRegionCode) {
+	  //  		if ("undefined" == typeof(this.selectionData)  || !this.selectionData.HouseRegionCode) {
+			// 	this.$message({
+   //          		type: 'warning',
+   //         			 message: '请选择表!',
+   //       		});
+			// 	return
+			// }
+
+
+			if (this.selectionData.length != 1) {
 				this.$message({
-            			type: 'warning',
-           			 	message: '请选择表!',
-         			 });
+            		type: 'warning',
+           			 message: '该操作只能选择有且只有一个选项',
+         		});
 				return
 			}
+
 	   		this.loading = true
 
 	   		// this.selectionData.HouseRegionCode = '0101001002004005'
@@ -346,7 +379,7 @@ export default{
           var params = {           
             UserId :window.sessionStorage.getItem('id'),
        		// HouseRegionCode:this.selectionData.HouseRegionCode,
-       		HouseRegionCode:JSON.stringify(this.selectionData),
+       		HouseRegionCode:JSON.stringify(this.selectionData[0]),
        		ctrlType:code,
        		time:this.dataUtil.formatTime1(new Date())      
           }

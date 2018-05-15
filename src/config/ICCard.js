@@ -67,12 +67,12 @@ function readerBeep() {
 */
 function openCard(openMode = 0 ,cardMode = 16){
     try {
-       MWRFATL.openCard(openMode, cardMode);
+      var result =  MWRFATL.openCard(openMode, cardMode);
         if (MWRFATL.LastRet != 0) {
             return false
         }
         else {
-           return true
+           return result
         }
     } catch(e) {
         console.log('打开卡片异常')
@@ -116,15 +116,21 @@ function cardDirVerifyPassword(keyMode,block,key){
 */
 function cardWriteHex(block,data){
     try {
-        MWRFATL.cardWriteHex(block,data); 
-        if (MWRFATL.LastRet != 0) {
-            console.log('写入失败')
-            return false
+        for (var i = 0; i < 3; i++) {
+
+            MWRFATL.cardWriteHex(block,data); 
+            if (MWRFATL.LastRet != 0) {
+                console.log('写入失败')
+            }
+            else {
+                console.log('写入成功')
+                return true
+            }             
+
         }
-        else {
-            console.log('写入成功')
-            return true
-        }
+
+        return false
+        
     } catch(e) {
         // statements
         console.log('写数据异常')

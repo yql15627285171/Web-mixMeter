@@ -7,7 +7,7 @@ import './config/root'
 import store from './store/store'
 
 // es6适用于ie9以上的操作
-// import "babel-polyfill"
+import "babel-polyfill"
 
 // axios兼容ie9
 import promise from 'es6-promise';

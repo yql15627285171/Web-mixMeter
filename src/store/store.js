@@ -21,9 +21,12 @@ export default new Vuex.Store({
 		}
 	},
 	mutations:{
+		
 		setClickTreeData(state,value){
+			state.clickTreeData = null
 			state.clickTreeData = value
-		},
+		},	
+
 		reloadTreeData(state,value){
 			state.treeData = value
 		}

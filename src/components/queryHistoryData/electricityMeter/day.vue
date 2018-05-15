@@ -2,23 +2,28 @@
 <template>
 	<div v-loading="loading" element-loading-text="拼命加载中">
 		<div class="condition">
-			<div class="block left day">
-			    <el-date-picker
-			      v-model="startDate"
-			      type="date"			   
-			      placeholder="开始日期"
-			      value-format='yyyy-MM-dd'>
-			    </el-date-picker>
+			<div class="block left">
+			   
+				<div class="block left">
+				    <el-date-picker
+				      v-model="startDate"
+				      type="datetime"
+				      placeholder="开始日期"
+				      format='yyyy-MM-dd HH:mm:ss'>
+				    </el-date-picker>
 
-			    <span>至</span>
+				    <span>至</span>
 
-			    <el-date-picker
-			      v-model="endDate"
-			      type="date"
-			      placeholder="结束日期"
-			      value-format='yyyy-MM-dd'>
-			    </el-date-picker>
+				    <el-date-picker
+				      v-model="endDate"
+				      type="datetime"
+				      placeholder="结束日期"
+				      format='yyyy-MM-dd HH:mm:ss'>
+				    </el-date-picker>
+		  		</div>
 	  		</div>
+
+
 
 	  		<el-button type="primary" style="margin-left:20px;" @click='checkFreezingData'>查询</el-button>
 		</div>
@@ -74,8 +79,8 @@ export default{
 		return{
 			loading:false,
 			currentPage:1,
-			startDate:this.dataUtil.yesterday(),
-			endDate:this.dataUtil.today(),
+			startDate:null,
+			endDate:null,
 			tableHead:[
 			{
 				label:'序号',
@@ -179,8 +184,8 @@ export default{
 
           var params = {           
        		FourthRegionCode :window.sessionStorage.getItem('RegionCode'),
-       		TimeStart:this.startDate,
-       		TimeEnd:this.endDate,
+       		TimeStart:this.dataUtil.formatTime1(this.startDate),
+       		TimeEnd:this.dataUtil.formatTime1(this.endDate),
        		time:this.dataUtil.formatTime1(new Date())      
           }
 
@@ -262,7 +267,12 @@ export default{
 
 		// 记录此页面是日冻结
 		window.sessionStorage.setItem('freezingData','day')
-	
+
+		var date = new Date()
+		
+		this.startDate = new Date(date.getTime()-2*24*60*60*1000)
+
+		this.endDate = new Date()
 	
 		setTimeout(()=>{
 			this.checkFreezingData()

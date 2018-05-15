@@ -4,6 +4,7 @@
 		<div class="condition">
 			<div class="add">
 				<input id="upload" type="file" @change="importExcel($event)"  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" style="display:none" />
+				<el-button type="primary" @click="singleImportDialog">单个添加</el-button>
 				<el-button type="primary" @click="choseFile">批量添加</el-button>
 				<!-- <el-button type="primary" @click='doPrint'>打印</el-button> -->
 			</div>
@@ -37,6 +38,42 @@
 			
 			
 		</el-dialog>
+		<!-- 单个导入弹出框 -->
+		
+		<el-dialog title="导入/修改 房间信息" :visible.sync="singleImportDialogVisible">
+	      <el-form :model="singleImportForm"  class="demo-ruleForm">
+			
+
+	        <el-form-item label="区域" prop="FifthRegionName" style='margin-left:30px'>
+		        <el-input
+				  v-model.trim="singleImportForm.FifthRegionName"
+				  placeholder="请输入内容"
+				  style='width:70%'
+				  :disabled='cannotabled'>	
+				</el-input>
+	          
+	        </el-form-item>
+	        <el-form-item label="房间"  prop="HouseRegionName" style='margin-left:30px'>
+	        	<el-input
+				  v-model.trim="singleImportForm.HouseRegionName"
+				  placeholder="请输入内容"
+				  style='width:70%'>	
+				</el-input>
+	        </el-form-item>
+	        <el-form-item label="面积"  prop="HouseAera" style='margin-left:30px'>
+	        	<el-input
+				  v-model.trim="singleImportForm.HouseAera"
+				  placeholder="请输入内容"
+				  style='width:70%'
+				  :disabled='cannotabled'>	
+				</el-input>
+	        </el-form-item>
+	      </el-form>
+	      <div slot="footer" class="dialog-footer">
+	        <el-button @click="singleImportDialogVisible = false">取 消</el-button>
+	        <el-button type="primary" @click='sureAddOrUpdate'>确 认</el-button>
+	      </div>
+	    </el-dialog>
 
 
 		<div>
@@ -61,7 +98,9 @@
 				width='150'
 		    	label="操作">	
 				<template slot-scope="scope">
+					<el-button @click="UpdateHouse(scope.row)" type="text" size="small">修改</el-button>
 	       			<el-button @click="deleteHouse(scope.row)" type="text" size="small">删除</el-button>
+	       			
      			</template>
 		    </el-table-column>
 		   
@@ -93,13 +132,18 @@ export default{
 			excelHead:null,
 			excelData:null,
 
-			// formLabelWidth:'120px',
-			// form:{
-			// 	startArea:'',
-			// 	endArea:'',
-			// 	comments:''
-			// },
-		
+			singleImportDialogVisible:false,//单个导入框是否显示
+			
+			singleImportForm:{
+				FifthRegionName:'',//栋数
+				HouseRegionName:'',//房间
+				HouseAera:'',//面积
+			},//单个导入表格
+			formLabelWidth:120,
+
+			cannotabled:false,
+			updateItem:null,//要修改的房间
+
 			// 表格内容
 			tableHead:[
 			{
@@ -108,7 +152,7 @@ export default{
 				width:70,
 			},
 			{
-				label:'栋',
+				label:'区域',
 				id:'FifthRegionName',
 			
 			},
@@ -191,6 +235,7 @@ export default{
       		})
 		},
 
+
 		/**
 		*确认上传表格内容
 		*/
@@ -227,6 +272,7 @@ export default{
 
 	            // 更新树
 	            this.updateTreeData()
+
 	          }else{
 
 	          	this.$message({
@@ -237,6 +283,151 @@ export default{
 	          }
 	        }) 			
 		},
+
+		/**
+		*单个添加房间
+		*/
+		AddHouseInfoSingle(){
+			this.singleImportDialogVisible = false
+      		
+      		this.allLoading = true
+      		 var params = {
+      		 	FifthRegionName:this.singleImportForm.FifthRegionName,
+      		 	HouseRegionName:this.singleImportForm.HouseRegionName,
+      		 	HouseAera:this.singleImportForm.HouseAera,
+                UserId:window.sessionStorage.getItem('id'),
+                RegionCode:window.sessionStorage.getItem('RegionCode'),
+                time:this.dataUtil.formatTime1(new Date()) 
+            }
+
+              console.log(JSON.stringify(params));
+          
+              var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+              console.log(this.$encrypt(JSON.stringify(params)))
+
+              this.http.post(this.api.baseUrl+this.api.AddHouseInfoSingle,encryptParams)
+              .then(result=>{
+
+              	  this.allLoading = false			       
+		          console.log(result)
+		          if (result.status=="成功") {
+		          	
+		          	this.$message({
+	            		type: 'success',
+	           			message: '操作成功!'
+	         		});
+
+		          	setTimeout(()=>{
+		          		this.getRoomInfo()
+		          	}, 500)
+
+		            // 更新树
+		            this.updateTreeData()
+
+
+		          }else{
+
+		          	this.$message({
+	            		type: 'error',
+	           			message: result.data
+	         		});
+
+		          }
+
+              })
+		},
+
+		/**
+      	*添加房间名字弹出框显示
+      	*/
+		singleImportDialog(){
+			this.singleImportDialogVisible = true
+			this.cannotabled = false
+		},
+
+
+		/**
+      	*修改房间名字弹出框显示
+      	*/
+      	UpdateHouse(row){
+      		this.cannotabled = true
+      		this.singleImportDialogVisible = true
+      		this.updateItem = row
+      		this.singleImportForm.FifthRegionName = row.FifthRegionName
+      		this.singleImportForm.HouseRegionName = row.HouseRegionName
+      		this.singleImportForm.HouseAera = row.HouseAera
+      	},
+
+      	/**
+      	*修改房间名字
+      	*/
+      	UpdateHouseRegionName(){
+      		this.singleImportDialogVisible = false
+      		
+      		this.allLoading = true
+      		 var params = {
+      		 	NewHouseName:this.singleImportForm.HouseRegionName,
+      		 	HouseRegionName:this.updateItem.HouseRegionName,//旧名
+      		 	HouseRegionCode:this.updateItem.HouseRegionCode,//修改的房间码
+                UserId:window.sessionStorage.getItem('id'),
+                RegionCode:window.sessionStorage.getItem('RegionCode'),
+                time:this.dataUtil.formatTime1(new Date()) 
+            }
+
+              console.log(JSON.stringify(params));
+          
+              var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+              console.log(this.$encrypt(JSON.stringify(params)))
+
+              this.http.post(this.api.baseUrl+this.api.UpdateHouseRegionName,encryptParams)
+              .then(result=>{
+
+              	  this.allLoading = false			       
+		          console.log(result)
+		          if (result.status=="成功") {
+		          	
+		          	this.$message({
+	            		type: 'success',
+	           			message: '操作成功!'
+	         		});
+
+		          	setTimeout(()=>{
+		          		this.getRoomInfo()
+		          	}, 500)
+
+		            // 更新树
+		            this.updateTreeData()
+
+
+		          }else{
+
+		          	this.$message({
+	            		type: 'error',
+	           			message: result.data
+	         		});
+
+		          }
+
+              })
+      	},
+
+      	/**
+      	*确定修改或更新
+      	*/
+      	sureAddOrUpdate(){
+      		if (this.cannotabled) {
+      			this.UpdateHouseRegionName()
+      		}else{
+      			this.AddHouseInfoSingle()
+      		}
+      	},
+
 
 		/**
 		*获取房间信息
@@ -284,38 +475,52 @@ export default{
 		*/
 		deleteHouse(row) {
         	// console.log(row);
-        	var that = this
-        	this.allLoading = true
-        	var params = {
-        		UserId:window.sessionStorage.getItem('id'),
-        		HouseRegionCode:row.HouseRegionCode,
-        		evalue:this.$encrypt()
-        	}
 
-        	this.http.post(this.api.baseUrl+this.api.DeleteHouseInfo,params)
-	        .then(result=>{
-	          this.allLoading = false
-	         
-	           console.log(result)
-	          if (result.status=="成功") {
-	          	this.$message({
-            			type: 'success',
-           			 	message: '操作成功!'
-         			 });
-	            
-	            this.updateTreeData()
-	            setTimeout(function(){
-					that.getRoomInfo()
-				},500)              	          
-	        }else{
-	        	this.$message({
-          			showClose: true,
-          			message: '操作失败',
-          			type: 'error'
-        		});
-	        }
-	      }) 	
+	        this.$confirm('确定要删除该房间吗', '警告', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(()=> {
+
+
+	                var that = this
+		        	this.allLoading = true
+		        	var params = {
+		        		UserId:window.sessionStorage.getItem('id'),
+		        		HouseRegionCode:row.HouseRegionCode,
+		        		evalue:this.$encrypt()
+		        	}
+
+		        	this.http.post(this.api.baseUrl+this.api.DeleteHouseInfo,params)
+			        .then(result=>{
+			          this.allLoading = false
+			         
+			           console.log(result)
+			          if (result.status=="成功") {
+			          	this.$message({
+		            			type: 'success',
+		           			 	message: '操作成功!'
+		         			 });
+			            
+			            this.updateTreeData()
+			            setTimeout(function(){
+							that.getRoomInfo()
+						},500)              	          
+			        }else{
+			        	this.$message({
+		          			showClose: true,
+		          			message: '操作失败',
+		          			type: 'error'
+		        		});
+			        }
+			      }) 
+	         })
+	        .catch(()=> {});
+      	
       	},
+
+
+
 
       	/**
       	*数据源条件筛选

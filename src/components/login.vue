@@ -12,11 +12,15 @@
 					<el-input v-model.trim="verifyCode" placeholder="请输入验证码" ></el-input>
 				
 					<el-button  id="code" @click="createCode" size="medium">{{checkCode}}</el-button>
-					<!-- <span class="span1" @click="toRegister">注册账号</span> -->
-					<!-- <span class="span2">忘记密码</span> -->
+					<!-- <span class="span1" @click="toRegister">注册账号</span> -->	
 				</div>
-				
-				 <el-button type="primary" size="large" @click="login">登 录</el-button>
+				<div style="float:right;margin-top:10px;">
+					<input type="radio" name="" @click='propCheck' :checked="checking">
+				<span style="color:#fff">记住账号密码</span> 
+				</div>
+
+				 <el-button type="primary" size="large" @click="login" >登 录</el-button>
+				 
 			 
 			</div>
 		</div>
@@ -25,7 +29,7 @@
 </template>
 <script>
 
-
+import axios from 'axios'
 export default{
 	data(){
 		return{
@@ -41,13 +45,17 @@ export default{
 
 			checkCode:'',//随机生成的验证码
 
-			//excel文件的数据
-			// excelData:null,
-			// keys:['序号','集中器地址','测量点号','波特率','通信端口号','通信规约','通讯地址','通讯密码','电表费率数','整数位','小数位','采集器地址','用户大类号','用户小类号'],
-			// file:null,
+			checking:false,
+
 		}
 	},
 	methods:{
+
+		propCheck(){
+			console.log('hello');
+			this.checking ? this.checking = false : this.checking = true
+		},
+
 		/**
 		*登录
 		*/
@@ -70,15 +78,24 @@ export default{
 			}
 
 			var params = {
-				userId:this.name,
-				userPwd:this.$encryptPsd(this.password),
-				evalue:this.$encrypt()
+				UserId:this.name,
+				UserPwd:this.$encryptPsd(this.password),
+				IP:returnCitySN.cip,
+				time:this.dataUtil.formatTime1(new Date()) 
+				
 			}
 			console.log(params)
 
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+            console.log(this.$encrypt(JSON.stringify(params)))
+
 			this.loading = true
 
-			this.http.post(this.api.baseUrl+this.api.login,params).then(result=>{
+			console.log(this.api.baseUrl+this.api.login)
+			this.http.post(this.api.baseUrl+this.api.login,encryptParams).then(result=>{
 				this.loading = false
 				// var result= res
 				console.log(result)
@@ -106,6 +123,7 @@ export default{
 
  					// 清空menuName的记录
  					window.sessionStorage.removeItem("menuName")
+
  					
  			
  					// 记录是否超级管理员
@@ -118,8 +136,16 @@ export default{
  					}
  					
 
-					// console.log(result.RegionCode)
-					// this.$store.dispatch('setIsLogin',true)
+					//记录是否记录账号密码
+					if (this.checking) {
+						window.localStorage.setItem('checking','1')
+						window.localStorage.setItem('user',this.name)
+						window.localStorage.setItem('psd',this.password)
+					}else{
+						window.localStorage.setItem('checking','0')
+						window.localStorage.setItem('user','')
+						window.localStorage.setItem('psd','')
+					}
 			
 					}
 					
@@ -146,16 +172,53 @@ export default{
 		*测试接口
 		*/
 		test(){
-			this.ICCard.readerOpen()
+			axios.get('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx79b555e9247591b2&secret=f769b386bf040225eafe3a0c17c72410')
+			 .then(function (response) {
+			    console.log(response);
+			 })
+			 .catch(function (error) {
+			    console.log(error);
+			 });
+
+
+
+			// var access_token="9_VcliCjBsNWqlYHLfZEmCUv3Gn6S2giIaQzTjngdtqSD2zvR8hvs98HQ8Mi_-JnlcH3Q_A-WQhz5bDlspvjOssyWq4d68w6Li8e-72PU_L3opRWgZtceQ61hNOL4GDeX1OHFtPJFMan_2cb-EUNBdAIAJCQ"
+			// var deviceId = "gh_e56aefbb322b_e52e4a14014fdb64"
+			// var  mac = "1123456";
+			// var params = {
+			//     device_num:"1",
+			//     device_list:[
+			//     {
+			// 	    id:deviceId,
+			// 	    mac:mac,
+			// 	    connect_protocol:"3",
+			// 	    auth_key:"",
+			// 	    close_strategy:"1",
+			// 	    conn_strategy:"1",
+			// 	    crypt_method:"0",
+			// 	   	auth_ver:"0",
+			// 	    manu_mac_pos:"-1",
+			// 	    ser_mac_pos:"-2",
+			// 	   ble_simple_protocol: "0"
+			// 	}
+			// 	],
+			// 	op_type:"1"
+			// }
+
+			// this.http.post("https://api.weixin.qq.com/device/authorize_device?access_token="+access_token+"&product_id=46912",JSON.stringify(params))
+			// .then(result=>{
+			// 	console.log(result)
+			// })
+			
 		},
 
 		 // 图片验证码
 	    createCode(){
           var code = "";    
           var codeLength = 4;//验证码的长度   
-          var random = new Array(0,1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');//随机数   
+          var random = new Array(1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F','G','H','I','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','p','q','r','s','t','u','v','w','x','y','z');//随机数   
           for(var i = 0; i < codeLength; i++) {//循环操作   
-              var index = Math.floor(Math.random()*61);//取得随机数的索引（0~61）   
+              var index = Math.floor(Math.random()*58);//取得随机数的索引（0~61）   
               code += random[index];//根据索引取得随机数加到code上   
           }   
               this.checkCode = code;//把code值赋给验证码 
@@ -169,12 +232,26 @@ export default{
 	    	}
 
 	    	return true
-	    }
-
+	    },
 	},
 	mounted(){
 		// this.test()
 		this.createCode()
+		// this.getLocalIP()
+		console.log(returnCitySN.cip)
+
+		if (window.localStorage.getItem('checking') == '1') {
+			this.checking = true
+		} 
+
+		this.name = window.localStorage.getItem('user')
+
+		this.password = window.localStorage.getItem('psd')
+
+
+	
+
+		
 	}
 }
 </script>
@@ -243,5 +320,73 @@ export default{
     margin-left: 10px;
     width: 140px;
 }
+
+
+input[type=radio] {
+
+    display: inline-block;
+
+    vertical-align: middle;
+
+    width: 16px;
+
+    height: 16px;
+
+    -webkit-appearance: none;
+
+    background-color: transparent;
+
+    border: 0;
+
+    outline: 0 !important;
+
+    line-height: 16px;
+
+    color: #d8d8d8;
+
+}
+
+input[type=radio]:after {
+
+    content: "";
+
+    display:block;
+
+    width: 16px;
+
+    height: 16px;
+
+
+
+    text-align: center;
+
+    line-height: 16px;
+
+    font-size: 16px;
+
+    color: #fff;
+
+    border: 1px solid #ddd;
+
+    background-color: #fff;
+
+    box-sizing:border-box;
+
+}
+
+input[type=radio]:checked:after {
+
+    content: "*";
+
+    /* transform:matrix(-0.766044,-0.642788,-0.642788,0.766044,0,0); */
+
+    /* -webkit-transform:matrix(-0.766044,-0.642788,-0.642788,0.766044,0,0); */
+
+    border-color: #099414;
+
+    background-color: #099414;
+
+}
+
 
 </style>

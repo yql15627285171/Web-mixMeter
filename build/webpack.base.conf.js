@@ -15,10 +15,10 @@ module.exports = {
   entry: {
     // app: './src/main.js'
     // 第一种写法
-    // app: ['babel-polyfill','./src/main.js'] 
+    app: ['babel-polyfill','./src/main.js'] 
     // 第二种写法 
-    'babel-polyfill': 'babel-polyfill',
-    app: './src/main.js'
+    // 'babel-polyfill': 'babel-polyfill',
+    // app: './src/main.js'
   },
   output: {
     path: config.build.assetsRoot,

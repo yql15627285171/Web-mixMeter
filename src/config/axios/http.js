@@ -110,8 +110,7 @@ export default {
       params, // get 请求时带的参数
       timeout: 10000,
       headers: {
-       
-        // "Access-Control-Allow-Origin":"*",
+        // 'X-Requested-With': 'XMLHttpRequest',
         "Content-Type":"text/html; charset=UTF8",
         "Authorization":"APPCODE 459866317d8f4c48b62eb53c3e5d63bd"
 

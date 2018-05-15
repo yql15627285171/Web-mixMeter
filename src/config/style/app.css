@@ -102,15 +102,24 @@
     width: 150px;
   }
 
+  .cost .el-date-editor.el-input input{
+    width: 190px;
+    padding-right: 0
+  }
   .cost .el-date-editor.el-input{
-    width: 150px;
+    width: 190px;
   }
 
+  .el-step{
+    margin-bottom: 40px;
+  }
+  .el-step.is-vertical .el-step__line{
+    height: 90px;
+  }
 
-
-
-
-
+.el-input .is-disabled .el-input__inner{
+  color: #000
+}
 
 
 

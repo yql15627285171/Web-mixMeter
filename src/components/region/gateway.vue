@@ -7,6 +7,7 @@
 
 			<div class="right">
 				<input id="upload" type="file" @change="importExcel($event)"  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" style="display:none" />
+				<el-button type="primary" @click="singleImportDialogVisible = true">单个添加</el-button>
 				<el-button type="primary" @click="choseFile">一键添加</el-button>
 				<!-- <el-button type="primary">导出</el-button> -->
 			</div>
@@ -45,6 +46,46 @@
 			</el-table>
 		</el-dialog>
 
+		<!-- 单个导入 -->
+		<el-dialog title="导入集中器" :visible.sync="singleImportDialogVisible" label-position='right' >
+	      <el-form :model="singleImportForm"  class="demo-ruleForm">
+			
+
+	        <el-form-item label="资产编号" prop="ConAssetsCode" label-width='80px'>
+		        <el-input
+				  v-model.trim="singleImportForm.ConAssetsCode"
+				  placeholder="请输入内容"
+				  style='width:70%'>	
+			</el-input>
+	          
+	        </el-form-item>
+	        <el-form-item label="SIM卡"  prop="SIM" label-width='80px'>
+	        	<el-input
+				  v-model.trim="singleImportForm.SIM"
+				  placeholder="请输入内容"
+				  style='width:70%'>	
+				</el-input>
+	        </el-form-item>
+	        <el-form-item label="安装地址"  prop="InstallAddr" label-width='80px'>
+	        	<el-input
+				  v-model.trim="singleImportForm.InstallAddr"
+				  placeholder="请输入内容"
+				  style='width:70%'>	
+				</el-input>
+	        </el-form-item>
+	        <el-form-item label="备注"  prop="Memo" label-width='80px'>
+	        	<el-input  v-model.trim="singleImportForm.Memo" 
+	        			   style='width:70%'
+	        			   placeholder="请输入内容">	        			   	
+	        	</el-input>
+	        </el-form-item>
+	      </el-form>
+	      <div slot="footer" class="dialog-footer">
+	        <el-button @click="singleImportDialogVisible = false">取 消</el-button>
+	        <el-button type="primary" @click="AddInputGWInfoSingle">添加</el-button>
+	      </div>
+	    </el-dialog>
+
 		<!-- 修改信息界面 -->
 		<el-dialog title="修改信息" :visible.sync="changeDialogVisible">
 			<el-form :model="changeForm">
@@ -63,7 +104,6 @@
 		    <el-button type="primary" @click="sureChangeGateInfo">确 定</el-button>
 		  </div>
 		</el-dialog>
-
 
 		<el-table
 		    :data="showTableData"
@@ -145,6 +185,15 @@ export default{
 				InstallAddr:'',
 				Memo:''
 			},
+
+			singleImportDialogVisible:false,//单个导入
+			singleImportForm:{
+				ConAssetsCode:'',//资产编号
+				SIM:'',// SIM卡号
+				InstallAddr:'',//安装地址
+				Memo:'',
+			},
+
 			// 对话框是否显示
 			excelVisible:false,
 			excelHead:null,
@@ -332,34 +381,106 @@ export default{
 		},
 
 		/**
+		*单个添加网关集中器
+		*/
+		AddInputGWInfoSingle(){
+			if (this.singleImportForm.ConAssetsCode.length != 12) {
+				this.$message({
+	            	type: 'warning',
+	           		message: '资产编号必须长度12位'
+	         	});
+	         	return
+			}
+
+			var that = this
+			this.singleImportDialogVisible = false
+      		
+      		this.allLoading = true
+      		 var params = {
+      		 	ConAssetsCode:this.singleImportForm.ConAssetsCode,
+      		 	InstallAddr:this.singleImportForm.InstallAddr,
+      		 	SIM:this.singleImportForm.SIM,  
+      		 	Memo:this.singleImportForm.Memo,     		
+                UserId:window.sessionStorage.getItem('id'),
+                RegionCode:window.sessionStorage.getItem('RegionCode'),
+                time:this.dataUtil.formatTime1(new Date()) 
+            }
+
+              console.log(JSON.stringify(params));
+          
+              var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+              console.log(this.$encrypt(JSON.stringify(params)))
+
+              this.http.post(this.api.baseUrl+this.api.AddInputGWInfoSingle,encryptParams)
+              .then(result=>{
+
+              	  this.allLoading = false			       
+		          console.log(result)
+		          if (result.status=="成功") {
+		          	
+		          	this.$message({
+	            		type: 'success',
+	           			message: '操作成功!'
+	         		});
+
+		          	this.updateTreeData()
+		            setTimeout(function(){
+						that.getAllGWInfo()
+					},500) 
+
+		          }else{
+
+		          	this.$message({
+	            		type: 'error',
+	           			message: result.data
+	         		});
+
+		          }
+
+              })
+		},
+
+		/**
 		*删除网关信息
 		*/
 		delGateInfo(row){
-			console.log('开始删除')
-			var that = this
-			this.allLoading = true
-			var params = {
-				UserId: window.sessionStorage.getItem('id'),
-  				LogicAddr:row.LogicAddr,
-          		evalue:this.$encrypt()
-        	}
+			
+			this.$confirm('确定要删除该网关吗？', '警告', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(()=>{
+				var that = this
+				this.allLoading = true
+				var params = {
+					UserId: window.sessionStorage.getItem('id'),
+	  				LogicAddr:row.LogicAddr,
+	          		evalue:this.$encrypt()
+	        	}
 
-        	console.log(this.api.baseUrl+this.api.DeleteGWInfo)
-        	this.http.post(this.api.baseUrl+this.api.DeleteGWInfo,params)
-	        .then(result=>{
-	          this.allLoading = false
-	      
-	          console.log('删除成功')
-	           console.log(result)
-	          if (result.status=="成功") {
-	          	this.updateTreeData()
-	          	setTimeout(function(){
-					that.getAllGWInfo()
-				}, 500)
-	          }else{
-	          	alert(result.data)
-	          }
-	        })
+	        	console.log(this.api.baseUrl+this.api.DeleteGWInfo)
+	        	this.http.post(this.api.baseUrl+this.api.DeleteGWInfo,params)
+		        .then(result=>{
+		          this.allLoading = false
+		      
+		          console.log('删除成功')
+		           console.log(result)
+		          if (result.status=="成功") {
+		          	this.updateTreeData()
+		          	setTimeout(function(){
+						that.getAllGWInfo()
+					}, 500)
+		          }else{
+		          	alert(result.data)
+		          }
+		        })
+			})
+			.catch(()=>{})
+
+
 		},
 
 		// 弹出修改网关信息窗口

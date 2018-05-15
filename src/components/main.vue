@@ -30,6 +30,9 @@
                   <img src="../assets/logout.png" style="width:20px;height:20px;outline: none" @click="logout">
                 </el-tooltip>
               <!-- </span> -->
+                <el-tooltip class="item set" effect="light" content="更新日志" placement="bottom">
+                  <i class="el-icon-question" style="font-size:20px;outline: none" @click="showUpdateLog"></i>
+                </el-tooltip>
 
               <div style="display:inline-block">
               <div class="account">
@@ -106,7 +109,8 @@
                       @node-click="handleNodeClick"
                       accordion
                       :filter-node-method="filterNode"
-                      ref="tree">
+                      ref="tree"
+                      >
                         
             </el-tree>
           </el-aside>
@@ -124,11 +128,10 @@
 
   
       <!-- 脚部 -->
-      <el-footer>
-      
+      <el-footer>      
         
           <span>CopyRight © 2018 深圳市航天泰瑞捷电子有限公司 版权所有</span>
-          <a href="http://www.miitbeian.gov.cn/" style="color:#fff">|粤ICP备17141636号-1</a>
+          <a href="http://www.miitbeian.gov.cn/" style="color:#fff">|粤ICP备17141636号-2</a>
           <a href="http://www.miitbeian.gov.cn/" >
           <img src="@/assets/ba.png" class="gongan"></a>
       
@@ -183,6 +186,18 @@
         <el-button type="primary" @click="changePsd">修改</el-button>
       </div>
     </el-dialog>
+
+    <!-- 更新日志 -->
+    <el-dialog title="日志更新" :visible.sync="updateLogDialogVisible">
+        <div style="height: 300px;overflow-y: auto;" v-if="versions.length > 0">
+          <el-steps direction="vertical" :active="1">
+            <el-step :title="versions[0].Ver" icon="el-icon-refresh" :description="versions[0].Info"></el-step>
+            <el-step v-for="(item,index) in versions" v-if="index > 0" :title="item.Ver" icon="el-icon-time" :description="versions[0].Info"></el-step>
+          </el-steps>
+        </div>
+  
+    </el-dialog>
+
   </div>
 </template>
 
@@ -216,12 +231,21 @@ export default {
       filterText:'',//搜索的关键字
      
       houseImg:require('../assets/house.png'), // 小图标路径
+     
       gateImg:require('../assets/gate_unselect.png'),
+      
       selectHouse:true,
-      // 菜单栏默认展开的栏目
-      defaultActive:"",
-      // 个人中心弹出框
-      informationDialogVisible:false,
+      
+      defaultActive:"",// 菜单栏默认展开的栏目
+      
+      informationDialogVisible:false,// 个人中心弹出框
+
+      updateLogDialogVisible:false,//更新日志
+
+      dialogLoading:false,//转圈
+
+      versions:[],//版本号
+
       informationForm:{
         name:'',
         mobilePhone:'',
@@ -266,10 +290,17 @@ export default {
         label: 'label'
       },
       selectedArea:[],
+
+      treeclickNum:0,//树节点点击次数
+      oldtime:'',//第一次点击时间
+      newtime:'',//第二次点击时间
+      oldCode:'',//第一次点击的几点code
+      newCode:'',//第二次点击的code
     }
   },
   methods:{
       // 菜单栏事件
+      show(){console.log('lll')},
 
        handleSelect(key, keyPath) {
         console.log(keyPath);
@@ -294,6 +325,48 @@ export default {
       handleNodeClick(data) {
         console.log(data)
         this.$store.dispatch('setClickTreeData',data)
+
+        // 双击弹框事件
+        // this.treeclickNum ++ 
+        // if(this.treeclickNum == 1){
+
+        //   this.oldtime = new Date()
+        //   this.oldCode = data.code
+        //   console.log(this.oldCode)
+
+        // }else if (this.treeclickNum == 2) {
+
+    
+        //   this.newtime = new Date()
+        //   this.newCode = data.code
+        //   console.log(this.newCode)
+        //   // 点击的是同一个节点
+        //   if (this.oldCode == this.newCode) {
+
+        //     console.log(this.newtime - this.oldtime)
+        //     if (this.newtime - this.oldtime < 500) {
+        //       // 进行修改
+        //       this.treeclickNum = 0
+        //       alert(1)
+
+        //     }else{
+        //       this.treeclickNum = 1
+        //       this.oldtime = new Date()
+        //       this.oldCode = data.code
+        //     }
+
+        //   }else{
+        //     console.log('不同节点')
+        //     this.treeclickNum = 1
+        //     this.oldtime = new Date()
+        //     this.oldCode = data.code
+        //   }
+
+          
+        // }
+
+
+        
         
       },
       // 树的搜索框
@@ -463,16 +536,72 @@ export default {
       },
 
       /**
+      *显示版本更新信息
+      */
+
+      showUpdateLog(){
+        // 网络请求
+        this.dialogLoading = true
+
+        var params = {
+          UserID:window.sessionStorage.getItem('id'),
+          time:this.dataUtil.formatTime1(new Date()) 
+        }
+
+        console.log(JSON.stringify(params));
+          
+        var encryptParams = {
+          evalue:this.$encrypt(JSON.stringify(params))
+        }
+
+        console.log(this.$encrypt(JSON.stringify(params)))
+        console.log(this.api.baseUrl+this.api.VersionDescription)
+        this.http.post(this.api.baseUrl+this.api.VersionDescription,encryptParams)
+            .then(result=>{
+              console.log('jjj')
+              this.dialogLoading = false
+
+              if (result.status == "成功") {
+                
+               this.dialogLoading = false
+
+                this.updateLogDialogVisible = true   
+
+                this.versions = result.data
+
+                console.log(result.data)
+              }else{
+                this.dialogLoading = false
+                this.$message({
+
+                  type: 'error',
+                  message:result.data             
+                });
+              }
+                                
+            })
+
+        
+      },
+
+      /**
       *记录点击的子菜单的名字
       *页面刷新也调用此方法
       */
       recordIndex(name,index){
+       
         // console.log(name)
         window.sessionStorage.setItem('menuName',name)
 
         // 解决ie上点击后菜单栏子菜单不消失的问题
         var father = document.getElementsByClassName("el-submenu")
-        father[index].lastChild.style.display = "none"
+
+        if (typeof(father[index]) != 'undefined') {
+
+          father[index].lastChild.style.display = "none"
+        }
+
+        
         
       
 
@@ -629,12 +758,12 @@ export default {
   height: 60px;
 }
 
-.el-footer{
+/* .el-footer{
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-}
+} */
 
   
 .el-aside {

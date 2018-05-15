@@ -7,11 +7,14 @@ export default {
    // 申特
 	// baseUrl:'https://www.trjiot.com/webiot.asmx',
 
-   // 泰瑞捷
+   //  自己测试
+   // baseUrl:'http://172.0.0.116/webiot.asmx',
+
+   //1楼测试
    baseUrl:'http://api.smart.trjiot.com/webiot.asmx',
 
+   
 	
-
 	/**
 	*测试接口
 	*/
@@ -76,10 +79,7 @@ export default {
 	*/
 	remote_area_url:'http://jisuarea.market.alicloudapi.com/area/query',
 
-   /**
-   *搜狐接口 获取本机ip地址
-   */
-   localIP:'http://pv.sohu.com/cityjson',
+
 	/**
 	*获取所有社区管理员信息
 	*evalue 加密参数
@@ -118,6 +118,19 @@ export default {
 	*/
 	AddHouseInfo:'/AddHouseInfo',
 
+   /**
+   *增加房间信息_单个
+   *FifthRegionName     五级区域名称（栋）
+   *HouseRegionName     六级区域名称（房间）
+   *UserId              操作者ID
+   *RegionCode  四级区域码
+   *HouseAera           面积
+   **返回参数** 
+   *成功或失败信息          
+   */
+   AddHouseInfoSingle:'/AddHouseInfoSingle',
+
+
 	/**
 	*区域管理的房间信息
 	*RegionCode 	区域编码
@@ -135,6 +148,18 @@ export default {
    DeleteHouseInfo:'/DeleteHouseInfo',
 
    /**
+   *修改房间名称
+   *NewHouseName        房间新名称
+   *HouseRegionName     六级区域名称（房间旧名称）
+   *UserId              操作者ID
+   *HouseRegionCode 六级区域码
+   *RegionCode  四级区域码
+   **返回参数**           
+   *成功或失败信息
+   */
+   UpdateHouseRegionName:'/UpdateHouseRegionName',
+
+   /**
    *导入网关  修改信息
    *UserId 		用户名
    *RegionCode 	区域编码
@@ -142,6 +167,20 @@ export default {
    *evalue 		加密参数
    */
    InputGWInfo:'/InputGWInfo',
+
+
+   /**
+   *增加集中器信息_单个
+   *ConAssetsCode       集中器资产编码（12长度）
+   *InstallAddr         安装地址
+   *UserId              操作者ID
+   *RegionCode  四级区域码
+   *SIM                 SIM卡号
+   *Memo                备注
+   **返回参数** 
+   *成功或失败信息          
+   */
+   AddInputGWInfoSingle:'/AddInputGWInfoSingle',
 
    /**
    *获取社区网关信息
@@ -166,6 +205,20 @@ export default {
    *evalue 		加密参数
    */
    InputMeterInfo:'/InputMeterInfo',
+
+   /**
+   *增加电表信息_单个
+   *LogicAddr           集中器名称
+   *FifthRegionName     五级区域名称（栋）
+   *HouseRegionName     六级区域名称（房间）
+   *UserId              操作者ID
+   *RegionCode  四级区域码
+   *MeterAssetsCode     电表资产号
+   *MeasureId             测量点号：新增表：0，修改表传当前测量点
+   **返回参数**
+   *成功或失败信息           
+   */
+   AddMeterInfoSingle:'/AddMeterInfoSingle',
 
    /**
    *查询表计信息
@@ -455,6 +508,34 @@ export default {
     SettlementAndCancelAccountByPANForRF:'/SettlementAndCancelAccountByPANForRF',
 
 
+    /**
+   *补卡（新卡）
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *HouseRegionCode 房间码
+   *time               当前时间
+   **返回参数**    
+   *EK               密钥报文未分割
+   *OAF              操作报文   
+   *cardInfo         补卡的业务信息
+   *data                失败信息，失败是传回
+   */
+    NewRFCardByHouseRegionCode:'/NewRFCardByHouseRegionCode',
+
+/**
+   *重写卡（验证卡返回‘重新卡’时执行）
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *PAN      PAN值
+   *time               当前时间
+   **返回参数**    
+   *EK               密钥报文未分割
+   *OAF              操作报文   
+   *cardInfo         补卡的业务信息
+   *data                失败信息，失败是传回
+   */
+    ReWriteRFCodeByPAN:'/ReWriteRFCodeByPAN',
+
 
    /**
    *设置变比
@@ -478,7 +559,143 @@ export default {
    **CT           电流互感器变比
    **PT           电压互感器变比
    */
-   QueryOprtcord:'/QueryOprtcord',
+   ReadEMValuePTAndCT:'/ReadEMValuePTAndCT',
+   
+
+   /**
+   *读取软件版本说明
+   *UserId          操作者ID
+   *time               当前时间
+   **返回参数**    
+   *data               软件版本信息说明内容
+   */
+    VersionDescription:'/VersionDescription',
+
+    /**
+   *设置电价
+   *HouseRegionCode     房间名称
+   *UserId              操作者ID
+   *RPrice1     费率电价1
+   *RPrice2     费率电价2
+   *RPrice3 费率电价3
+   *RPrice4     费率电价4
+   **返回参数**
+   *成功或失败信息           
+   */
+   SetEMValueRatesPrice:'/SetEMValueRatesPrice',
+
+
+/**
+   *读取电价
+   *HouseRegionCode     房间名称
+   *UserId              操作者ID
+   **返回参数**           
+   *成功返回电价或失败信息
+   *RPrice1     费率电价1
+   *RPrice2     费率电价2
+   *RPrice3 费率电价3
+   *RPrice4     费率电价4
+   */
+   ReadEMValueRatesPrice:'/ReadEMValueRatesPrice',
+
+   /**
+   *远程开户
+   *HouseRegionCode 房间编号
+   *Amount          充值金额 单位元
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *TransactionType    0充值1退费
+   *TransactionMode    0射频卡，1蓝牙，【2 远程】
+   *TransactionMethod  按最新文档说明
+   *time               当前时间
+   **返回参数**    
+  *LastRecord          最后一次记录（成功时返回，定义不变
+    */
+   GetFrameOpenAccountyByHouseCode:'/GetFrameOpenAccountyByHouseCode',
+
+   /**
+   *远程充值
+   *HouseRegionCode 房间编号
+   *Amount          充值金额 单位元
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *TransactionType    0充值1退费
+   *TransactionMode    0射频卡，1蓝牙，【2 远程】
+   *TransactionMethod  按最新文档说明
+   *time               当前时间
+   **返回参数**    
+  *LastRecord          最后一次记录（成功时返回，定义不变
+     */
+   GetFrameRechargeByHouseCode:'/GetFrameRechargeByHouseCode',
+
+   /**
+   *重新操作（类似卡重写）
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *HouseRegionCode 房间编号
+   *time               当前时间
+   **返回参数**    
+   *LastRecord          最后一次记录（成功时返回，定义不变
+   *CardType            卡当前的状态 （成功时返回，开户卡、充值卡、重写卡、销户退费卡（页面暂时不支持））
+   *data                失败信息，失败时返回
+   */
+   ReOprtByHouseCode:'/ReOprtByHouseCode',
+
+   /**
+   *查看用户状态（类似卡验证）
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *HouseRegionCode 房间编号
+   *time               当前时间
+   **返回参数**    
+   *LastRecord          最后一次记录（成功时返回，定义不变
+   *CardType            卡当前的状态 （成功时返回，开户卡、充值卡、重写卡、销户退费卡（页面暂时不支持））
+   *CustomerInfo       用户信息    （成功失败均返回用户信息，可能为空） 
+   *data                失败信息，失败时返回
+   */
+   QueryEMSTSStatus:'/QueryEMSTSStatus',
+
+
+   /**
+   *查询告警事件
+   *UserId       用户ID
+   *TimeStart              起始时间（到秒）默认请求前48小时
+   *TimeEnd                截止时间（到秒）默认请求时刻
+   *time        时间
+   **返回参数**
+      **FifthRegionCode  5级区域码
+      **HouseRegionCode  6级区域码 
+      **FifthRegionCodeName  房间名      
+      **MeterAddr    表计地址（下拉显示）  
+      **RunStatus    运行状态字（下拉显示）  
+      **ShowStatus   运行状态  
+      **ReadDataTime   抄读时间 
+      **UpdateTime   更新时间（下拉显示）  
+   */
+   QureyERStatus:'/QureyERStatus',
+
+   /**
+   *查询预付费表日抄读数据
+   *UserId       用户ID
+   *TimeStart              起始时间（到秒）默认请求前48小时
+   *TimeEnd                截止时间（到秒）默认请求时刻
+   *time        时间
+   **返回参数**
+      **FifthRegionCode  5级区域码
+      **HouseRegionCode  6级区域码 
+      **FifthRegionCodeName  房间名      
+      **MeterAddr    表计地址（下拉显示）  
+      **FreezeDate    冻结日期  
+      **PowerPurchaseTimes   购电次数 
+      **RemainAmount   剩余金额 
+      **TotalPurchaseAmount  累计购电金额 
+      **OverdraftAmount   透支金额
+      **ReadDataTime   抄读时间 （下拉显示）
+      **UpdateTime   更新时间（下拉显示）  
+   */
+   QureyPEDayData:'/QureyPEDayData',
+
+
 
 }
 

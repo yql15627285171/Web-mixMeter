@@ -5,6 +5,7 @@
 			
 			<div class="right">
 				<input id="upload" type="file" @change="importExcel($event)"  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" style="display:none" />
+				<el-button type="primary" @click="singleImportBtnClick">单个添加</el-button>
 				<el-button type="primary" @click="choseFile">一键添加</el-button>
 				<el-button type="primary" @click="setFileToGW">档案下发</el-button>
 			</div>
@@ -37,7 +38,7 @@
 			</el-table>
 		
 		</el-dialog>
-
+		
 		<!-- 修改对话框 -->
 		<el-dialog :title='changeTitle' :visible.sync="changeDialogVisible">
 		  <el-form :model="changeForm">
@@ -59,6 +60,66 @@
 		    <el-button type="primary" @click="sureChangeInfo">确 定</el-button>
 	  	  </div>
 		</el-dialog>
+
+		<!-- 单个导入 -->
+		<el-dialog title="导入/修改 表计" :visible.sync="singleImportDialogVisible" label-position='right' >
+	      <el-form :model="singleImportForm"  class="demo-ruleForm">
+			
+
+	        <el-form-item label="资产编号" prop="MeterAssetsCode" label-width='90px'>
+	        	<el-input 	v-model.trim="singleImportForm.MeterAssetsCode"
+	        				placeholder="请输入内容"
+	        				style='width:70%'
+	        				:disabled='noChangeMeterAssetsCode'
+	        	></el-input>
+		       
+	          
+	        </el-form-item>
+	        <el-form-item label="区域"  prop="FifthRegionName" label-width='90px'>
+	        	<el-autocomplete
+				  v-model.lazy.trim="singleImportForm.FifthRegionName"
+				  :fetch-suggestions="queryFifthRegionName"
+				  placeholder="请输入内容"
+				  style='width:70%'
+				  @select="handleSelect">	
+				</el-autocomplete>
+	        </el-form-item>
+	        <el-form-item label="房间"  prop="HouseRegionName" label-width='90px'>
+	        	<el-autocomplete
+				  v-model.trim="singleImportForm.HouseRegionName"
+				  :fetch-suggestions="queryHouseRegionName"
+				  placeholder="请输入内容"
+				  style='width:70%'>	
+				</el-autocomplete>
+	        </el-form-item>
+	        <el-form-item label="集中器地址"  prop="LogicAddr" label-width='90px'>
+	        	<el-autocomplete
+				  v-model.trim="singleImportForm.LogicAddr"
+				  :fetch-suggestions="queryLogicAddr"
+				  placeholder="请输入内容"
+				  style='width:70%'>	
+				</el-autocomplete>
+	        </el-form-item>
+
+			<el-form-item label="安装地址" prop="InstallAddr" label-width='90px'>
+	        	<el-input 	v-model.trim="singleImportForm.InstallAddr"
+	        				placeholder="请输入内容"
+	        				style='width:70%'
+	        	></el-input>
+		       
+	          
+	        </el-form-item>
+
+
+	      </el-form>
+
+		 	
+	      <div slot="footer" class="dialog-footer">
+	        <el-button @click="singleImportDialogVisible = false">取 消</el-button>
+	        <el-button type="primary" @click="AddMeterInfoSingle">确认</el-button>
+	      </div>
+
+	    </el-dialog>
 
 
 		<!-- 表格 -->
@@ -94,15 +155,15 @@
 	       			<span v-if="scope.row.RunStatus == '1'" style="color:green">运行</span>
      			</template>
 	    	 </el-table-column>
- -->	         <el-table-column label="操作">	
+ -->	  <el-table-column label="操作">	
 				<template slot-scope="scope" >
 					<div>
 						<el-button
-							v-if= "isSuper == '1' "
+
 							@click="changeClick(scope.row)" 
 							type="text" 
 							size="small">修改</el-button>
-	        			<el-button type="text" size="small" @click="deleteGateInfo(scope.row)">删除</el-button>
+	        			<el-button type="text" size="small" @click="DeleteMeterInfo(scope.row)">删除</el-button>
 					</div>	
      			</template>
 	    	 </el-table-column>
@@ -145,6 +206,18 @@ export default{
 				RunStatus:false,//运行状态
 
 			},
+
+			singleImportDialogVisible:false,//单个导入
+			singleImportForm:{
+				MeterAssetsCode:'',//资产编号
+				FifthRegionName:'',//栋数
+				HouseRegionName:'',//房间名
+				LogicAddr:'',//集中器逻辑地址
+				MeasureId:'',//测量点号：新增表：0，修改表传当前测量点 
+				InstallAddr:'',//安装地址 
+			},
+			noChangeMeterAssetsCode:false,//资产编号能否进行编辑
+
 			changeRow:{},//要修改的行的信息
 			// 表格信息
 			tableHead:[
@@ -158,7 +231,7 @@ export default{
 				id:'MeterAddr'
 			},
 			{
-				label:'所属栋数',
+				label:'所属区域',
 				id:'FifthRegionName'
 			},
 			{
@@ -301,6 +374,115 @@ export default{
 	
 		},
 
+		//输入框筛选内容-----栋
+		queryFifthRegionName(queryString, cb) {
+
+
+			var Commmunity = this.$store.state.treeData.Commmunity[0]
+
+
+			if (Commmunity == null) {
+				cb([])
+				return
+			}
+
+			var restaurants = []
+
+			for (var i = 0; i < Commmunity.children.length; i++) {
+				var item = {"value":Commmunity.children[i].label}
+				restaurants.push(item)
+			}
+
+			if (restaurants.length == 0) {
+				cb([])
+				return
+			}
+        	
+        	var results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants;
+
+          	cb(results);
+       
+        },
+
+        // 房间筛选
+        queryHouseRegionName(queryString, cb) {
+		
+
+
+			var Commmunity = this.$store.state.treeData.Commmunity[0]
+
+			var houseName = Commmunity.children.filter(element=> {
+			return	(element.label == this.singleImportForm.FifthRegionName)
+			})[0];
+			
+			if (houseName == null) {
+				cb([])
+				return
+			}
+
+			var restaurants = []
+
+			for (var i = 0; i < houseName.children.length; i++) {
+				var item = {"value":houseName.children[i].label}
+				restaurants.push(item)
+			}
+
+			if (restaurants.length == 0) {
+				cb([])
+				return
+			}
+
+        	
+        	var results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants;
+
+      
+
+          	cb(results);
+       
+        },
+
+        // 集中器
+        queryLogicAddr(queryString, cb) {
+
+
+			var GWList = this.$store.state.treeData.GWList[0]
+
+			if (GWList == null) {
+				cb([])
+				return
+			}
+
+			var restaurants = []
+
+			for (var i = 0; i < GWList.children.length; i++) {
+				var item = {"value":GWList.children[i].label}
+				restaurants.push(item)
+			}
+
+        	if (restaurants.length == 0) {
+				cb([])
+				return
+			}
+        	var results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants;
+
+          	cb(results);
+       
+        },
+
+
+      	createStateFilter(queryString) {
+        	return (state) => {
+          		return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) != -1);
+        	};
+      	},
+      	handleSelect(item) {
+      		console.log(item.value)
+        	if (item.value != this.singleImportForm.FifthRegionName) {
+        		console.log('gaibian1')
+        		this.singleImportForm.HouseRegionName = ''
+        	}
+      	},
+
 		/**
 		*分页控制器的方法
 		*/
@@ -313,20 +495,45 @@ export default{
       	*点击修改按钮
       	*/
       	changeClick(row){
-      		this.changeDialogVisible = true,
+      		if (this.isSuper == '1') {
+      			this.changeDialogVisible = true,
 
-      		this.changeRow = row
+	      		this.changeRow = row
 
-      		this.changeForm.BigClassNo = row.BigClassNo
+	      		this.changeForm.BigClassNo = row.BigClassNo
 
-      		this.changeForm.SmallClassNo = row.SmallClassNo
+	      		this.changeForm.SmallClassNo = row.SmallClassNo
 
-      		row.RunStatus ? this.changeForm.RunStatus = true : this.changeForm.RunStatus = false
+	      		row.RunStatus ? this.changeForm.RunStatus = true : this.changeForm.RunStatus = false
+      		}else{
+      			this.singleImportDialogVisible = true
+      			this.noChangeMeterAssetsCode = true //修改时资产编号不能进行编辑
 
+      			this.singleImportForm.MeterAssetsCode = row.MeterAssetsCode
+      			this.singleImportForm.FifthRegionName = row.FifthRegionName
+      			this.singleImportForm.HouseRegionName = row.HouseRegionName
+      			this.singleImportForm.LogicAddr = row.LogicAddr
+      			this.singleImportForm.MeasureId = row.MeasureId
+      			this.singleImportForm.InstallAddr = row.InstallAddr
+
+      		}
+      		
       	},
 
+      	// 点击单个导入按钮
+      	singleImportBtnClick(){
+      		this.singleImportDialogVisible = true
+      		this.noChangeMeterAssetsCode = false //添加时资产编号能进行编辑
+      		this.singleImportForm.MeterAssetsCode = ''
+  			this.singleImportForm.FifthRegionName = ''
+  			this.singleImportForm.HouseRegionName = ''
+  			this.singleImportForm.LogicAddr = ''
+  			this.singleImportForm.InstallAddr = ''
+  			this.singleImportForm.MeasureId = '0'
+      	},
       	/**
       	*确定上传修改
+      	*超级管理员的修改
       	*/
       	sureChangeInfo(){
       		this.changeDialogVisible = false,
@@ -339,13 +546,77 @@ export default{
       		this.updateInfo([this.changeRow])
 
       	},
+      	/**
+      	*确定上传导入/修改
+      	*管理员的修改
+      	*/
+      	AddMeterInfoSingle(){
+
+      		if (this.singleImportForm.MeterAssetsCode.length !=12) {
+      			this.$message({
+	            	type: 'warning',
+	           		message: '资产编号必须是12位长度'
+	         	});
+	         	return
+      		}
+
+      		this.singleImportDialogVisible = false
+      		
+      		this.allLoading = true
+      		 var params = {
+      		 	FifthRegionName:this.singleImportForm.FifthRegionName,
+      		 	HouseRegionName:this.singleImportForm.HouseRegionName,
+      		 	LogicAddr:this.singleImportForm.LogicAddr,
+      		 	MeterAssetsCode:this.singleImportForm.MeterAssetsCode,
+      		 	MeasureId:this.singleImportForm.MeasureId,
+      		 	InstallAddr:this.singleImportForm.InstallAddr,
+                UserId:window.sessionStorage.getItem('id'),
+                RegionCode:window.sessionStorage.getItem('RegionCode'),
+                time:this.dataUtil.formatTime1(new Date()) 
+            }
+
+              console.log(JSON.stringify(params));
+          
+              var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+              console.log(this.$encrypt(JSON.stringify(params)))
+
+              this.http.post(this.api.baseUrl+this.api.AddMeterInfoSingle,encryptParams)
+              .then(result=>{
+
+              	  this.allLoading = false			       
+		          console.log(result)
+		          if (result.status=="成功") {
+		          	
+		          	this.$message({
+	            		type: 'success',
+	           			message: '操作成功!'
+	         		});
+
+		          	this.queryMeterInfo()
+
+		          }else{
+
+		          	this.$message({
+	            		type: 'error',
+	           			message: result.data
+	         		});
+
+		          }
+
+              })
+      	},
+
 
 		/**
 		*表格选中的行发生改变
 		*/
-		// handleSelectionChange(val){
-		// 	console.log(val)
-		// },
+		handleSelectionChange(val){
+			console.log(val)
+			this.singleImportForm.HouseRegionName = ''
+		},
 
 		// 选择文件
       	choseFile(){
@@ -452,38 +723,45 @@ export default{
 		},
 
 		/**
-		*删除网关信息
+		*删除表计信息
 		*/
-		deleteGateInfo(row){
-			this.allLoading = true
-			this.loadingTitle="拼命加载中"
-			var that = this
-      	
-  			var params = {
-  				UserId:window.sessionStorage.getItem("id"),
-  				LogicAddr:row.LogicAddr,
-  				MeasureId:row.MeasureId,
-          		evalue:this.$encrypt()
-        	}
+		DeleteMeterInfo(row){
+			this.$confirm('确定要删除该表吗', '警告', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(()=>{
+            	this.allLoading = true
+				this.loadingTitle="拼命加载中"
+				var that = this
+	      	
+	  			var params = {
+	  				UserId:window.sessionStorage.getItem("id"),
+	  				LogicAddr:row.LogicAddr,
+	  				MeasureId:row.MeasureId,
+	          		evalue:this.$encrypt()
+	        	}
 
-        	console.log(this.api.baseUrl+this.api.DeleteMeterInfo)
-        	
-        	this.http.post(this.api.baseUrl+this.api.DeleteMeterInfo,params)
-	        .then(result=>{
-	          this.allLoading = false
-	     
-	          console.log('删除表计')
-	           console.log(result)
-	          if (result.status=="成功") {
+	        	console.log(this.api.baseUrl+this.api.DeleteMeterInfo)
+	        	
+	        	this.http.post(this.api.baseUrl+this.api.DeleteMeterInfo,params)
+		        .then(result=>{
+		          this.allLoading = false
+		     
+		          console.log('删除表计')
+		           console.log(result)
+		          if (result.status=="成功") {
 
-	          	this.$message({
-            		type: 'success',
-           			message: '操作成功!'
-         		});
+		          	this.$message({
+	            		type: 'success',
+	           			message: '操作成功!'
+	         		});
 
-	          	this.queryMeterInfo()
-	          }
-	        }) 
+		          	this.queryMeterInfo()
+		          }
+		        }) 
+            }).catch();
+			
 		},
 
 		/**
@@ -504,25 +782,41 @@ export default{
         	this.http.post(this.api.baseUrl+this.api.SetMeterFilesByDataBaseToGW,params)
 	        .then(result=>{
 	       
-	         
-	           console.log(result)
-	          
 
-	           this.loadingTitle=`下发档案中,总数${result.Total},剩余${result.Last}`
+	          	this.loadingTitle=`下发档案中,总数${result.Total},剩余${result.Last}`
 	           if (result.Last != '0') {
 	           		setTimeout(function(){
 	           			//递归请求
 	           			that.setFileToGW()
 	           		},3000)
+
 	           }else{
 	           	// 完成下发
 	           		this.allLoading = false
+
 	           		this.$message({
             		type: 'success',
            			message: '档案已全部下发!'
-         		});
+         			});
+
+	           		var failResult = result.fail
+	           		if (typeof(failResult) != "undefined") {
+	          			for (var i = 0; i < failResult.length; i++) {
+	          				
+	          				this.$notify({
+				          		title: failResult[i].LogicAddr,
+				          		message: failResult[i].Exception,
+				          		type: 'error'
+				       		})
+	          			}
+
+	          		}
+
 
 	           }
+	   
+
+	           
 	        }) 
 		},
 
@@ -568,13 +862,20 @@ export default{
 	computed:{
 		treeNode(){
 			return this.$store.state.clickTreeData
-		}
+		},
+		// copyFifthRegionName(){
+		// 	return this.singleImportForm.FifthRegionName
+		// }
 	},
 	watch:{
 		// 观察点击的树的内容发生改变
 		treeNode(newVal){
 			this.filterTableData(newVal)
-		}
+		},
+		// copyFifthRegionName(newVal){
+		// 	console.log('aaa')
+		// 	this.singleImportForm.HouseRegionName = ''
+		// }
 	},
 
 	mounted(){

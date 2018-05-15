@@ -19,12 +19,14 @@ import meterFiles from '@/components/region/meterFiles'
 import GateWayControl from '@/components/getewayParaOprt/GateWayControl'
 import MeterReadAndSet from '@/components/getewayParaOprt/MeterReadAndSet'
 import electric from '@/components/getewayParaOprt/meter/electric'
+import MeterParameter from '@/components/getewayParaOprt/MeterParameter'
 
 // 费用管理
 import RechargeFeeRefund from '@/components/costManagement/RechargeFeeRefund'
 import BillingReport from '@/components/costManagement/BillingReport'
 import AccoundReconciliation from '@/components/costManagement/AccoundReconciliation'
 import monthElectric from '@/components/costManagement/time/monthElectric'
+import RemoteRecharge from '@/components/costManagement/RemoteRecharge'
 
 // 日志管理
 import LoadLog from '@/components/logManagement/LoadLog'
@@ -153,6 +155,14 @@ const router = new Router({
         }]
       },
       {
+        path:'MeterParameter',
+        name:'MeterParameter',
+        meta:{
+            requireAuth:true
+          },
+        component:MeterParameter
+      },
+      {
         // 充值退费
         path:'RechargeFeeRefund',
         name:'RechargeFeeRefund',
@@ -160,6 +170,15 @@ const router = new Router({
             requireAuth:true
           },
         component:RechargeFeeRefund
+      },
+      {
+        // 远程充值RemoteRecharge
+        path:'RemoteRecharge',
+        name:'RemoteRecharge',
+        meta:{
+            requireAuth:true
+          },
+        component:RemoteRecharge
       },
       {
         // 结算报表

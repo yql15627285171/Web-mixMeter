@@ -4,7 +4,7 @@
 		<div class="condition">
 
 			<div class="block left cost">
-			    <el-date-picker
+			    <!-- <el-date-picker
 			      v-model="startDate"
 			      type="date"
 			      placeholder="开始日期"
@@ -18,7 +18,24 @@
 			      type="date"
 			      placeholder="结束日期"
 			      value-format='yyyy-MM-dd'>
+			    </el-date-picker> -->
+
+			    <el-date-picker
+			      v-model="startDate"
+			      type="datetime"
+			      placeholder="开始日期"
+			      format='yyyy-MM-dd HH:mm:ss'>
 			    </el-date-picker>
+
+			    <span>至</span>
+
+			    <el-date-picker
+			      v-model="endDate"
+			      type="datetime"
+			      placeholder="结束日期"
+			      format='yyyy-MM-dd HH:mm:ss'>
+			    </el-date-picker>
+
 	  		</div>
 			<el-button type="primary" @click='QureyTransactionFile(code)'>查询</el-button>			
 			
@@ -27,7 +44,7 @@
 			    <el-option
 
 			      v-for="item in tradeStyle"
-			      v-if="tradeStyle.length > 0"
+			      v-if="tradeStyle.length > 0 && item!='' "
 			      :label="item"
 			      :value="item">
 			    </el-option>
@@ -35,7 +52,7 @@
 				<el-select v-model.lazy="name2" placeholder="审核状态" clearable @change="selectChange">
 				    <el-option
 				      v-for="item in AuditState"
-				      v-if="AuditState.length > 0"
+				      v-if="AuditState.length > 0 && item!='' "
 				      :label="item"
 				      :value="item">
 				    </el-option>
@@ -43,7 +60,7 @@
 				<el-select v-model.lazy="name3" placeholder="交易类型" clearable @change="selectChange">
 				    <el-option
 				      v-for="item in tradeType"
-				      v-if="tradeType.length > 0"
+				      v-if="tradeType.length > 0 && item!='' "
 				      :label="item"
 				      :value="item">
 				    </el-option>
@@ -86,7 +103,7 @@
 		  </el-table>
 			<div style='text-align:center;font-size:16px;margin-top:20px'>
 				<span style='margin-right:60px'>实收：{{this.totalMoney}}元</span>	
-				<span style='margin-right:60px'>充值：{{this.predictMoney}}元</span> 
+				<span style='margin-right:60px'>充值/开户：{{this.predictMoney}}元</span> 
 				<span style='margin-right:60px'>退费：{{this.moveMoney}}元</span> 
 				<span style='margin-right:20px'>补助：{{this.helpMoney}}元</span> 
 			</div>
@@ -106,8 +123,8 @@ export default{
 	data(){
 		return{
 			loading:false,
-			startDate:this.dataUtil.yesterday(),
-			endDate:this.dataUtil.today(),
+			startDate:null,
+			endDate:null,
 			currentPage:1,
 			code:window.sessionStorage.getItem('RegionCode'),
 			name1:'',//交易方式
@@ -122,11 +139,12 @@ export default{
 			{
 				label:'序号',
 				id:'index',
-				width:70
+				width:50
 			},
 			{
 				label:'房间信息',
 				id:'FifthHouseRegionName',
+				width:90
 			},
 			{
 				label:'交易类型',
@@ -147,6 +165,7 @@ export default{
 			{
 				label:'交易时间',
 				id:'TransactionTime',
+				width:180	
 			},
 			{
 				label:'交易状态',
@@ -233,8 +252,8 @@ export default{
       		var params = {
       			RegionCode:code,
       			UserId:window.sessionStorage.getItem('id'),
-      			TimeStart:this.startDate,
-      			TimeEnd:this.endDate,
+      			TimeStart:this.dataUtil.formatTime1(this.startDate),
+       			TimeEnd:this.dataUtil.formatTime1(this.endDate),
       			time:this.dataUtil.formatTime1(new Date()) 
       		}
 
@@ -416,7 +435,7 @@ export default{
 		predictMoney(){
 			var money = 0
 			this.partOfTableData.forEach(element=>{
-				if (element.TransactionType == '充值') {
+				if (element.TransactionType == '充值' || element.TransactionType == '开户') {
 					money +=  parseInt(element.TransactionAmount) 
 				}
 			})
@@ -427,7 +446,7 @@ export default{
 		moveMoney(){
 			var money = 0
 			this.partOfTableData.forEach(element=>{
-				if (element.TransactionType == '退费') {
+				if (element.TransactionType == '异常退费' || element.TransactionType == '销户退费') {
 					money +=  parseInt(element.TransactionAmount) 
 				}
 			})
@@ -483,6 +502,11 @@ export default{
 		}
 	},
 	mounted(){
+		var date = new Date()
+		
+		this.startDate = new Date(date.getTime()-2*24*60*60*1000)
+
+		this.endDate = new Date()
 
 		setTimeout(()=>{
 			this.QureyTransactionFile(this.code)	
@@ -507,6 +531,8 @@ export default{
 }
 .condition{
 	overflow: hidden;
+
+	/* width: 1100px; */
 }
 .el-select{
 	width: 130px;
