@@ -276,6 +276,17 @@ export default {
 
    GetGWHeartTime:'/GetGWHeartTime',
 
+   /**
+   *重新下发表档案
+   *UserId       用户ID
+   *RegionCode   四级区域码
+   *LogicAddr    集中器地址
+   *time        时间
+   **返回参数**
+     成功或失败原因
+   */
+   ReSetMeterFilesByData:'/ReSetMeterFilesByData',
+
 
    /**
    *获取集中器的时间
@@ -695,7 +706,51 @@ export default {
    */
    QureyPEDayData:'/QureyPEDayData',
 
+   /**
+   *获取手机验证码
+   *mobile             手机号
+   *time               当前时间
+   **返回参数**    
+    *成功或失败及信息
+   */
+  VerificationCode:'/VerificationCode',
 
+  /**
+   *首页内容
+   *RegionCode      社区码
+   *time        时间
+   **返回参数**
+      **status  成功或失败
+      **data    数据
+       *** DevOnline  在线数据
+        ****GW 网关在线信息
+         *****OnLine 在线数量
+         *****Total 总数
+        ****MT 电表在线信息（抄表成功率）
+         *****OnLine 在线数量
+         *****Total 总数
+       *** EData  电能数据
+        ****EYear 年电能（10年）
+         *****FreezeDate 时标
+         *****TotalPow 总量
+        ****EMonth 月电能（12月）
+         *****FreezeDate 时标
+         *****TotalPow 总量
+        ****EDay 日电能（30天）
+         *****FreezeDate 时标
+         *****TotalPow 总量
+       *** MData  充值数据
+        ****MWeek 本周充值
+         *****TransactionMethod 充值方式
+         *****TotalTransactionAmount 充值金额
+        ****MMonth 本月充值
+         *****TransactionMethod 充值方式
+         *****TotalTransactionAmount 充值金额
+        ****MDay 当天充值
+         *****TransactionMethod 充值方式
+         *****TotalTransactionAmount 充值金额
+   */
+   QueryHomePageData:'/QueryHomePageData',
 
 }
 

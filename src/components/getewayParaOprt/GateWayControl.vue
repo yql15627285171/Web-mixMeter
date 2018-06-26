@@ -78,17 +78,17 @@
 						<span>参数及数据区初始化</span>
 					</div>
 					
-					<div @click="resetGW('F3')">
+					<!-- <div @click="resetGW('F3')">
 						<i class="el-icon-edit-outline"></i>
 						<span>恢复至出厂</span>
-					</div>
+					</div> -->
 					
 				</div>
 				<div class="ope">
 					<span>档案操作：</span>
-					<div>
+					<div @click="ReSetMeterFilesByData">
 						<i class="el-icon-edit-outline"></i>
-						<span>清除</span>
+						<span>重新下发</span>
 					</div>
 						
 				</div>
@@ -376,6 +376,49 @@ export default{
 	          }
 	        })
       	},
+
+      	/**
+      	*重新下发
+      	*/
+      	ReSetMeterFilesByData(){
+      		this.loading = true
+
+      		var params = {
+      			UserId: window.sessionStorage.getItem('id'),
+      			RegionCode:window.sessionStorage.getItem('RegionCode'),
+      			LogicAddr:this.gateInfo.LogicAddr, 
+      			time:this.dataUtil.formatTime1(new Date()) 
+      		}
+
+      		var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+            console.log(this.$encrypt(JSON.stringify(params)))
+
+            this.http.post(this.api.baseUrl+this.api.ReSetMeterFilesByData,encryptParams)
+            .then(result=>{
+            	this.loading = false
+
+            	console.log(result)
+	          if (result.status=="成功") {
+	          	
+	          	this.$message({
+            			type: 'success',
+           			 	message: result.data
+         			 });
+
+	          }else{
+	          	this.$message({
+          			showClose: true,
+          			message: result.data,
+          			type: 'error'
+        		});
+	          }
+
+
+            })
+      	}
 
 		
 	},

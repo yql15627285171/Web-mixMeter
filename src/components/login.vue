@@ -132,7 +132,7 @@ export default{
  						this.$router.push('main')
  					}else{
  						window.sessionStorage.setItem('isSuper',"0")
- 						this.$router.push("main/firstRegion")
+ 						this.$router.push("main")
  					}
  					
 
@@ -172,13 +172,32 @@ export default{
 		*测试接口
 		*/
 		test(){
-			axios.get('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx79b555e9247591b2&secret=f769b386bf040225eafe3a0c17c72410')
-			 .then(function (response) {
-			    console.log(response);
-			 })
-			 .catch(function (error) {
-			    console.log(error);
-			 });
+			var params = {
+				mobile:'18025391303',
+				time:this.dataUtil.formatTime1(new Date()) 
+				
+			}
+			console.log(params)
+
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+              console.log(this.$encrypt(JSON.stringify(params)))
+
+			this.http.post(this.api.baseUrl+this.api.VerificationCode,encryptParams)
+			.then(result=>{
+				console.log(result)
+			})
+
+		
+			// axios.get('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx79b555e9247591b2&secret=f769b386bf040225eafe3a0c17c72410')
+			//  .then(function (response) {
+			//     console.log(response);
+			//  })
+			//  .catch(function (error) {
+			//     console.log(error);
+			//  });
 
 
 

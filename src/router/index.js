@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import Main from '@/components/main'
 import Login from '@/components/login'
 import Register from '@/components/register'
+import FirstPage from '@/components/FirstPage'
+
 // import RemoteControl from '@/components/control/remoteControl'
 // 权限管理
 // import UserInfo from '@/components/authority/userInfo'
@@ -63,14 +65,23 @@ const router = new Router({
       component: Register 
     },
     {
-      path:'/main/',
+      path:'/main',
       name:'main',
+      redirect:'/main/FirstPage',
       meta:{
         requireAuth:true
       },
-      redirect:'/main/userGroup',
       component:Main,
       children:[ 
+       {
+        // 首页
+        path:'FirstPage',
+        name:'FirstPage',
+        meta:{
+        requireAuth:true
+        },
+        component:FirstPage
+      }, 
       {
         // 用户组信息
         path:'userGroup',
@@ -90,15 +101,6 @@ const router = new Router({
         component:SuperAdminInfo
       },
       {
-        // 区域管理
-        path:'firstRegion',
-        name:'firstRegion',
-        meta:{
-        requireAuth:true
-        },
-        component:firstRegion
-      },
-      {
         // 网关资产管理
         path:'gateway',
         name:'gateway',
@@ -106,6 +108,15 @@ const router = new Router({
         requireAuth:true
         },
         component:gateway
+      },
+      {
+        // 区域管理
+        path:'firstRegion',
+        name:'firstRegion',
+        meta:{
+        requireAuth:true
+        },
+        component:firstRegion
       },
       {
         // 计量表档案管理

@@ -468,7 +468,9 @@ export default{
                 })
 
                 // 记录最后一次操作的数据
-                this.LastRecord = result.LastRecord[0]
+                if (result.LastRecord != '') {
+                    this.LastRecord = result.LastRecord[0]
+                }
 
                 console.log(JSON.stringify(result) )
                 console.log('完成验证卡');
@@ -533,7 +535,7 @@ export default{
                         this.$alert('请将此卡回收','失效卡')
                         deliver(8)
                     }else if (result.CardType == '不处理') {
-                        this.$alert('此卡是补卡后的未执行卡','不处理')
+                        this.$alert('此卡是补卡后的未执行卡,请执行刷卡','不处理')
                         deliver(9)
                     }else{
                         // 未识别卡的种类

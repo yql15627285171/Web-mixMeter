@@ -144,7 +144,7 @@ export default{
 			{
 				label:'房间信息',
 				id:'FifthHouseRegionName',
-				width:90
+				width:150
 			},
 			{
 				label:'交易类型',

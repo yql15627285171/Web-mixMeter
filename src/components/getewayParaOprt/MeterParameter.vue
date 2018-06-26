@@ -359,11 +359,11 @@ export default{
 	},
 	activated(){
 
-		setTimeout(()=>{
-			var obj = this.$store.state.treeData.Commmunity
-			this.HouseName = obj[0].children[0].children[0].label
-			this.HouseRegionCode = obj[0].children[0].children[0].code
-		},1000)
+		// setTimeout(()=>{
+		// 	var obj = this.$store.state.treeData.Commmunity
+		// 	this.HouseName = obj[0].children[0].children[0].label
+		// 	this.HouseRegionCode = obj[0].children[0].children[0].code
+		// },1000)
 
 		
 	}

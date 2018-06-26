@@ -2,9 +2,6 @@
 <template>
 	<div v-loading="allLoading" element-loading-text="拼命加载中">
 		<div class="condition">
-			
-
-
 			<div class="right">
 				<input id="upload" type="file" @change="importExcel($event)"  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" style="display:none" />
 				<el-button type="primary" @click="singleImportDialogVisible = true">单个添加</el-button>

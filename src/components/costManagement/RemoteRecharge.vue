@@ -343,10 +343,10 @@ export default{
                     message: '请选择好信息'
                  });
                   return
-              }else if (isNaN(this.Amount) || this.Amount <= 0 || this.Amount.toString().indexOf('.') != -1) {
+              }else if (isNaN(this.Amount) || this.Amount < 0 || this.Amount.toString().indexOf('.') != -1) {
                   this.$message({
                     type: 'warning',
-                    message: '金额必须为大于0的整数'
+                    message: '金额必须不能为负数'
                  });
                   return
               }else if (this.Amount > 16000) {
@@ -438,10 +438,10 @@ export default{
                     message: '请选择好信息'
                  });
                   return
-              }else if (isNaN(this.Amount) || this.Amount <= 0 || this.Amount.toString().indexOf('.') != -1) {
+              }else if (isNaN(this.Amount) || this.Amount < 0 || this.Amount.toString().indexOf('.') != -1) {
                   this.$message({
                     type: 'warning',
-                    message: '金额必须为大于0的整数'
+                    message: '金额必须不能为负数'
                  });
                   return
               }else if (this.Amount > 16000) {

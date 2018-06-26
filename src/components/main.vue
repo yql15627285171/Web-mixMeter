@@ -49,42 +49,51 @@
 
       <el-main class='contentMain'>
         <el-header class="headerMenus">
-
-         <el-col :offset="1" :span="23">
-              <el-menu
-              menu-trigger='hover'
-              :default-active="defaultActive" 
-              mode="horizontal"
-              v-if="menus.length>0"
-              background-color="#909399"
-              text-color="#fff"
-              active-text-color="#ffd04b"  
-              @select="handleSelect">
-             
-                <el-submenu v-for="(subitem,subIndex) in menus" :index="subitem.index">
-                  <template slot="title">{{subitem.name}}</template>
-                  <router-link 
-                    v-for='child in subitem.child' 
-                    :to="{name:child.index}"
-                    @click.native="recordIndex(child.index,subIndex)">
-                    <el-menu-item :index="child.index">
-                      {{child.name}}
-                    </el-menu-item>
-                  </router-link>
-                  
-                </el-submenu>
-              </el-menu>  
-         </el-col>
+          
+          <el-row>
+            <!-- <el-col :offset="1" :span="2">
+              <div style="font-size:14px; cursor: pointer;" @click="fistPageClick">首页</div>
+            </el-col> -->
+            <el-col :offset="1":span="23">
+              
+                <el-menu
+                  menu-trigger='hover'
+                  :default-active="defaultActive" 
+                  mode="horizontal"
+                  v-if="menus.length>0"
+                  background-color="#909399"
+                  text-color="#fff"
+                  active-text-color="#ffd04b"  
+                  @select="handleSelect">
+                 
+                    <el-submenu v-for="(subitem,subIndex) in menus" :index="subitem.index" >
+                      <template slot="title">
+                        <div @click='fistPageClick(subitem.index)'>{{subitem.name}}</div>
+                      </template>
+                      <router-link 
+                        v-for='child in subitem.child'
+                        :to="{name:child.index}"
+                        @click.native="recordIndex(child.index,subIndex)">
+                        <el-menu-item :index="child.index">
+                          {{child.name}}
+                        </el-menu-item>
+                      </router-link>
+                      
+                    </el-submenu>
+                </el-menu>  
+            </el-col>
+          </el-row>
+          
           
         </el-header>
 
-            <!-- body内容 -->
-      <el-container >
+        
+        <el-container >
 
-          <!-- 社区房间选择 -->
+      
           <el-aside width='200px'>
-            <div>
-              <i class="el-icon-location" style="margin-left: -30px;color:#409EFF"></i>
+            <div style='text-align:left'>
+              <i class="el-icon-location" style="margin-left: 10px;color:#409EFF"></i>
               <el-breadcrumb separator-class="el-icon-arrow-right" style="margin-top:20px;font-size: 12px; display: inline-block;text-align:left">
 
                 <el-breadcrumb-item>{{fatherName}}</el-breadcrumb-item>
@@ -103,7 +112,7 @@
               placeholder="输入关键字进行搜索"
               v-model="filterText">
             </el-input>
-            <!-- 房间号选择 -->
+        
             <el-tree  :data="showTreeData" 
                       :props="defaultProps" 
                       @node-click="handleNodeClick"
@@ -119,10 +128,13 @@
               <router-view ></router-view>
             </keep-alive>
           </el-main>
+          
+
+
         </el-container>
       </el-main>
 
-      
+
 
 
 
@@ -139,13 +151,6 @@
     </el-container>
     </div>
     
-
-  <!--   <div class="footer">
-          <span>CopyRight © 2018 深圳市航天泰瑞捷电子有限公司 版权所有</span>
-          <a href="http://www.miitbeian.gov.cn/" style="color:#fff">|粤ICP备17141636号-1</a>
-          <a href="http://www.miitbeian.gov.cn/" >
-          <img src="@/assets/ba.png" class="gongan"></a>
-    </div> -->
 
     <!-- 修改个人信息弹出框 -->
     <el-dialog title="个人信息" :visible.sync="informationDialogVisible">
@@ -299,28 +304,46 @@ export default {
     }
   },
   methods:{
+ 
       // 菜单栏事件
-      show(){console.log('lll')},
 
-       handleSelect(key, keyPath) {
-        console.log(keyPath);
-        var selectFatherItem = this.menus.filter(element=> {
-          return (element.index == keyPath[0]);
-        });
-        this.fatherName = selectFatherItem[0].name
+      handleSelect(key, keyPath) {
+          console.log(keyPath);
+          var selectFatherItem = this.menus.filter(element=> {
+            return (element.index == keyPath[0]);
+          });
+          this.fatherName = selectFatherItem[0].name
 
-        var selectChildItem = selectFatherItem[0].child.filter(element=> {
-          return (element.index == keyPath[1]);
-        });
+          var selectChildItem = selectFatherItem[0].child.filter(element=> {
+            return (element.index == keyPath[1]);
+          });
 
-        this.childName = selectChildItem[0].name
-      
-      window.sessionStorage.setItem('fatherName',this.fatherName)
-      window.sessionStorage.setItem('childName',this.childName)
+          this.childName = selectChildItem[0].name
+        
+          window.sessionStorage.setItem('fatherName',this.fatherName)
+          window.sessionStorage.setItem('childName',this.childName)
+          this.defaultActive = keyPath[1]
+      },
 
+      // 点击首页按钮
+      fistPageClick(index){
+
+
+
+        if (index == 'FirstPage') {
+          this.$router.push({name:'FirstPage'})
+          window.sessionStorage.setItem('fatherName','首页')
+          this.fatherName = '首页'
+          window.sessionStorage.setItem('childName','首页')
+          this.childName = ''
+          window.sessionStorage.setItem('menuName','FirstPage')
+          this.defaultActive = null
+
+        }
+        
 
       },
- 
+
       // 树的事件
       handleNodeClick(data) {
         console.log(data)
@@ -401,6 +424,8 @@ export default {
       *获取菜单信息
       */
       getMenus(){
+
+
         console.log('请求menus')
         this.loading = true
         var params = { 
@@ -417,15 +442,28 @@ export default {
             // statement
             this.menus = result.menus
 
-            this.defaultActive = window.sessionStorage.getItem('menuName') ? window.sessionStorage.getItem('menuName') : this.menus[0].child[0].index
+            if (window.sessionStorage.getItem('menuName')!= null && window.sessionStorage.getItem('menuName') != 'FirstPage') {
+              this.defaultActive =   window.sessionStorage.getItem('menuName')
+            }else{
+             
+              // this.defaultActive = this.menus[0].child[0].index
+              this.defaultActive = null
+            }
+            
 
             // 取路径
             if (window.sessionStorage.getItem('fatherName') != null) {
               this.fatherName = window.sessionStorage.getItem('fatherName')
-              this.childName = window.sessionStorage.getItem('childName')
+              if (this.fatherName != '首页') {
+                this.childName = window.sessionStorage.getItem('childName')
+              }
+              
             }else{
               this.fatherName = this.menus[0].name
-              this.childName = this.menus[0].child[0].name
+
+              this.$router.push({name:'FirstPage'})
+
+              // this.childName = this.menus[0].child[0].name
             }
           }
          
@@ -787,6 +825,7 @@ export default {
   text-align: left;
   font-size: 20px;
 
+  text-shadow: 2px 2px 10px red;
 }
 
 .system-setting{
@@ -857,6 +896,7 @@ export default {
 .account{
   display: flex;
   align-items: center;
+
 }
 
 </style>

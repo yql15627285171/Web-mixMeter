@@ -32,6 +32,7 @@
 			<el-table
 		    :data="showTableData"
 		    :header-cell-class-name="tableheaderClassName"
+		    :cell-class-name="tableCellName"
 		    stripe
 		    style="width: 100%">
 
@@ -125,6 +126,13 @@ export default{
 		 tableheaderClassName({ row, rowIndex }) {
           return "table-head-th";
         },
+
+        tableCellName({row, column, rowIndex, columnIndex}){
+			if (columnIndex == 3) {
+				return 'content-left'				
+			}
+	
+		},
 
         /**
 		*分页控制器的方法

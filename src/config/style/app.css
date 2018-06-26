@@ -14,6 +14,10 @@
 
 }
 
+.content-left{
+  text-align: left;
+
+}
 
 .el-table--enable-row-transition .el-table__body td {
   padding:6px 0;
@@ -122,4 +126,12 @@
 }
 
 
+.el-menu--horizontal .el-submenu .el-submenu__title{
+  padding: 0;
+  width: 96px;
+}
+
+.el-menu--horizontal .el-submenu>.el-menu{
+  padding: 0 !important;
+}
 
