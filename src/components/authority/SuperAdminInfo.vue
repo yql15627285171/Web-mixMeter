@@ -359,26 +359,32 @@ export default{
       			var params = { 
       				UserId:this.addForm.userId,
       				UserPwd:this.$encryptPsd(this.addForm.psd),
-	          		evalue:this.$encrypt()
-	        	}
-	        	this.http.post(this.api.baseUrl+this.api.AddNewCommmunity,params)
-		        .then(result=>{
-		        	console.log('添加管理员')
-		          this.loading = false
+	          		time:this.dataUtil.formatTime1(new Date()) 
+				}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
 
-		           console.log(result)
-		          if (result.status=="成功") {
-		          	
-		          	this.$message({
-            			type: 'success',
-           			 	message: '操作成功!'
-         			 });
-		            
-		            this.getAllAdminInfo()
-		          }else{
-		          	alert(result.data)
-		          }
-		        })
+            console.log(this.$encrypt(JSON.stringify(params)))
+	        this.http.post(this.api.baseUrl+this.api.AddNewCommmunity,encryptParams)
+		    .then(result=>{
+		        console.log('添加管理员')
+		         this.loading = false
+
+	           console.log(result)
+	           if (result.status=="成功") {
+	          	
+	          	this.$message({
+        			type: 'success',
+       			 	message: '操作成功!'
+     			 });
+	            
+	            this.getAllAdminInfo()
+	          }else{
+	          	alert(result.data)
+	          }
+	        })
       			
       		}
       		
@@ -427,12 +433,17 @@ export default{
 	      		GroupId:this.changeForm.GroupId,
 	      		RegionLevel:this.changeForm.RegionLevel,
 	      		ValidFlg:this.changeForm.Effective ? '1':'0',
-	        	evalue:this.$encrypt()
-	        }
+	        	time:this.dataUtil.formatTime1(new Date()) 
+				}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
 
-	        console.log(params)
+            console.log(this.$encrypt(JSON.stringify(params)))
 
-	        this.http.post(this.api.baseUrl+this.api.UpdateCommmunity,params)
+
+	        this.http.post(this.api.baseUrl+this.api.UpdateCommmunity,encryptParams)
 	        .then(result=>{
 	          this.loading = false
 	        
@@ -460,9 +471,17 @@ export default{
       		console.log('请求管理员信息')
       		this.loading = true
 	      	var params = { 
-	          evalue:this.$encrypt()
+	          time:this.dataUtil.formatTime1(new Date()) 
 	        }
-	        this.http.post(this.api.baseUrl+this.api.QureyAllAdminInfo,params)
+	      
+	        var encryptParams = {
+	          evalue:this.$encrypt(JSON.stringify(params))
+	        }
+
+	        console.log(this.$encrypt(JSON.stringify(params)))
+
+	        
+	        this.http.post(this.api.baseUrl+this.api.QureyAllAdminInfo,encryptParams)
 	        .then(result=>{
 	          this.loading = false
 	    

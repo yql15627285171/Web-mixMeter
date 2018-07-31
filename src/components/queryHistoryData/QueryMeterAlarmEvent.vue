@@ -26,6 +26,7 @@
 
 
 	  		<el-button type="primary" style="margin-left:20px;" @click='QureyERStatus'>查询</el-button>
+	  		<el-button type="primary" style="margin-left:20px;" @click='QueryERStatusLast'>查询最近一次</el-button>
 		</div>
 		
 		
@@ -142,7 +143,7 @@ export default{
       	},
 
       	// 查询警告事件
-		 QureyERStatus(){
+		QureyERStatus(){
 
 			if (this.startDate > this.endDate) {
 				this.$message({
@@ -170,6 +171,55 @@ export default{
           console.log(this.$encrypt(JSON.stringify(params)))
 
           this.http.post(this.api.baseUrl+this.api.QureyERStatus,encryptParams)
+          .then(result=>{
+            this.loading = false
+            console.log(result)
+            if (result.status == '成功') {
+            	
+                this.$message({
+                  type: 'success',
+                  message: '查询成功!'
+               });
+                this.tableData = result.data
+                this.partOfTableData = this.tableData
+                this.showTableData = this.partOfTableData.slice(0, 10)
+                console.log(this.showTableData[0])
+
+            }else{
+
+              this.$message({
+                  type: 'error',
+                  message: result.data
+               });
+
+            }
+            
+            
+                    
+          })
+		},
+
+
+		// 查询最近一次
+		QueryERStatusLast(){
+
+			
+		this.loading = true
+
+          var params = {           
+       		FourthRegionCode:window.sessionStorage.getItem('RegionCode'),
+       		time:this.dataUtil.formatTime1(new Date())      
+          }
+
+          console.log(params);
+          
+          var encryptParams = {
+            evalue:this.$encrypt(JSON.stringify(params))
+          }
+
+          console.log(this.$encrypt(JSON.stringify(params)))
+
+          this.http.post(this.api.baseUrl+this.api.QueryERStatusLast,encryptParams)
           .then(result=>{
             this.loading = false
             console.log(result)

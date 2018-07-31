@@ -129,11 +129,18 @@ export default{
 			this.loading = true
 			var params = { 
   				RegionCode:window.sessionStorage.getItem('RegionCode'), 				
-          		evalue:this.$encrypt()
-        	}
-        	console.log(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode)
-        	console.log(params);
-        	this.http.post(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode,params)
+          		time:this.dataUtil.formatTime1(new Date()) 
+				
+			}
+		
+
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+            console.log(this.$encrypt(JSON.stringify(params)))
+        	
+        	this.http.post(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode,encryptParams)
 	        .then(result=>{
 
 	          this.loading = false
@@ -175,22 +182,27 @@ export default{
       	*/
       	resetGW(type){
       		// console.log(type)
-      		 this.$confirm('此操作有风险, 是否继续?', '提示', {
+      		this.$confirm('此操作有风险, 是否继续?', '提示', {
 	          	confirmButtonText: '确定',
 	          	cancelButtonText: '取消',
 	          	type: 'warning'
-	         }).then(() => {
+	        }).then(() => {
 	          	this.loading = true
 				var params = {
 					UserId: window.sessionStorage.getItem('id'),
 	  		 		LogicAddr:this.gateInfo.LogicAddr, 	
-	  				// LogicAddr:'01010876',
 	  				resetType:type,			
-	          		evalue:this.$encrypt()
-	        	}
-	        	console.log(this.api.baseUrl+this.api.ResetGW)
-	        	console.log(params);
-	        	this.http.post(this.api.baseUrl+this.api.ResetGW,params)
+	          		time:this.dataUtil.formatTime1(new Date()) 
+				
+				}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+            console.log(this.$encrypt(JSON.stringify(params)))
+
+	        this.http.post(this.api.baseUrl+this.api.ResetGW,encryptParams)
 		        .then(result=>{
 		          this.loading = false
 		 
@@ -233,11 +245,17 @@ export default{
 				UserId: window.sessionStorage.getItem('id'),
   		 		LogicAddr:this.gateInfo.LogicAddr, 	
   				// LogicAddr:'01010876',			
-          		evalue:this.$encrypt()
-        	}
-        	console.log(this.api.baseUrl+this.api.GetGWTime)
-        	console.log(params);
-        	this.http.post(this.api.baseUrl+this.api.GetGWTime,params)
+          		time:this.dataUtil.formatTime1(new Date()) 
+				
+			}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+            console.log(this.$encrypt(JSON.stringify(params)))
+        
+        	this.http.post(this.api.baseUrl+this.api.GetGWTime,encryptParams)
 	        .then(result=>{
 	          this.loading = false
 	         
@@ -274,10 +292,18 @@ export default{
 				UserId: window.sessionStorage.getItem('id'),
   				LogicAddr:this.gateInfo.LogicAddr, 	
   				// LogicAddr:'01010876',			
-          		evalue:this.$encrypt()
-        	}
-        	console.log(this.api.baseUrl+this.api.SetGWTime)
-        	this.http.post(this.api.baseUrl+this.api.SetGWTime,params)
+          		time:this.dataUtil.formatTime1(new Date()) 
+				
+			}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+            console.log(this.$encrypt(JSON.stringify(params)))
+
+
+        	this.http.post(this.api.baseUrl+this.api.SetGWTime,encryptParams)
 	        .then(result=>{
 	          this.loading = false
 	      
@@ -311,12 +337,18 @@ export default{
 			var params = {
 				UserId: window.sessionStorage.getItem('id'),
   				LogicAddr:this.gateInfo.LogicAddr, 	
-  				// LogicAddr:'01010876',			
-          		evalue:this.$encrypt()
-        	}
+  				time:this.dataUtil.formatTime1(new Date()) 
+				
+			}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+            console.log(this.$encrypt(JSON.stringify(params)))
         	
         
-        	this.http.post(this.api.baseUrl+this.api.GetGWHeartTime,params)
+        	this.http.post(this.api.baseUrl+this.api.GetGWHeartTime,encryptParams)
 	        .then(result=>{
 	          this.loading = false
 	         
@@ -348,12 +380,18 @@ export default{
 			var params = {
 				UserId: window.sessionStorage.getItem('id'),
   				LogicAddr:this.gateInfo.LogicAddr, 	
-  				// LogicAddr:'01010876',
-  				time:this.heartTime,			
-          		evalue:this.$encrypt()
-        	}
+  				hTime:this.heartTime,//心跳时间			
+          		time:this.dataUtil.formatTime1(new Date()) 
+				
+			}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+            console.log(this.$encrypt(JSON.stringify(params)))
         	
-        	this.http.post(this.api.baseUrl+this.api.SetGWHeartTime,params)
+        	this.http.post(this.api.baseUrl+this.api.SetGWHeartTime,encryptParams)
 	        .then(result=>{
 	          this.loading = false
 	          // var result= JSON.parse(res.data.replace(/<[^>]+>/g, ""))

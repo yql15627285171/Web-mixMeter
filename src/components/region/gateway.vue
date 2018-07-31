@@ -307,11 +307,20 @@ export default{
 			this.allLoading = true
 			var params = { 
   				RegionCode:window.sessionStorage.getItem('RegionCode'), 				
-          		evalue:this.$encrypt()
-        	}
+          		time:this.dataUtil.formatTime1(new Date()) 
+				
+			}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+            console.log(this.$encrypt(JSON.stringify(params)))
+
+
         	console.log(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode)
-        	console.log(params);
-        	this.http.post(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode,params)
+     
+        	this.http.post(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode,encryptParams)
 	        .then(result=>{
 	          this.allLoading = false
 	        
@@ -338,11 +347,20 @@ export default{
 				UserId: window.sessionStorage.getItem('id'),
   				RegionCode:window.sessionStorage.getItem('RegionCode'),
   				jsonValue:JSON.stringify(jsonVal),
-          		evalue:this.$encrypt()
-        	}
+          		time:this.dataUtil.formatTime1(new Date()) 
+				
+			}
+			console.log(params)
+
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+            console.log(this.$encrypt(JSON.stringify(params)))
 
         	console.log(this.api.baseUrl+this.api.InputGWInfo)
-        	this.http.post(this.api.baseUrl+this.api.InputGWInfo,params)
+
+        	this.http.post(this.api.baseUrl+this.api.InputGWInfo,encryptParams)
 	        .then(result=>{
 	          this.allLoading = false
 	        
@@ -455,11 +473,17 @@ export default{
 				var params = {
 					UserId: window.sessionStorage.getItem('id'),
 	  				LogicAddr:row.LogicAddr,
-	          		evalue:this.$encrypt()
-	        	}
+	          		time:this.dataUtil.formatTime1(new Date()) 
+				
+			}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
 
-	        	console.log(this.api.baseUrl+this.api.DeleteGWInfo)
-	        	this.http.post(this.api.baseUrl+this.api.DeleteGWInfo,params)
+            console.log(this.$encrypt(JSON.stringify(params)))
+
+	        this.http.post(this.api.baseUrl+this.api.DeleteGWInfo,encryptParams)
 		        .then(result=>{
 		          this.allLoading = false
 		      

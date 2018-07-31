@@ -575,7 +575,6 @@ export default{
                 time:this.dataUtil.formatTime1(new Date()) 
             }
 
-              console.log(JSON.stringify(params));
           
               var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
@@ -656,13 +655,17 @@ export default{
   				UserId:window.sessionStorage.getItem('id'),
   				RegionCode:window.sessionStorage.getItem('RegionCode'),
   				jsonValue:JSON.stringify(jsonVal),
-          		evalue:this.$encrypt()
-        	}
+          		time:this.dataUtil.formatTime1(new Date()) 
+			}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
 
-        	console.log(params)
-        	console.log(JSON.stringify(jsonVal))
-        	console.log(this.api.baseUrl+this.api.InputMeterInfo)
-        	this.http.post(this.api.baseUrl+this.api.InputMeterInfo,params)
+            console.log(this.$encrypt(JSON.stringify(params)))
+        
+        	
+        	this.http.post(this.api.baseUrl+this.api.InputMeterInfo,encryptParams)
 	        .then(result=>{
 	          this.allLoading = false
 	          
@@ -701,12 +704,16 @@ export default{
   			var params = { 
   				// RegionCode:'ALL',
   				RegionCode:window.sessionStorage.getItem('RegionCode'),
-          		evalue:this.$encrypt()
-        	}
+          		time:this.dataUtil.formatTime1(new Date()) 
+			}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
 
-        	console.log(params)
+            console.log(this.$encrypt(JSON.stringify(params)))
         	
-        	this.http.post(this.api.baseUrl+this.api.QureyAllMeterInfoByRegionCode,params)
+        	this.http.post(this.api.baseUrl+this.api.QureyAllMeterInfoByRegionCode,encryptParams)
 	        .then(result=>{
 	          this.allLoading = false
 	       
@@ -739,12 +746,16 @@ export default{
 	  				UserId:window.sessionStorage.getItem("id"),
 	  				LogicAddr:row.LogicAddr,
 	  				MeasureId:row.MeasureId,
-	          		evalue:this.$encrypt()
-	        	}
+	          		time:this.dataUtil.formatTime1(new Date()) 
+			}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
 
-	        	console.log(this.api.baseUrl+this.api.DeleteMeterInfo)
-	        	
-	        	this.http.post(this.api.baseUrl+this.api.DeleteMeterInfo,params)
+            console.log(this.$encrypt(JSON.stringify(params)))	 
+
+	        this.http.post(this.api.baseUrl+this.api.DeleteMeterInfo,encryptParams)
 		        .then(result=>{
 		          this.allLoading = false
 		     
@@ -774,12 +785,17 @@ export default{
   			var params = {
   				UserId:window.sessionStorage.getItem("id"),
   				RegionCode:window.sessionStorage.getItem("RegionCode"),
-          		evalue:this.$encrypt()
-        	}
+          		time:this.dataUtil.formatTime1(new Date()) 
+            }
 
-        	console.log(this.api.baseUrl+this.api.SetMeterFilesByDataBaseToGW)
+          
+              var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+              console.log(this.$encrypt(JSON.stringify(params)))
         	
-        	this.http.post(this.api.baseUrl+this.api.SetMeterFilesByDataBaseToGW,params)
+        	this.http.post(this.api.baseUrl+this.api.SetMeterFilesByDataBaseToGW,encryptParams)
 	        .then(result=>{
 	       
 

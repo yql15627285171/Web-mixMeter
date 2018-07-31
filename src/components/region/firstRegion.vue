@@ -248,12 +248,16 @@ export default{
   				UserId:window.sessionStorage.getItem('id'),
   				RegionCode:window.sessionStorage.getItem('RegionCode'),
   				jsonValue:JSON.stringify(this.excelData),
-          		evalue:this.$encrypt()
+          		time:this.dataUtil.formatTime1(new Date()) 
         	}
+  
+	        var encryptParams = {
+	          evalue:this.$encrypt(JSON.stringify(params))
+	        }
 
-        	// console.log(params)
+	        console.log(this.$encrypt(JSON.stringify(params)))
         	
-        	this.http.post(this.api.baseUrl+this.api.AddHouseInfo,params)
+        	this.http.post(this.api.baseUrl+this.api.AddHouseInfo,encryptParams)
 	        .then(result=>{
 	          this.allLoading = false
 	      
@@ -437,12 +441,16 @@ export default{
 			var params = { 
 				// RegionCode:"ALL",
   				RegionCode:window.sessionStorage.getItem('RegionCode'), 				
-          		evalue:this.$encrypt()
+          		time:this.dataUtil.formatTime1(new Date()) 
         	}
-        	console.log(this.api.baseUrl+this.api.QureyAllHouseInfoForForm)
-        	console.log(params);
+  
+	        var encryptParams = {
+	          evalue:this.$encrypt(JSON.stringify(params))
+	        }
 
-        	this.http.post(this.api.baseUrl+this.api.QureyAllHouseInfoForForm,params)
+	        console.log(this.$encrypt(JSON.stringify(params)))
+
+        	this.http.post(this.api.baseUrl+this.api.QureyAllHouseInfoForForm,encryptParams)
 	        .then(result=>{
 	          this.allLoading = false
 	        
@@ -488,10 +496,16 @@ export default{
 		        	var params = {
 		        		UserId:window.sessionStorage.getItem('id'),
 		        		HouseRegionCode:row.HouseRegionCode,
-		        		evalue:this.$encrypt()
+		        		time:this.dataUtil.formatTime1(new Date()) 
 		        	}
+		  
+			        var encryptParams = {
+			          evalue:this.$encrypt(JSON.stringify(params))
+			        }
 
-		        	this.http.post(this.api.baseUrl+this.api.DeleteHouseInfo,params)
+			        console.log(this.$encrypt(JSON.stringify(params)))
+
+		        	this.http.post(this.api.baseUrl+this.api.DeleteHouseInfo,encryptParams)
 			        .then(result=>{
 			          this.allLoading = false
 			         

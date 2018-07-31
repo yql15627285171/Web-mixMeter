@@ -301,6 +301,8 @@ export default {
       newtime:'',//第二次点击时间
       oldCode:'',//第一次点击的几点code
       newCode:'',//第二次点击的code
+
+      requestMenusAgain:true,//由于同时请求的错误再一次请求menus
     }
   },
   methods:{
@@ -347,55 +349,13 @@ export default {
       // 树的事件
       handleNodeClick(data) {
         console.log(data)
-        this.$store.dispatch('setClickTreeData',data)
-
-        // 双击弹框事件
-        // this.treeclickNum ++ 
-        // if(this.treeclickNum == 1){
-
-        //   this.oldtime = new Date()
-        //   this.oldCode = data.code
-        //   console.log(this.oldCode)
-
-        // }else if (this.treeclickNum == 2) {
-
-    
-        //   this.newtime = new Date()
-        //   this.newCode = data.code
-        //   console.log(this.newCode)
-        //   // 点击的是同一个节点
-        //   if (this.oldCode == this.newCode) {
-
-        //     console.log(this.newtime - this.oldtime)
-        //     if (this.newtime - this.oldtime < 500) {
-        //       // 进行修改
-        //       this.treeclickNum = 0
-        //       alert(1)
-
-        //     }else{
-        //       this.treeclickNum = 1
-        //       this.oldtime = new Date()
-        //       this.oldCode = data.code
-        //     }
-
-        //   }else{
-        //     console.log('不同节点')
-        //     this.treeclickNum = 1
-        //     this.oldtime = new Date()
-        //     this.oldCode = data.code
-        //   }
-
-          
-        // }
-
-
-        
+        this.$store.dispatch('setClickTreeData',data) 
         
       },
       // 树的搜索框
       filterNode(value, data) {
-        if (!value) return true;
-        return data.label.indexOf(value) !== -1;
+        if (!value) return true; //value为空时
+        return data.label.indexOf(value) !== -1
       },
 
       // 级联选择器事件
@@ -425,15 +385,24 @@ export default {
       */
       getMenus(){
 
+        console.log(this.dataUtil.formatTime1(new Date()) )
 
         console.log('请求menus')
         this.loading = true
         var params = { 
           UserID:window.sessionStorage.getItem('id'),
-          evalue:this.$encrypt()
+          time:this.dataUtil.formatTime1(new Date()) 
         }
-        // console.log(params)
-        this.http.post(this.api.baseUrl+this.api.menus,params)
+      
+   
+        var encryptParams = {
+          evalue:this.$encrypt(JSON.stringify(params))
+        }
+
+        console.log(this.$encrypt(JSON.stringify(params)))
+
+
+        this.http.post(this.api.baseUrl+this.api.menus,encryptParams)
         .then(result=>{
           this.loading = false
           // var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
@@ -465,6 +434,18 @@ export default {
 
               // this.childName = this.menus[0].child[0].name
             }
+          }else{
+            
+            if (this.requestMenusAgain) {
+              console.log('再请求一次menus')
+              this.requestMenusAgain = false
+              // 延时500毫秒在此发送
+              setTimeout(()=>{
+               this.getMenus() 
+              },500)
+              
+            }
+            
           }
          
         })
@@ -501,7 +482,6 @@ export default {
           UserId:window.sessionStorage.getItem('id'),
           time:this.dataUtil.formatTime1(new Date())
         }
-        console.log(params)
 
         var encryptParams = {
             evalue:this.$encrypt(JSON.stringify(params))
@@ -738,8 +718,8 @@ export default {
   mounted(){
     
      if (window.sessionStorage.getItem('menuName') == 'meterFiles') {
-      this.showSelect = true
-    }
+        this.showSelect = true
+      }
 
 
 

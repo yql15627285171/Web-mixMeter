@@ -282,10 +282,9 @@ export default{
           this.http.post(this.api.baseUrl+this.api.QueryEMSTSStatus,encryptParams)
           .then(result=>{
           	this.loading = false
-          	console.log(result)
+          	console.log(JSON.stringify(result))
 
           	
-
           	if (result.status == '成功') {
 
               if (result.LastRecord != '') {

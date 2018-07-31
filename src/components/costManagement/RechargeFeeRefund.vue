@@ -357,6 +357,7 @@ export default{
         *8 坏卡
         *9 失效卡
         *10不处理
+        *11 清回写
         */
         async readCard(deliver,isFirstOperation=false){
 
@@ -537,7 +538,15 @@ export default{
                     }else if (result.CardType == '不处理') {
                         this.$alert('此卡是补卡后的未执行卡,请执行刷卡','不处理')
                         deliver(9)
-                    }else{
+                    }else if (result.CardType == '清回写') {
+                        this.$alert('上次刷卡操作无效','请重新刷卡！')
+                        this.clearDataBlock(8)
+                        this.clearDataBlock(9)
+                        this.clearDataBlock(16)
+                        this.clearDataBlock(17)
+                        deliver(11)
+                    }
+                    else{
                         // 未识别卡的种类
                         this.$alert('不可进行任何操作','未识别卡')
                         deliver(7)
@@ -1328,7 +1337,14 @@ export default{
                 this.ICCard.readerClose()
                 return
             }else{
+
                  this.loading = true
+
+                //  var result = await new Promise(resolve=>{
+                //     this.NewRFCardChkByHouseRegionCode()
+                // })
+              
+
                 var params = {
                     CardID:this.CardID,
                     HouseRegionCode:this.HouseCode,    
@@ -1425,6 +1441,42 @@ export default{
 
            
         },
+
+        /**
+        *判断能否进行补卡
+        *返回0则不可以 1则能
+        */
+        // async NewRFCardChkByHouseRegionCode(){
+        //     var params = {
+        //         UserId:window.sessionStorage.getItem('id'),
+        //         RegionCode:window.sessionStorage.getItem('RegionCode'),
+        //         HouseRegionCode:this.HouseCode, 
+        //         time:this.dataUtil.formatTime1(new Date()) 
+        //     }
+
+        //     console.log(JSON.stringify(params));
+          
+        //     var encryptParams = {
+        //         evalue:this.$encrypt(JSON.stringify(params))
+        //     }
+
+        //     console.log(this.$encrypt(JSON.stringify(params)))
+
+        //     this.http.post(this.api.baseUrl+this.api.NewRFCardChkByHouseRegionCode,encryptParams)
+        //     .then(result=>{
+        //         console.log(result)
+        //         if (result.status == '成功') {
+        //             return result.data
+        //         }else {
+        //             this.$message({
+        //               type: 'error',
+        //               message: result.data
+        //             });
+        //         }
+        //     })
+
+        // },
+
 
         // 根据6级名寻找五级名
         findFifthRegionNameByHouseName(){

@@ -5,13 +5,13 @@ export default {
 	*基本路径
 	*/
    // 申特
-	// baseUrl:'https://www.trjiot.com/webiot.asmx',
+	baseUrl:'https://www.trjiot.com/webiot.asmx',
 
    //  自己测试
    // baseUrl:'http://172.0.0.116/webiot.asmx',
 
    //1楼测试
-   baseUrl:'http://api.smart.trjiot.com/webiot.asmx',
+   // baseUrl:'http://api.smart.trjiot.com/webiot.asmx',
 
    
 	
@@ -547,6 +547,17 @@ export default {
    */
     ReWriteRFCodeByPAN:'/ReWriteRFCodeByPAN',
 
+    /**
+   *补卡条件判断（判断是否能进行补卡操作）
+   *UserId          操作者ID
+   *RegionCode      社区码
+   *HouseRegionCode 房间码
+   *time               当前时间
+   **返回参数**    
+   *data                失败信息或成功信息，成功信息中0:不能，1:能
+   */
+    NewRFCardChkByHouseRegionCode:'/NewRFCardChkByHouseRegionCode',
+
 
    /**
    *设置变比
@@ -669,7 +680,7 @@ export default {
 
    /**
    *查询告警事件
-   *UserId       用户ID
+   *FourthRegionCode       四级区域码
    *TimeStart              起始时间（到秒）默认请求前48小时
    *TimeEnd                截止时间（到秒）默认请求时刻
    *time        时间
@@ -684,6 +695,22 @@ export default {
       **UpdateTime   更新时间（下拉显示）  
    */
    QureyERStatus:'/QureyERStatus',
+
+   /**
+   *查询告警事件
+   *FourthRegionCode       四级区域码
+   *time        时间
+   **返回参数**
+      **FifthRegionCode  5级区域码
+      **HouseRegionCode  6级区域码 
+      **FifthRegionCodeName  房间名      
+      **MeterAddr    表计地址（下拉显示）  
+      **RunStatus    运行状态字（下拉显示）  
+      **ShowStatus   运行状态  
+      **ReadDataTime   抄读时间 
+      **UpdateTime   更新时间（下拉显示）  
+   */
+   QueryERStatusLast:'/QueryERStatusLast',
 
    /**
    *查询预付费表日抄读数据

@@ -45,16 +45,25 @@
 					</div>
 		  			
 		  		</div>
-		  		<div id="Pie" style="width:100%; height:230px; margin-top:10px" ></div>
+		  		<div id="Pie" style="width:100%; height:230px; margin-top:10px" >
+		  			没有相关内容
+		  		</div>
 		  	</div>
 		  </el-col>
 		   <el-col :xs='20' :sm='12' :md='12' :lg='8'>
 		  	<div class="area" style='min-width:300px'>
 		  		<div class="title">运行预警</div>
-		  		<el-tabs v-model="activeName" style='padding: 0px 0 0px 20px;font-size:12px;'>
+		  		<el-tabs v-model="activeName" style='padding: 0px 0 0px 20px;font-size:12px;' @tab-click="userSelect">
 				    <el-tab-pane label="跳闸用户" name="first"></el-tab-pane>
 				    <el-tab-pane label="报警用户" name="second"></el-tab-pane>
+				    <el-tab-pane label="保电用户" name="third"></el-tab-pane>
 				</el-tabs>
+				<div class="showUser" style='width:100%;overflow-y: auto;height:180px'>
+					<div class="userItem" v-for="(item,index) in warnUser">
+						<span>{{index + 1}}</span>
+						<span>{{item}}</span>
+					</div>
+				</div>
 		  	</div>
 		  </el-col>
 
@@ -142,6 +151,17 @@ export default{
 			active7:true,
 			active8:false,
 			active9:false,
+
+			bd:[],//保电用户
+
+			bj:[],//报警用户、
+
+			tz:[],//报警用户
+			warnUser:[],//显示的预警客户
+
+			// 多次请求的时候，发生数据错误的时候是否再请求一次
+			requestAgian:true
+
 
 		}
 	},
@@ -333,6 +353,23 @@ export default{
 
             		this.setBar('day')
 
+            		this.bd = data.warn.bd
+            		this.tz = data.warn.tz
+            		this.bj = data.warn.bj
+
+            		this.warnUser = this.tz
+
+            	}else{
+            		
+            		if (this.requestAgian) {
+            			console.log('再请求主页')
+            			this.requestAgian = false
+            			setTimeout(()=>{
+	            			this.QueryHomePageData()
+	            		},1000)
+            		}
+            		
+            		
             	}
             })
 		},
@@ -430,7 +467,21 @@ export default{
 		        	}]
 				})
 			}
-		}
+		},
+
+		/**
+		*运行预警的
+		*/
+		userSelect(tab, event){
+			if (tab.$options.propsData.name == 'first') {
+        		this.warnUser = this.tz
+        	}else if(tab.$options.propsData.name == 'second'){
+        		this.warnUser = this.bj
+
+        	}else if(tab.$options.propsData.name == 'third'){
+        		this.warnUser = this.bd
+        	}
+		},
 
 	},
 	mounted(){
@@ -444,7 +495,7 @@ export default{
 
 		setTimeout(()=>{
           this.QueryHomePageData()
-		},500)
+		},1000)
 	}
 }	
 </script>
@@ -494,6 +545,33 @@ export default{
 	color: rgba(54, 138, 233, 1.0);
 	border-color:rgba(76, 144, 232, 1.0);
 
+
+}
+
+.userItem{
+	border-bottom: 1px solid #ccc;
+}
+
+.userItem span{
+	display: inline-block;
+	height: 30px;
+	line-height: 30px;
+	font-size: 12px
+	
+}
+
+.userItem span:first-child{
+	margin-left: 30px;
+
+	width: 30px;
+
+	text-align: left;
+}
+
+.userItem span:last-child{
+	margin-left: 30px;
+
+	text-align: left;
 }
 
 </style>

@@ -58,7 +58,7 @@
 		    <el-table-column type="expand">
 		      <template slot-scope="props">
 		        <el-form label-position="left" inline class="demo-table-expand" >
-		          <el-form-item  v-for="(item,index) in tableHead" v-if="index > 7" :label="item.label" >
+		          <el-form-item  v-for="(item,index) in tableHead" v-if="index > 8" :label="item.label" >
 		            <span>{{ props.row[item.id] }}</span>
 		          </el-form-item>
 		     
@@ -67,7 +67,7 @@
 		    </el-table-column>		    
 		    <el-table-column
 		    v-for="(item,index) in tableHead"
-		    v-if="index <= 7" 
+		    v-if="index <= 8" 
 		      :label="item.label"
 		      :prop="item.id"
 		      >
@@ -114,6 +114,10 @@ export default{
 				id:'InstallAddr'
 			},
 			{
+				label:'倍率',
+				id:'CT'
+			},
+			{
 				label:'当前电量',
 				id:'CurrentPower',
 			},
@@ -144,6 +148,26 @@ export default{
 			{
 				label:'读取阀控状态时间',
 				id:'RunStatusTime'
+			},
+			{
+				label:'费率1电价',
+				id:'R1'
+			},
+			{
+				label:'费率2电价',
+				id:'R2'
+			},
+			{
+				label:'费率3电价',
+				id:'R3'
+			},
+			{
+				label:'费率4电价',
+				id:'R4'
+			},
+			{
+				label:'集中器地址',
+				id:'LogicAddr'
 			}
 			],
 			tableData:[],
@@ -240,11 +264,16 @@ export default{
 				UserId: window.sessionStorage.getItem('id'),
 				RegionCode :window.sessionStorage.getItem('RegionCode'),
 				MeterKindId:'1',	
-          		evalue:this.$encrypt()
-        	}
-          console.log(this.api.baseUrl+this.api.QureyMeterCurrentStatusByRegionCode)
-          console.log(params)
-        	this.http.post(this.api.baseUrl+this.api.QureyMeterCurrentStatusByRegionCode,params)
+          		time:this.dataUtil.formatTime1(new Date()) 
+			}
+	
+			var encryptParams = {
+                evalue:this.$encrypt(JSON.stringify(params))
+              }
+
+            console.log(this.$encrypt(JSON.stringify(params)))
+            
+        	this.http.post(this.api.baseUrl+this.api.QureyMeterCurrentStatusByRegionCode,encryptParams)
 	        .then(result=>{
 	          this.loading = false
 	          // var result= JSON.parse(res.data.replace(/<[^>]+>/g, "").replace(/[' '\r\n]/g, ""))
@@ -277,7 +306,7 @@ export default{
 	   	*ctrlType           指令类型：1当前电量，2剩余金额，3当前状态
 	   	*/
    		ReadEMCurrentPara(type){
-
+   			var that = this
    			if (this.selectionData.length == 0) {
 				this.$message({
             			type: 'warning',
@@ -285,12 +314,29 @@ export default{
          			 });
 				return
 			}
-			// this.loading = true
-			for (var i = 0; i < this.selectionData.length; i++) {
 
-				this.readEM(this.selectionData[i],type)
+
+			var count = 0 //计数器
+
+			var timer = setInterval(function(){
+				if (count < that.selectionData.length) {
+					that.readEM(that.selectionData[count],type)
+					count ++
+				}else {
+					clearInterval(timer)
+				}
+			},500)
+
+			// this.loading = true
+			// for (var i = 0; i < this.selectionData.length; i++) {
+			
+			// 	var index = i
+			// 	setTimeout(function(){
+			// 		that.readEM(that.selectionDatqa[index],type)
+			// 	},500*i)
 				
-			}
+				
+			// }
 	   		
      
    		},
