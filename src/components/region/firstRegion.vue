@@ -1,6 +1,6 @@
-<!-- 这是用于管理员管理区域信息的页面 -->
+<!-- 区域的页面 -->
 <template>
-	<div v-loading="allLoading" element-loading-text="拼命加载中">
+	<div v-loading="loading" element-loading-text="拼命加载中">
 		<div class="condition">
 			<div class="add">
 				<input id="upload" type="file" @change="importExcel($event)"  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" style="display:none" />
@@ -125,8 +125,8 @@ export default{
 		return{
 			isSuper:'0',
 			//菊花 
-			allLoading:false,
-			dialogLoading:false,
+			loading:false,
+			// dialogLoading:false,
 			// 对话框
 			excelVisible:false,
 			excelHead:null,
@@ -241,7 +241,7 @@ export default{
 		*/
 		sureUploadExcel(){
 			this.excelVisible = false
-			this.allLoading = true
+			this.loading = true
 			var that = this
       	
   			var params = { 
@@ -259,7 +259,7 @@ export default{
         	
         	this.http.post(this.api.baseUrl+this.api.AddHouseInfo,encryptParams)
 	        .then(result=>{
-	          this.allLoading = false
+	          this.loading = false
 	      
 	          console.log('添加房间')
 	           console.log(result)
@@ -294,7 +294,7 @@ export default{
 		AddHouseInfoSingle(){
 			this.singleImportDialogVisible = false
       		
-      		this.allLoading = true
+      		this.loading = true
       		 var params = {
       		 	FifthRegionName:this.singleImportForm.FifthRegionName,
       		 	HouseRegionName:this.singleImportForm.HouseRegionName,
@@ -315,7 +315,7 @@ export default{
               this.http.post(this.api.baseUrl+this.api.AddHouseInfoSingle,encryptParams)
               .then(result=>{
 
-              	  this.allLoading = false			       
+              	  this.loading = false			       
 		          console.log(result)
 		          if (result.status=="成功") {
 		          	
@@ -371,7 +371,7 @@ export default{
       	UpdateHouseRegionName(){
       		this.singleImportDialogVisible = false
       		
-      		this.allLoading = true
+      		this.loading = true
       		 var params = {
       		 	NewHouseName:this.singleImportForm.HouseRegionName,
       		 	HouseRegionName:this.updateItem.HouseRegionName,//旧名
@@ -392,7 +392,7 @@ export default{
               this.http.post(this.api.baseUrl+this.api.UpdateHouseRegionName,encryptParams)
               .then(result=>{
 
-              	  this.allLoading = false			       
+              	  this.loading = false			       
 		          console.log(result)
 		          if (result.status=="成功") {
 		          	
@@ -437,7 +437,7 @@ export default{
 		*获取房间信息
 		*/
 		getRoomInfo(){
-			this.allLoading = true
+			this.loading = true
 			var params = { 
 				// RegionCode:"ALL",
   				RegionCode:window.sessionStorage.getItem('RegionCode'), 				
@@ -452,7 +452,7 @@ export default{
 
         	this.http.post(this.api.baseUrl+this.api.QureyAllHouseInfoForForm,encryptParams)
 	        .then(result=>{
-	          this.allLoading = false
+	          this.loading = false
 	        
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -492,7 +492,7 @@ export default{
 
 
 	                var that = this
-		        	this.allLoading = true
+		        	this.loading = true
 		        	var params = {
 		        		UserId:window.sessionStorage.getItem('id'),
 		        		HouseRegionCode:row.HouseRegionCode,
@@ -507,7 +507,7 @@ export default{
 
 		        	this.http.post(this.api.baseUrl+this.api.DeleteHouseInfo,encryptParams)
 			        .then(result=>{
-			          this.allLoading = false
+			          this.loading = false
 			         
 			           console.log(result)
 			          if (result.status=="成功") {
@@ -580,9 +580,10 @@ export default{
 		this.isSuper = window.sessionStorage.getItem('isSuper')
 
 		var that = this
+		this.loading = true
 		setTimeout(function(){
 			that.getRoomInfo()
-		},500)
+		},2000)
 		
 	}
 }

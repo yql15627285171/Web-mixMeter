@@ -1,4 +1,4 @@
-<!-- 计量表档案管理 -->
+<!-- 表计档案 -->
 <template>
 	<div v-loading="allLoading" :element-loading-text="loadingTitle">
 		<div class="condition">
@@ -898,10 +898,10 @@ export default{
 		var that = this
 
 		this.isSuper = window.sessionStorage.getItem('isSuper')
-
+		this.allLoading = true
 		setTimeout(function(){
 			that.queryMeterInfo()
-		},500)
+		},2000)
 	}
 }
 </script>

@@ -5,7 +5,7 @@ import http from './http'
 import myAES from '../AES/myAES'
 import dataUtil from '../AES/Date'
 
-var requestTreeAgain = true
+// var requestTreeAgain = true
 
 function getTreeData(obj){
 	  console.log('请求树')     
@@ -29,17 +29,18 @@ function getTreeData(obj){
           if (result.status=="成功") {
             obj.succeed(result) 
           }else{
-            if (requestTreeAgain) {
-              requestTreeAgain = false
-              // 二次请求书
-              console.log('再次请求树')
-              setTimeout(()=>{
-                getTreeData(obj)
-              },500)
-            }else{
-              // 回调错误
+            // 回调错误
               obj.failed(result)
-            }
+            // if (requestTreeAgain) {
+            //   requestTreeAgain = false
+            //   // 二次请求书
+            //   console.log('再次请求树')
+            //   setTimeout(()=>{
+            //     getTreeData(obj)
+            //   },500)
+            // }else{
+              
+            // }
           	
           }        
         })

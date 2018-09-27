@@ -508,9 +508,10 @@ export default{
 
 		this.endDate = new Date()
 
+		this.loading = true
 		setTimeout(()=>{
 			this.QureyTransactionFile(this.code)	
-		},500)
+		},2000)
 		
 	
 	}

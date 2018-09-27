@@ -273,10 +273,11 @@ export default{
 		this.startDate = new Date(date.getTime()-2*24*60*60*1000)
 
 		this.endDate = new Date()
-	
+		
+		this.loading = true
 		setTimeout(()=>{
 			this.checkFreezingData()
-		}, 500)
+		}, 2000)
 		
 
 	}

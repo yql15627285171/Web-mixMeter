@@ -15,12 +15,12 @@
 			<div class="add">
 				<el-button type="primary" @click="addDialogVisible = true">添加管理员</el-button>
 			</div>
-			
+
 		</div>
 
 		<!-- 添加管理员对话框 -->
 		<el-dialog title="添加管理员" :visible.sync="addDialogVisible" >
-		 
+
 		  <el-form :model="addForm" :rules="addFormRules" ref="addForm" label-width="100px" class="demo-ruleForm" >
 			<!-- 用户名 -->
 			  <el-form-item label="用户名" prop="userId">
@@ -45,38 +45,41 @@
 		<el-dialog :title='changeTitle' :visible.sync="changeDialogVisible">
 		  <el-form :model="changeForm">
 			<el-form-item label="省" :label-width="formLabelWidth">
-		      <el-select v-model="changeForm.FirstRegionName" placeholder="请选择省份">
-		        <el-option v-for="item in FirstRegion"
-		        :label="item.name" :value="item.name"></el-option>
-		      </el-select>
+		      <!--<el-select v-model="changeForm.FirstRegionName" placeholder="请选择省份">-->
+		        <!--<el-option v-for="item in FirstRegion"-->
+		        <!--:label="item.name" :value="item.name"></el-option>-->
+		      <!--</el-select>-->
+        <el-input v-model.trim="changeForm.FirstRegionName" placeholder="请输入"></el-input>
 			</el-form-item>
 			<el-form-item label="市" :label-width="formLabelWidth">
-		      <el-select v-model="changeForm.SecondRegionName" placeholder="请选择市">
-		        <el-option v-for="item in SecondRegion"
-		        :label="item.name" :value="item.name"></el-option>
-		      </el-select>
+		      <!--<el-select v-model="changeForm.SecondRegionName" placeholder="请选择市">-->
+		        <!--<el-option v-for="item in SecondRegion"-->
+		        <!--:label="item.name" :value="item.name"></el-option>-->
+		      <!--</el-select>-->
+        <el-input v-model.trim="changeForm.SecondRegionName" placeholder="请输入"></el-input>
 		  	</el-form-item>
 			<el-form-item label="区/县" :label-width="formLabelWidth">
-		      <el-select v-model="changeForm.ThirdRegionName" placeholder="请选择区/县">
-		        <el-option v-for="item in ThirdRegion"
-		        :label="item.name" :value="item.name"></el-option>
-		      </el-select>
+		      <!--<el-select v-model="changeForm.ThirdRegionName" placeholder="请选择区/县">-->
+		        <!--<el-option v-for="item in ThirdRegion"-->
+		        <!--:label="item.name" :value="item.name"></el-option>-->
+		      <!--</el-select>-->
+        <el-input v-model.trim="changeForm.ThirdRegionName" placeholder="请输入"></el-input>
 			</el-form-item>
 			  <el-form-item label="所在社区" :label-width="formLabelWidth">
 		      <el-input v-model="changeForm.FourthRegionName" placeholder="请输入社区名字"></el-input>
 		    </el-form-item>
-		    </el-form-item>
+
 			  <el-form-item label="组名" :label-width="formLabelWidth">
 		      <el-input v-model="changeForm.GroupId" placeholder="请输入组名编号"></el-input>
 		    </el-form-item>
-		    </el-form-item>
+
 			  <el-form-item label="区域级别" :label-width="formLabelWidth">
 		      <el-input v-model="changeForm.RegionLevel" placeholder="请输入区域级别"></el-input>
 		    </el-form-item>
-		    </el-form-item>
+
 		    <el-form-item label="有效性" :label-width="formLabelWidth">
-			  <el-switch v-model="changeForm.Effective">
-			  </el-switch>
+			    <el-switch v-model="changeForm.Effective">
+			    </el-switch>
 		    </el-form-item>
 
 		  </el-form>
@@ -86,7 +89,7 @@
 	  	  </div>
 		</el-dialog>
 
-	
+
 
 		 <el-table
 		    :data="showTableData"
@@ -100,33 +103,33 @@
 		          <el-form-item  v-for="(item,index) in tableHead" v-if="index >=5" :label="item.label" >
 		            <span>{{ props.row[item.id] }}</span>
 		          </el-form-item>
-		     
+
 		        </el-form>
 		      </template>
 		    </el-table-column>
-		    <el-table-column 
+		    <el-table-column
 		    	v-for="(item,index) in tableHead"
 		    	v-if="index <= 4"
 		    	:prop="item.id"
 		    	:label="item.label"
 		    	:width='item.width'
-		    	>		
+		    	>
 		    </el-table-column>
-	
-		     <!-- <el-table-column label="状态">	
+
+		     <!-- <el-table-column label="状态">
 				<template slot-scope="scope">
 	       			<span v-if="scope.row.ValidFlg == '1'" style="color:green;">有效</span>
 	       			<span v-else style="color:red;">无效</span>
      			</template>
 	    	 </el-table-column> --> -->
 
-		     <el-table-column 
-		    	label="操作">	
+		     <el-table-column
+		    	label="操作">
 				<template slot-scope="scope">
 	       			<el-button @click="changeAdminInfo(scope.row)" type="text" size="small">修改</el-button>
      			</template>
 		    </el-table-column>
-		   
+
 		</el-table>
 
 		<div class="block pagination">
@@ -154,6 +157,7 @@ export default{
 			  callback();
 			}
 		};
+
 		return{
 			// 转圈
 			loading:false,
@@ -272,9 +276,9 @@ export default{
 					return 'error'
 				}else{
 					return 'warning'
-				}				
+				}
 			}
-	
+
 		},
 
 		/**
@@ -294,7 +298,7 @@ export default{
       		if (val == "全部") {
       			this.partOfTableData = this.tableData
       		}else if (val == "有效") {
-      		
+
       			this.partOfTableData = this.tableData.filter(element=>{
       				return (element.ValidFlg == "1" || element.ValidFlg == "有效")
       			});
@@ -316,6 +320,8 @@ export default{
       	FirstRegionRequest(){
       		var params = {
 				parentid:0,
+
+
 			}
 
 			this.http.get(this.api.remote_area_url,params).then(res=>{
@@ -330,7 +336,7 @@ export default{
       		var params = {
 				parentid:id,
 			}
-		
+
 			this.http.get(this.api.remote_area_url,params).then(res=>{
 				this.SecondRegion = res.data.result
 			})
@@ -347,21 +353,21 @@ export default{
 				this.ThirdRegion = res.data.result
 			})
       	},
-      	
+
       	/**
       	*添加管理员
       	*/
       	addAdminstor(){
-      		
+
       		this.loading = true
       		this.addDialogVisible = false
       		if (this.addForm.userId !=''&&this.addForm.psd !=''&&this.addForm.psd==this.addForm.checkPsd) {
-      			var params = { 
+      			var params = {
       				UserId:this.addForm.userId,
       				UserPwd:this.$encryptPsd(this.addForm.psd),
-	          		time:this.dataUtil.formatTime1(new Date()) 
+	          		time:this.dataUtil.formatTime1(new Date())
 				}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
@@ -374,20 +380,20 @@ export default{
 
 	           console.log(result)
 	           if (result.status=="成功") {
-	          	
+
 	          	this.$message({
         			type: 'success',
        			 	message: '操作成功!'
      			 });
-	            
+
 	            this.getAllAdminInfo()
 	          }else{
 	          	alert(result.data)
 	          }
 	        })
-      			
+
       		}
-      		
+
 
       	},
 
@@ -405,17 +411,17 @@ export default{
         	setTimeout(function(){that.changeForm.SecondRegionName = row.SecondRegionName},'100')
         	setTimeout(function(){that.changeForm.ThirdRegionName = row.ThirdRegionName},'100')
         	setTimeout(function(){that.changeForm.FourthRegionName = row.FourthRegionName},'100')
-        	
-        	
+
+
         	this.changeForm.GroupId = row.GroupId
-        	this.changeForm.RegionLevel = row.RegionLevel 
+        	this.changeForm.RegionLevel = row.RegionLevel
         	if (row.ValidFlg == '1' || row.ValidFlg=='有效') {
         		// statement
         		this.changeForm.Effective = true
         	}else {
         		this.changeForm.Effective = false
-        	}	
-        	
+        	}
+
       	},
 
       	sureChangeAdminInfo(){
@@ -433,9 +439,9 @@ export default{
 	      		GroupId:this.changeForm.GroupId,
 	      		RegionLevel:this.changeForm.RegionLevel,
 	      		ValidFlg:this.changeForm.Effective ? '1':'0',
-	        	time:this.dataUtil.formatTime1(new Date()) 
+	        	time:this.dataUtil.formatTime1(new Date())
 				}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
@@ -446,10 +452,10 @@ export default{
 	        this.http.post(this.api.baseUrl+this.api.UpdateCommmunity,encryptParams)
 	        .then(result=>{
 	          this.loading = false
-	        
+
 	           console.log(result)
 	          if (result.status=="成功") {
-	          	
+
             	this.$message({
         			type: 'success',
        			 	message: '操作成功!'
@@ -470,21 +476,21 @@ export default{
       	getAllAdminInfo(){
       		console.log('请求管理员信息')
       		this.loading = true
-	      	var params = { 
-	          time:this.dataUtil.formatTime1(new Date()) 
+	      	var params = {
+	          time:this.dataUtil.formatTime1(new Date())
 	        }
-	      
+
 	        var encryptParams = {
 	          evalue:this.$encrypt(JSON.stringify(params))
 	        }
 
 	        console.log(this.$encrypt(JSON.stringify(params)))
 
-	        
+
 	        this.http.post(this.api.baseUrl+this.api.QureyAllAdminInfo,encryptParams)
 	        .then(result=>{
 	          this.loading = false
-	    
+
 	           console.log(result)
 	          if (result.status=="成功") {
 	            this.tableData = result.data
@@ -513,82 +519,82 @@ export default{
 		}
 	},
 	computed:{
-		province:function(){
-			this.SecondRegion = []
-			this.ThirdRegion = []
-			this.changeForm.SecondRegionName = ""
-			this.changeForm.ThirdRegionName = ""
-			this.changeForm.FourthRegionName = ""
-			return this.changeForm.FirstRegionName
-		},
-		city:function(){
-			this.ThirdRegion = []
-			this.changeForm.ThirdRegionName = ""
-			this.changeForm.FourthRegionName = ""
-			return this.changeForm.SecondRegionName
-		},
-		town:function(){
-			this.changeForm.FourthRegionName = ""
-			return this.changeForm.ThirdRegionName
-		}
+		// province:function(){
+		// 	this.SecondRegion = []
+		// 	this.ThirdRegion = []
+		// 	this.changeForm.SecondRegionName = ""
+		// 	this.changeForm.ThirdRegionName = ""
+		// 	this.changeForm.FourthRegionName = ""
+		// 	return this.changeForm.FirstRegionName
+		// },
+		// city:function(){
+		// 	this.ThirdRegion = []
+		// 	this.changeForm.ThirdRegionName = ""
+		// 	this.changeForm.FourthRegionName = ""
+		// 	return this.changeForm.SecondRegionName
+		// },
+		// town:function(){
+		// 	this.changeForm.FourthRegionName = ""
+		// 	return this.changeForm.ThirdRegionName
+		// }
 	},
 	watch:{
-		province:function(newvalue){
-			// 清空子列表
-			
-			var specialArea = false
-
-			if (newvalue == "北京" || newvalue == "上海" || newvalue == "天津" || newvalue == "重庆") {
-				this.changeForm.SecondRegionName = newvalue
-				var tempPro = {
-					name:newvalue
-				}
-				this.SecondRegion.push(tempPro)
-				specialArea = true
-			}
-
-			for (var i = 0; i < this.FirstRegion.length; i++) {
-				if (newvalue == this.FirstRegion[i].name) {
-					if (specialArea) {
-						this.ThirdRegionRequest(this.FirstRegion[i].id)
-					}else {
-						this.SecondRegionRequest(this.FirstRegion[i].id)
-					}
-					
-					return
-				}
-			}
-		},
-		city:function(newvalue){
-			
-			if (newvalue == "北京" || newvalue == "上海" || newvalue == "天津" || newvalue == "重庆") {
-				return
-			}
-			for (var i = 0; i < this.SecondRegion.length; i++) {
-				if (newvalue == this.SecondRegion[i].name) {
-					// statement
-					this.ThirdRegionRequest(this.SecondRegion[i].id)
-					return
-				}
-			}
-		},
-		town:function(newvalue){},
+		// province:function(newvalue){
+		// 	// 清空子列表
+        //
+		// 	var specialArea = false
+        //
+		// 	if (newvalue == "北京" || newvalue == "上海" || newvalue == "天津" || newvalue == "重庆") {
+		// 		this.changeForm.SecondRegionName = newvalue
+		// 		var tempPro = {
+		// 			name:newvalue
+		// 		}
+		// 		this.SecondRegion.push(tempPro)
+		// 		specialArea = true
+		// 	}
+        //
+		// 	for (var i = 0; i < this.FirstRegion.length; i++) {
+		// 		if (newvalue == this.FirstRegion[i].name) {
+		// 			if (specialArea) {
+		// 				this.ThirdRegionRequest(this.FirstRegion[i].id)
+		// 			}else {
+		// 				this.SecondRegionRequest(this.FirstRegion[i].id)
+		// 			}
+        //
+		// 			return
+		// 		}
+		// 	}
+		// },
+		// city:function(newvalue){
+        //
+		// 	if (newvalue == "北京" || newvalue == "上海" || newvalue == "天津" || newvalue == "重庆") {
+		// 		return
+		// 	}
+		// 	for (var i = 0; i < this.SecondRegion.length; i++) {
+		// 		if (newvalue == this.SecondRegion[i].name) {
+		// 			// statement
+		// 			this.ThirdRegionRequest(this.SecondRegion[i].id)
+		// 			return
+		// 		}
+		// 	}
+		// },
+		// town:function(newvalue){},
 	},
 	mounted(){
 		console.log('请求省')
 		if (this.FirstRegion.length==0) {
 			setTimeout(()=>{
-				this.FirstRegionRequest()
+				// this.FirstRegionRequest()
 			},1000)
 		}
 		// 获取所有社区管理员信息
-	
+
 		var that = this
 		setTimeout(function(){
 			that.getAllAdminInfo()
 		}, 500)
-	}	
-}	
+	}
+}
 </script>
 <style scoped>
 .el-table{

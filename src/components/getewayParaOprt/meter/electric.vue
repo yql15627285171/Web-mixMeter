@@ -179,6 +179,8 @@ export default{
 			currentPage:1,//当前页数
 
 			selectionData:[],
+
+			requestCount:0,//多个表读状态的时候进行的计数
 		}
 	},
 	methods:{
@@ -316,29 +318,76 @@ export default{
 			}
 
 
-			var count = 0 //计数器
+			// var count = 0 //计数器
 
-			var timer = setInterval(function(){
-				if (count < that.selectionData.length) {
-					that.readEM(that.selectionData[count],type)
-					count ++
-				}else {
-					clearInterval(timer)
-				}
-			},500)
+			// var timer = setInterval(function(){
+			// 	if (count < that.selectionData.length) {
+			// 		that.readEM(that.selectionData[count],type)
+			// 		count ++
+			// 	}else {
+			// 		clearInterval(timer)
+			// 	}
+			// },500)
 
-			// this.loading = true
-			// for (var i = 0; i < this.selectionData.length; i++) {
-			
-			// 	var index = i
-			// 	setTimeout(function(){
-			// 		that.readEM(that.selectionDatqa[index],type)
-			// 	},500*i)
-				
-				
-			// }
-	   		
-     
+			this.loading = true
+
+			var selectData = this.selectionData[this.requestCount]
+			console.log(selectData)
+	   		var housename = selectData.HouseName
+
+
+	   		var params = {           
+	            UserId :window.sessionStorage.getItem('id'),
+	   
+	       		HouseRegionCode:JSON.stringify(selectData),
+	       		ctrlType:type,
+	       		time:this.dataUtil.formatTime1(new Date())      
+	          }
+
+	        console.log(params);
+	          
+	        var encryptParams = {
+	         	evalue:this.$encrypt(JSON.stringify(params))
+	         }
+
+	        console.log(this.$encrypt(JSON.stringify(params)))
+
+	        this.http.post(this.api.baseUrl+this.api.ReadEMCurrentPara,encryptParams)
+	        .then(result=>{
+	           	
+	           	console.log(result)
+
+	           	if (this.requestCount < this.selectionData.length - 1) {
+	           		this.requestCount ++
+	           		this.ReadEMCurrentPara(3)
+
+	           	}else{
+	           		this.loading = false
+	           	}
+	            if (result.status == '成功') {
+	            	
+	            	this.resetData(this.tableData,result.data)
+	   				this.resetData(this.showTableData,result.data)
+	   				this.resetData(this.partOfTableData,result.data)
+
+	                 this.$notify({
+			          	title: housename,
+			          	message: '读取成功',
+			          	type: 'success'
+			          })
+
+	            }else{
+	            	
+	              	this.$notify({
+			          title: housename,
+			          message: result.data,
+			          type: 'error'
+			       })
+	            }	
+	            	                       
+	        })
+
+	   		   
    		},
 
 		/**
@@ -347,51 +396,52 @@ export default{
 	   	*HouseRegionCode    房间编号     
 	   	*ctrlType           指令类型：1当前电量，2剩余金额，3当前状态
 	   	*/
-	   	readEM(selectData,type){
-	   		this.loading = true
-	   		var housename =  selectData.HouseName
-	   		var params = {           
-		            UserId :window.sessionStorage.getItem('id'),
-		       		// HouseRegionCode:this.selectionData.HouseRegionCode,
-		       		HouseRegionCode:JSON.stringify(selectData),
-		       		ctrlType:type,
-		       		time:this.dataUtil.formatTime1(new Date())      
-		          }
+	 //   	readEM(selectData,type){
+	 //   		this.loading = true
+	 //   		var housename =  selectData.HouseName
+	 //   		var params = {           
+		//             UserId :window.sessionStorage.getItem('id'),
+		//        		// HouseRegionCode:this.selectionData.HouseRegionCode,
+		//        		HouseRegionCode:JSON.stringify(selectData),
+		//        		ctrlType:type,
+		//        		time:this.dataUtil.formatTime1(new Date())      
+		//           }
 
-		          console.log(params);
+		//           console.log(params);
 		          
-		          var encryptParams = {
-		            evalue:this.$encrypt(JSON.stringify(params))
-		          }
+		//           var encryptParams = {
+		//             evalue:this.$encrypt(JSON.stringify(params))
+		//           }
 
-		          console.log(this.$encrypt(JSON.stringify(params)))
+		//           console.log(this.$encrypt(JSON.stringify(params)))
 
-		          this.http.post(this.api.baseUrl+this.api.ReadEMCurrentPara,encryptParams)
-		          .then(result=>{
-		            this.loading = false
-		            console.log(result)
-		            if (result.status == '成功') {
+		//           this.http.post(this.api.baseUrl+this.api.ReadEMCurrentPara,encryptParams)
+		//           .then(result=>{
+		//             this.loading = false
+		//             console.log(result)
+		//             if (result.status == '成功') {
 		            	
-		            	this.resetData(this.tableData,result.data)
-		   				this.resetData(this.showTableData,result.data)
-		   				this.resetData(this.partOfTableData,result.data)
+		//             	this.resetData(this.tableData,result.data)
+		//    				this.resetData(this.showTableData,result.data)
+		//    				this.resetData(this.partOfTableData,result.data)
 
-		                 this.$notify({
-				          	title: housename,
-				          	message: '读取成功',
-				          	type: 'success'
-				          })
+		//                  this.$notify({
+		// 		          	title: housename,
+		// 		          	message: '读取成功',
+		// 		          	type: 'success'
+		// 		          })
 
-		            }else{
+		//             }else{
 		            	
-		              	this.$notify({
-				          title: housename,
-				          message: result.data,
-				          type: 'error'
-				       })
-		            }		                       
-		          })
-		},
+		//               	this.$notify({
+		// 		          title: housename,
+		// 		          message: result.data,
+		// 		          type: 'error'
+		// 		       })
+		//             }	
+
+		//           })
+		// },
 		/**
 	   *费控接口 用于电表拉合闸、报警、保电
 	   *UserId             用户号
@@ -399,15 +449,7 @@ export default{
 	   *ctrlType           指令类型：1拉闸，2合闸，3报警，4报警解除，5保电，6保电解除
 	   */
 	   	CtrlEMRelayStatu(code){
-	   		// this.tableData
 
-	  //  		if ("undefined" == typeof(this.selectionData)  || !this.selectionData.HouseRegionCode) {
-			// 	this.$message({
-   //          		type: 'warning',
-   //         			 message: '请选择表!',
-   //       		});
-			// 	return
-			// }
 
 
 			if (this.selectionData.length != 1) {
@@ -542,10 +584,10 @@ export default{
 	
 	mounted(){
 		var that = this
-
+		this.loading = true
 		setTimeout(function(){
 			that.qureyMeterCurrentStatusByRegionCode()
-		},500)
+		},2000)
 		
 	}
 }

@@ -542,10 +542,10 @@ export default{
 	mounted(){
 		var that = this
 		this.isSuper = window.sessionStorage.getItem('isSuper')
-		
+		this.allLoading = true
 		setTimeout(function(){
 			that.getAllGWInfo()
-		}, 500)
+		}, 2000)
 	}
 }
 

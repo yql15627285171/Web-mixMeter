@@ -286,9 +286,10 @@ export default{
 
 		window.sessionStorage.setItem('freezingData','month')
 
+		this.loading = true
 		setTimeout(()=>{
 			this.checkFreezingData()
-		}, 500)
+		}, 2000)
 	}
 }
 </script>

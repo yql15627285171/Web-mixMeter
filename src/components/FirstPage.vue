@@ -492,10 +492,10 @@ export default{
 		this.dayPie()
 		this.electricityLine()
 		this.electricityBar()
-
+		this.loading = true
 		setTimeout(()=>{
           this.QueryHomePageData()
-		},1000)
+		},2000)
 	}
 }	
 </script>

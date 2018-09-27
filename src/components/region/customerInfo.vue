@@ -281,9 +281,10 @@ export default{
 	},
 	mounted(){
 		var that = this 
+		this.loading = true
 		setTimeout(function(){
 			that.QureyHouseApplyInfo()
-		},500)
+		},2000)
 	}
 }	
 </script>

@@ -133,11 +133,6 @@
 
         </el-container>
       </el-main>
-
-
-
-
-
   
       <!-- 脚部 -->
       <el-footer>      
@@ -302,7 +297,7 @@ export default {
       oldCode:'',//第一次点击的几点code
       newCode:'',//第二次点击的code
 
-      requestMenusAgain:true,//由于同时请求的错误再一次请求menus
+      // requestMenusAgain:true,//由于同时请求的错误再一次请求menus
     }
   },
   methods:{
@@ -343,7 +338,6 @@ export default {
 
         }
         
-
       },
 
       // 树的事件
@@ -436,15 +430,15 @@ export default {
             }
           }else{
             
-            if (this.requestMenusAgain) {
-              console.log('再请求一次menus')
-              this.requestMenusAgain = false
-              // 延时500毫秒在此发送
-              setTimeout(()=>{
-               this.getMenus() 
-              },500)
+            // if (this.requestMenusAgain) {
+            //   console.log('再请求一次menus')
+            //   this.requestMenusAgain = false
+            //   // 延时500毫秒在此发送
+            //   setTimeout(()=>{
+            //    this.getMenus() 
+            //   },500)
               
-            }
+            // }
             
           }
          
@@ -721,14 +715,12 @@ export default {
         this.showSelect = true
       }
 
-
-
     this.getMenus()
 
     var that = this
     setTimeout(function(){
       that.getTreeInfo()
-    },200) 
+    },1000) 
 
     
     

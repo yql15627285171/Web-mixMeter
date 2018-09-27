@@ -463,9 +463,10 @@ export default{
 	mounted(){
 		var that = this
 		// 获取社区网关信息
+		this.loading = true
 		setTimeout(function(){
 			that.getGateInfo()
-		},500) 
+		},2000) 
 	},
 
 	computed:{
