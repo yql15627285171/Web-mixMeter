@@ -3,7 +3,7 @@
 	<div v-loading="loading" element-loading-text="拼命加载中">
 		<div class="condition">
 			<div class="block left">
-			   
+
 				<div class="block left">
 				    <el-date-picker
 				      v-model="startDate"
@@ -28,8 +28,8 @@
 	  		<el-button type="primary" style="margin-left:20px;" @click='QureyERStatus'>查询</el-button>
 	  		<el-button type="primary" style="margin-left:20px;" @click='QueryERStatusLast'>查询最近一次</el-button>
 		</div>
-		
-		
+
+
 			<el-table
 		    :data="showTableData"
 		    :header-cell-class-name="tableheaderClassName"
@@ -44,7 +44,7 @@
 		          <el-form-item  v-for="(item,index) in tableHead" v-if="index > 3" :label="item.label" >
 		            <span>{{ props.row[item.id] }}</span>
 		          </el-form-item>
-		     
+
 		        </el-form>
 		      </template>
 		    </el-table-column>
@@ -55,7 +55,7 @@
 		      :label="item.label"
 		      :prop="item.id"
 		      :width="item.width"
-		
+
 		      >
 		    </el-table-column>
 
@@ -70,7 +70,7 @@
 		      :total="partOfTableData.length">
 		    </el-pagination>
 	  	  </div>
-		
+
 
 
 	</div>
@@ -108,7 +108,7 @@ export default{
 			{
 				label:'更新时间',
 				id:'UpdateTime'
-			},	
+			},
 			{
 				label:'运行状态字',
 				id:'RunStatus'
@@ -130,9 +130,9 @@ export default{
 
         tableCellName({row, column, rowIndex, columnIndex}){
 			if (columnIndex == 3) {
-				return 'content-left'				
+				return 'content-left'
 			}
-	
+
 		},
 
         /**
@@ -152,18 +152,18 @@ export default{
                });
 				return
 			}
-			
+
 			this.loading = true
 
-          var params = {           
+          var params = {
        		FourthRegionCode:window.sessionStorage.getItem('RegionCode'),
        		TimeStart:this.dataUtil.formatTime1(this.startDate),
        		TimeEnd:this.dataUtil.formatTime1(this.endDate),
-       		time:this.dataUtil.formatTime1(new Date())      
+       		time:this.dataUtil.formatTime1(new Date())
           }
 
           console.log(params);
-          
+
           var encryptParams = {
             evalue:this.$encrypt(JSON.stringify(params))
           }
@@ -175,7 +175,7 @@ export default{
             this.loading = false
             console.log(result)
             if (result.status == '成功') {
-            	
+
                 this.$message({
                   type: 'success',
                   message: '查询成功!'
@@ -193,9 +193,9 @@ export default{
                });
 
             }
-            
-            
-                    
+
+
+
           })
 		},
 
@@ -203,16 +203,16 @@ export default{
 		// 查询最近一次
 		QueryERStatusLast(){
 
-			
+
 		this.loading = true
 
-          var params = {           
+          var params = {
        		FourthRegionCode:window.sessionStorage.getItem('RegionCode'),
-       		time:this.dataUtil.formatTime1(new Date())      
+       		time:this.dataUtil.formatTime1(new Date())
           }
 
           console.log(params);
-          
+
           var encryptParams = {
             evalue:this.$encrypt(JSON.stringify(params))
           }
@@ -224,7 +224,7 @@ export default{
             this.loading = false
             console.log(result)
             if (result.status == '成功') {
-            	
+
                 this.$message({
                   type: 'success',
                   message: '查询成功!'
@@ -242,20 +242,20 @@ export default{
                });
 
             }
-            
-            
-                    
+
+
+
           })
 		},
 
 		// 筛选数据
 		filterTableData(node){
       		if (window.sessionStorage.getItem('menuName') == 'QueryMeterAlarmEvent') {
-      			
+
       			if(node.level == "4"){
       				this.partOfTableData = this.tableData;
       			}else if(node.level == "5"){
-      				
+
       				this.partOfTableData = this.tableData.filter(element=>{
       					return (element.FifthRegionCode == node.code)
       				})
@@ -269,7 +269,7 @@ export default{
       				this.partOfTableData[i].index = (i+1).toString()
       			}
       			this.showTableData = this.partOfTableData.slice(0, 10)
-      			
+
       		}
       	},
 
@@ -291,16 +291,16 @@ export default{
 		window.sessionStorage.setItem('freezingData','day')
 
 		var date = new Date()
-		
+
 		this.startDate = new Date(date.getTime()-2*24*60*60*1000)
 
 		this.endDate = new Date()
-		
+
 		this.loading = true
-		setTimeout(()=>{
+		// setTimeout(()=>{
 			this.QureyERStatus()
-		}, 2000)
-		
+		// }, 2000)
+
 
 	}
 }

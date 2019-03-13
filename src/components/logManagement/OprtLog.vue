@@ -106,9 +106,9 @@ export default{
 					return 'normal'
 				}else {
 					return 'error'
-				}			
+				}
 			}
-	
+
 		},
 
 		/**
@@ -132,15 +132,15 @@ export default{
 			}
 
       		this.loading = true
-      		var params = {     
+      		var params = {
       			UserId:window.sessionStorage.getItem('id'),
       			TimeStart:this.dataUtil.formatTime1(this.startDate),
       			TimeEnd:this.dataUtil.formatTime1(this.endDate),
-      			time:this.dataUtil.formatTime1(new Date()) 
+      			time:this.dataUtil.formatTime1(new Date())
       		}
 
       		  console.log(params);
-          
+
 	          var encryptParams = {
 	            evalue:this.$encrypt(JSON.stringify(params))
 	          }
@@ -152,7 +152,7 @@ export default{
 	            this.loading = false
 	            console.log(result)
 	            if (result.status == '成功') {
-	            	
+
 	                this.$message({
 	                  type: 'success',
 	                  message: '查询成功!'
@@ -170,23 +170,23 @@ export default{
 	               });
 
 	            }
-	            
-	            
-	                    
+
+
+
 	          })
       	}
 
 	},
 	mounted(){
 		var date = new Date()
-		
+
 		this.startDate = new Date(date.getTime()-2*24*60*60*1000)
 
 		this.endDate = new Date()
 		this.loading = true
-		setTimeout(()=>{
+		// setTimeout(()=>{
 			this.QueryOprtcord()
-		},2000)
+		// },2000)
 	}
 }
 </script>

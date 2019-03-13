@@ -51,6 +51,9 @@ Vue.prototype.dataUtil = dataUtil
 import ICCard from './ICCard'
 Vue.prototype.ICCard = ICCard
 
+//打印插件
+// import Print from 'vue-print-nb'
+// Vue.use(Print);
 
 
 

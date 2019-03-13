@@ -37,9 +37,9 @@
 			    </el-date-picker>
 
 	  		</div>
-			<el-button type="primary" @click='QureyTransactionFile(code)'>查询</el-button>			
-			
-			<div class="right">		
+			<el-button type="primary" @click='QureyTransactionFile(code)'>查询</el-button>
+
+			<div class="right">
 				<el-select v-model.lazy="name1" placeholder="交易方式" clearable @change="selectChange">
 			    <el-option
 
@@ -65,7 +65,7 @@
 				      :value="item">
 				    </el-option>
 				</el-select>
-				<el-button type="primary">导出表格</el-button>
+				<el-button type="primary" @click="export2Excel">导出表格</el-button>
 			</div>
 		</div>
 		<el-table
@@ -79,7 +79,7 @@
 		          <el-form-item  v-for="(item,index) in tableHead" v-if="index > 8" :label="item.label" >
 		            <span>{{ props.row[item.id] }}</span>
 		          </el-form-item>
-		     
+
 		        </el-form>
 		      </template>
 		    </el-table-column>
@@ -93,8 +93,8 @@
 		      >
 		    </el-table-column>
 
-		     <el-table-column 
-		    	label="操作">	
+		     <el-table-column
+		    	label="操作">
 				<template slot-scope="scope">
 	       			<el-button v-if="scope.row.AuditState == '未审核' " @click="AuditTransaction(scope.row)" type="text" size="small">审核</el-button>
      			</template>
@@ -102,10 +102,10 @@
 
 		  </el-table>
 			<div style='text-align:center;font-size:16px;margin-top:20px'>
-				<span style='margin-right:60px'>实收：{{this.totalMoney}}元</span>	
-				<span style='margin-right:60px'>充值/开户：{{this.predictMoney}}元</span> 
-				<span style='margin-right:60px'>退费：{{this.moveMoney}}元</span> 
-				<span style='margin-right:20px'>补助：{{this.helpMoney}}元</span> 
+				<span style='margin-right:60px'>实收：{{this.totalMoney}}元</span>
+				<span style='margin-right:60px'>充值/开户：{{this.predictMoney}}元</span>
+				<span style='margin-right:60px'>退费：{{this.moveMoney}}元</span>
+				<span style='margin-right:20px'>补助：{{this.helpMoney}}元</span>
 			</div>
 		  <div class="block pagination">
 		    <el-pagination
@@ -118,7 +118,7 @@
 	  	  </div>
 	</div>
 </template>
-<script> 
+<script>
 export default{
 	data(){
 		return{
@@ -165,7 +165,7 @@ export default{
 			{
 				label:'交易时间',
 				id:'TransactionTime',
-				width:180	
+				width:180
 			},
 			{
 				label:'交易状态',
@@ -219,7 +219,7 @@ export default{
 					return 'normal'
 				}
 			}
-	
+
 		},
 
         /**
@@ -254,11 +254,11 @@ export default{
       			UserId:window.sessionStorage.getItem('id'),
       			TimeStart:this.dataUtil.formatTime1(this.startDate),
        			TimeEnd:this.dataUtil.formatTime1(this.endDate),
-      			time:this.dataUtil.formatTime1(new Date()) 
+      			time:this.dataUtil.formatTime1(new Date())
       		}
 
       		  console.log(params);
-          
+
 	          var encryptParams = {
 	            evalue:this.$encrypt(JSON.stringify(params))
 	          }
@@ -270,7 +270,7 @@ export default{
 	            this.loading = false
 	            console.log(result)
 	            if (result.status == '成功') {
-	            	
+
 	                this.$message({
 	                  type: 'success',
 	                  message: '查询成功!'
@@ -289,9 +289,9 @@ export default{
 	               });
 
 	            }
-	            
-	            
-	                    
+
+
+
 	          })
       	},
 
@@ -306,11 +306,11 @@ export default{
       		var params = {
       			TransactionOrder:row.TransactionOrder,
       			UserId:window.sessionStorage.getItem('id'),
-      			time:this.dataUtil.formatTime1(new Date()) 
+      			time:this.dataUtil.formatTime1(new Date())
       		}
 
       		  console.log(params);
-          
+
 	          var encryptParams = {
 	            evalue:this.$encrypt(JSON.stringify(params))
 	          }
@@ -322,7 +322,7 @@ export default{
 	            this.loading = false
 	            console.log(result)
 	            if (result.status == '成功') {
-	            	
+
 	                this.$message({
 	                  type: 'success',
 	                  message: '审核成功!'
@@ -341,9 +341,9 @@ export default{
 	               });
 
 	            }
-	            
-	            
-	                    
+
+
+
 	          })
       	},
 
@@ -381,14 +381,14 @@ export default{
 
 		// 筛选数据
 		filterTableData(node){
-		
+
       		if (window.sessionStorage.getItem('menuName') == 'AccoundReconciliation') {
-     
+
       			if(node.level == "4"){
       				this.areaTableData = this.tableData
-      				
+
       			}else if(node.level == "5"){
-      				
+
       				this.areaTableData = this.tableData.filter(element=>{
       					return (element.FifthRegionCode == node.code)
       				})
@@ -405,19 +405,62 @@ export default{
       			}
 
       			this.showTableData = this.partOfTableData.slice(0, 10)
-      			
+
       		}
       	},
 
       	// 审核成功后，改变数据源
-      	resetData(arr,TransactionOrder){
+    resetData(arr,TransactionOrder){
 			arr.forEach( (element, index)=> {
 				if(element.TransactionOrder == TransactionOrder){
 					arr[index].AuditState = '已审核'
 					return
 				}
 			});
-		}
+		},
+
+    // 导出表格
+    export2Excel:function () {
+      require.ensure([], () => {
+        const { export_json_to_excel } = require('@/vendor/Export2Excel')
+        const tHeader = [
+          '房间信息',
+          '交易类型',
+          '交易金额',
+          '交易路径',
+          '交易方式',
+          '交易时间',
+          '交易状态',
+          '审核状态',
+          '表地址',
+          '备注信息',
+          '交易单号',
+          '第三方订单号',
+          '审核人',
+          '审核时间']
+        const filterVal = [
+          'FifthHouseRegionName',
+          'TransactionType',
+          'TransactionAmount',
+          'TransactionMode',
+          'TransactionMethod',
+          'TransactionTime',
+          'OprtState',
+          'AuditState',
+          'MeterAddr',
+          'Memo',
+          'TransactionOrder',
+          'OtherTransactionOrder',
+          'AuditorName',
+          'AuditTime']
+        const list = this.partOfTableData
+        const data = this.formatJson(filterVal, list);
+        export_json_to_excel(tHeader, data, '财务表格');
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]))
+    }
 
 	},
 
@@ -436,7 +479,7 @@ export default{
 			var money = 0
 			this.partOfTableData.forEach(element=>{
 				if (element.TransactionType == '充值' || element.TransactionType == '开户') {
-					money +=  parseInt(element.TransactionAmount) 
+					money +=  parseInt(element.TransactionAmount)
 				}
 			})
 
@@ -447,7 +490,7 @@ export default{
 			var money = 0
 			this.partOfTableData.forEach(element=>{
 				if (element.TransactionType == '异常退费' || element.TransactionType == '销户退费') {
-					money +=  parseInt(element.TransactionAmount) 
+					money +=  parseInt(element.TransactionAmount)
 				}
 			})
 
@@ -458,7 +501,7 @@ export default{
 			var money = 0
 			this.partOfTableData.forEach(element=>{
 				if (element.TransactionMethod == '补助') {
-					money +=  parseInt(element.TransactionAmount) 
+					money +=  parseInt(element.TransactionAmount)
 				}
 			})
 
@@ -503,19 +546,19 @@ export default{
 	},
 	mounted(){
 		var date = new Date()
-		
+
 		this.startDate = new Date(date.getTime()-2*24*60*60*1000)
 
 		this.endDate = new Date()
 
 		this.loading = true
-		setTimeout(()=>{
-			this.QureyTransactionFile(this.code)	
-		},2000)
-		
-	
+		// setTimeout(()=>{
+			this.QureyTransactionFile(this.code)
+		// },2000)
+
+
 	}
-}	
+}
 </script>
 <style scoped>
 .right{

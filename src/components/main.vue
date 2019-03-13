@@ -5,14 +5,15 @@
       <!-- 头部 -->
       <el-header >
         <el-row type="flex" justify='space-between'>
-          <el-col :span="12" style="text-align:left">
-            <span class="system-name">社区服务系统</span>
-            
+
+          <el-col :span="10" style="text-align:left;display: flex;align-items: center">
+            <img src="../assets/favicon1.png" alt="" style="width: 50px;height: 50px">
+            <span class="system-name">园区智能物联平台</span>
           </el-col>
           <el-col :span="12">
             <div class="system-setting">
               <!-- <router-link :to="{name:'main'}" class="set">个人中心</router-link> -->
-              
+
               <!-- <div class="set"> -->
                 <el-tooltip class="item set" effect="light" content="修改个人信息" placement="bottom" >
                   <img src="../assets/edit.png" style="width:20px;height:20px;outline: none"  @click="getInfo">
@@ -23,7 +24,7 @@
                 <el-tooltip class="item set" effect="light" content="修改密码" placement="bottom" >
                   <img src="../assets/psd.png" style="width:20px;height:20px;outline: none"@click="psdDialogVisible = true">
                 </el-tooltip>
-                
+
               <!-- </span> -->
               <!-- <span class="set" @click="logout"> -->
                 <el-tooltip class="item set" effect="light" content="退出登录" placement="bottom">
@@ -39,9 +40,9 @@
                 <img src="../assets/account.png" style='padding:0 5px 0 20px;'>
               <span >{{account}}</span>
               </div>
-              
+
             </div>
-            
+
             </div>
           </el-col>
         </el-row>
@@ -49,28 +50,28 @@
 
       <el-main class='contentMain'>
         <el-header class="headerMenus">
-          
+
           <el-row>
             <!-- <el-col :offset="1" :span="2">
               <div style="font-size:14px; cursor: pointer;" @click="fistPageClick">首页</div>
             </el-col> -->
             <el-col :offset="1":span="23">
-              
+
                 <el-menu
                   menu-trigger='hover'
-                  :default-active="defaultActive" 
+                  :default-active="defaultActive"
                   mode="horizontal"
                   v-if="menus.length>0"
-                  background-color="#909399"
+                  background-color="#6FB2F8"
                   text-color="#fff"
-                  active-text-color="#ffd04b"  
+                  active-text-color="#ffd04b"
                   @select="handleSelect">
-                 
+
                     <el-submenu v-for="(subitem,subIndex) in menus" :index="subitem.index" >
                       <template slot="title">
                         <div @click='fistPageClick(subitem.index)'>{{subitem.name}}</div>
                       </template>
-                      <router-link 
+                      <router-link
                         v-for='child in subitem.child'
                         :to="{name:child.index}"
                         @click.native="recordIndex(child.index,subIndex)">
@@ -78,19 +79,19 @@
                           {{child.name}}
                         </el-menu-item>
                       </router-link>
-                      
+
                     </el-submenu>
-                </el-menu>  
+                </el-menu>
             </el-col>
           </el-row>
-          
-          
+
+
         </el-header>
 
-        
+
         <el-container >
 
-      
+
           <el-aside width='200px'>
             <div style='text-align:left'>
               <i class="el-icon-location" style="margin-left: 10px;color:#409EFF"></i>
@@ -100,7 +101,7 @@
                 <el-breadcrumb-item>{{childName}}</el-breadcrumb-item>
               </el-breadcrumb>
             </div>
-            
+
 
             <div class="selectTree" v-if="showSelect">
               <img :src="houseImg" @click='houseClick'>
@@ -112,15 +113,15 @@
               placeholder="输入关键字进行搜索"
               v-model="filterText">
             </el-input>
-        
-            <el-tree  :data="showTreeData" 
-                      :props="defaultProps" 
+
+            <el-tree  :data="showTreeData"
+                      :props="defaultProps"
                       @node-click="handleNodeClick"
                       accordion
                       :filter-node-method="filterNode"
                       ref="tree"
                       >
-                        
+
             </el-tree>
           </el-aside>
           <el-main class='contentTable'>
@@ -128,24 +129,25 @@
               <router-view ></router-view>
             </keep-alive>
           </el-main>
-          
+
 
 
         </el-container>
       </el-main>
-  
+
       <!-- 脚部 -->
-      <el-footer>      
-        
-          <span>CopyRight © 2018 深圳市航天泰瑞捷电子有限公司 版权所有</span>
-          <a href="http://www.miitbeian.gov.cn/" style="color:#fff">|粤ICP备17141636号-2</a>
-          <a href="http://www.miitbeian.gov.cn/" >
-          <img src="@/assets/ba.png" class="gongan"></a>
-      
+      <el-footer>
+
+        <span>CopyRight © 2019 三源申特电气设备有限公司 | 物兴科技(深圳)有限公司</span>
+        <!--<span style="float: right">技术支持：物兴科技(深圳)有限公司</span>-->
+          <!--<a href="http://www.miitbeian.gov.cn/" style="color:#fff">|粤ICP备17141636号-2</a>-->
+          <!--<a href="http://www.miitbeian.gov.cn/" >-->
+          <!--<img src="@/assets/ba.png" class="gongan"></a>-->
+
       </el-footer>
     </el-container>
     </div>
-    
+
 
     <!-- 修改个人信息弹出框 -->
     <el-dialog title="个人信息" :visible.sync="informationDialogVisible">
@@ -195,7 +197,7 @@
             <el-step v-for="(item,index) in versions" v-if="index > 0" :title="item.Ver" icon="el-icon-time" :description="versions[0].Info"></el-step>
           </el-steps>
         </div>
-  
+
     </el-dialog>
 
   </div>
@@ -229,15 +231,15 @@ export default {
       fatherName:'',//功能路径名
       childName:'',//功能路径名
       filterText:'',//搜索的关键字
-     
+
       houseImg:require('../assets/house.png'), // 小图标路径
-     
+
       gateImg:require('../assets/gate_unselect.png'),
-      
+
       selectHouse:true,
-      
+
       defaultActive:"",// 菜单栏默认展开的栏目
-      
+
       informationDialogVisible:false,// 个人中心弹出框
 
       updateLogDialogVisible:false,//更新日志
@@ -255,7 +257,7 @@ export default {
       infoRules:{
         mobilePhone:[
           {validator: validatePhone},
-   
+
         ],
 
       },
@@ -301,7 +303,7 @@ export default {
     }
   },
   methods:{
- 
+
       // 菜单栏事件
 
       handleSelect(key, keyPath) {
@@ -316,7 +318,7 @@ export default {
           });
 
           this.childName = selectChildItem[0].name
-        
+
           window.sessionStorage.setItem('fatherName',this.fatherName)
           window.sessionStorage.setItem('childName',this.childName)
           this.defaultActive = keyPath[1]
@@ -324,8 +326,6 @@ export default {
 
       // 点击首页按钮
       fistPageClick(index){
-
-
 
         if (index == 'FirstPage') {
           this.$router.push({name:'FirstPage'})
@@ -337,14 +337,14 @@ export default {
           this.defaultActive = null
 
         }
-        
+
       },
 
       // 树的事件
       handleNodeClick(data) {
         console.log(data)
-        this.$store.dispatch('setClickTreeData',data) 
-        
+        this.$store.dispatch('setClickTreeData',data)
+
       },
       // 树的搜索框
       filterNode(value, data) {
@@ -361,11 +361,11 @@ export default {
       *点击小图标
       */
       houseClick(){
-       
+
           this.houseImg = require('../assets/house.png')
           this.gateImg= require('../assets/gate_unselect.png')
           this.showTreeData = this.treeData.Commmunity
-      
+
       },
       gateClick(){
         this.houseImg = require('../assets/house_unselect.png')
@@ -383,12 +383,12 @@ export default {
 
         console.log('请求menus')
         this.loading = true
-        var params = { 
+        var params = {
           UserID:window.sessionStorage.getItem('id'),
-          time:this.dataUtil.formatTime1(new Date()) 
+          time:this.dataUtil.formatTime1(new Date())
         }
-      
-   
+
+
         var encryptParams = {
           evalue:this.$encrypt(JSON.stringify(params))
         }
@@ -408,11 +408,11 @@ export default {
             if (window.sessionStorage.getItem('menuName')!= null && window.sessionStorage.getItem('menuName') != 'FirstPage') {
               this.defaultActive =   window.sessionStorage.getItem('menuName')
             }else{
-             
+
               // this.defaultActive = this.menus[0].child[0].index
               this.defaultActive = null
             }
-            
+
 
             // 取路径
             if (window.sessionStorage.getItem('fatherName') != null) {
@@ -420,7 +420,7 @@ export default {
               if (this.fatherName != '首页') {
                 this.childName = window.sessionStorage.getItem('childName')
               }
-              
+
             }else{
               this.fatherName = this.menus[0].name
 
@@ -429,19 +429,19 @@ export default {
               // this.childName = this.menus[0].child[0].name
             }
           }else{
-            
+
             // if (this.requestMenusAgain) {
             //   console.log('再请求一次menus')
             //   this.requestMenusAgain = false
             //   // 延时500毫秒在此发送
             //   setTimeout(()=>{
-            //    this.getMenus() 
+            //    this.getMenus()
             //   },500)
-              
+
             // }
-            
+
           }
-         
+
         })
       },
 
@@ -451,7 +451,7 @@ export default {
       */
 
       getTreeInfo(){
-        
+
         // this.community = this.$store.getters.getTreeData
 
         var that = this
@@ -463,7 +463,7 @@ export default {
             that.recordIndex(window.sessionStorage.getItem('menuName'))
           }
         })
-       
+
       },
 
       /**
@@ -487,8 +487,8 @@ export default {
         .then(result=>{
           console.log(result)
           if (result.status == '成功') {
-            this.informationForm.name = result.data[0].UserName 
-            this.informationForm.mobilePhone = result.data[0].MobilePhone 
+            this.informationForm.name = result.data[0].UserName
+            this.informationForm.mobilePhone = result.data[0].MobilePhone
             this.informationForm.address = result.data[0].CustomerAddress
           }else{
             this.$message({
@@ -516,7 +516,7 @@ export default {
           }
 
           console.log(params);
-          
+
           var encryptParams = {
             evalue:this.$encrypt(JSON.stringify(params))
           }
@@ -540,9 +540,9 @@ export default {
                });
 
             }
-            
-            
-                    
+
+
+
           })
 
       },
@@ -557,11 +557,11 @@ export default {
 
         var params = {
           UserID:window.sessionStorage.getItem('id'),
-          time:this.dataUtil.formatTime1(new Date()) 
+          time:this.dataUtil.formatTime1(new Date())
         }
 
         console.log(JSON.stringify(params));
-          
+
         var encryptParams = {
           evalue:this.$encrypt(JSON.stringify(params))
         }
@@ -574,10 +574,10 @@ export default {
               this.dialogLoading = false
 
               if (result.status == "成功") {
-                
+
                this.dialogLoading = false
 
-                this.updateLogDialogVisible = true   
+                this.updateLogDialogVisible = true
 
                 this.versions = result.data
 
@@ -587,13 +587,13 @@ export default {
                 this.$message({
 
                   type: 'error',
-                  message:result.data             
+                  message:result.data
                 });
               }
-                                
+
             })
 
-        
+
       },
 
       /**
@@ -601,7 +601,7 @@ export default {
       *页面刷新也调用此方法
       */
       recordIndex(name,index){
-       
+
         // console.log(name)
         window.sessionStorage.setItem('menuName',name)
 
@@ -610,12 +610,12 @@ export default {
 
         if (typeof(father[index]) != 'undefined') {
 
-          father[index].lastChild.style.display = "none"
+          // father[index].lastChild.style.display = "none"
+          console.log(father[index].getElementsByClassName('el-menu'))
+          father[index].getElementsByClassName('el-menu')[0].style.display = "none"
         }
 
-        
-        
-      
+
 
         // 在区域档案->计量表档案管理 和 终端操作的->表计控制的时候 ，数列表可选
         if (name == 'meterFiles' || name == 'MeterReadAndSet') {
@@ -633,8 +633,8 @@ export default {
         }else{
           this.showTreeData = this.$store.state.treeData.Commmunity
         }
-        
-        
+
+
         // 在终端操作 网关控制的时候，数列表只显示集中器，其他地方树列表显示房屋
 
       },
@@ -661,7 +661,7 @@ export default {
           }
 
           console.log(params);
-          
+
           var encryptParams = {
             evalue:this.$encrypt(JSON.stringify(params))
           }
@@ -686,9 +686,9 @@ export default {
                });
 
             }
-            
-            
-                    
+
+
+
           })
       },
 
@@ -710,7 +710,7 @@ export default {
 
   },
   mounted(){
-    
+
      if (window.sessionStorage.getItem('menuName') == 'meterFiles') {
         this.showSelect = true
       }
@@ -718,12 +718,12 @@ export default {
     this.getMenus()
 
     var that = this
-    setTimeout(function(){
+    // setTimeout(function(){
       that.getTreeInfo()
-    },1000) 
+    // },1000)
 
-    
-    
+
+
   },
   computed:{
     treeData(){
@@ -738,12 +738,12 @@ export default {
       }else{
         this.showTreeData = newValue.Commmunity
       }
-      
+
     },
     // 搜索框搜索
     filterText(val) {
-        this.$refs.tree.filter(val);
-      }
+      this.$refs.tree.filter(val);
+    }
 
   }
 
@@ -764,6 +764,10 @@ export default {
   line-height: 60px;
 }
 
+.el-header{
+  background: linear-gradient(to bottom right, #338ff6, #3668ef);
+}
+
 .el-header div{
   height: 60px;
 }
@@ -775,7 +779,7 @@ export default {
   right: 0;
 } */
 
-  
+
 .el-aside {
   background-color: #fff;
   color: #333;
@@ -797,7 +801,7 @@ export default {
   text-align: left;
   font-size: 20px;
 
-  text-shadow: 2px 2px 10px red;
+  /*text-shadow: 2px 2px 10px red;*/
 }
 
 .system-setting{
@@ -819,15 +823,15 @@ export default {
 
 
  .headerMenus{
-    background:#909399;
+    background:#6FB2F8;
 
   }
   li.el-menu-item{
     text-align: left;
 
   }
-  
- 
+
+
 
 .el-tree{
   padding-left: 10px;
@@ -868,7 +872,6 @@ export default {
 .account{
   display: flex;
   align-items: center;
-
 }
 
 </style>

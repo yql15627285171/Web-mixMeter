@@ -50,7 +50,7 @@
     display: flex;
     flex-wrap: wrap;
   }
-  
+
   .demo-table-expand label {
     width: 130px;
     color: #99a9bf;
@@ -62,8 +62,8 @@
     width: 45%;
     text-align: left;
   }
-  
-  
+
+
   /*分页控制器*/
   .pagination{
     margin-top: 20px;
@@ -76,9 +76,9 @@
   }
 
   /*日期选择*/
-  .day .el-date-editor--daterange.el-input, 
-  .day.el-date-editor--daterange.el-input__inner, 
-  .day.el-date-editor--timerange.el-input, 
+  .day .el-date-editor--daterange.el-input,
+  .day.el-date-editor--daterange.el-input__inner,
+  .day.el-date-editor--timerange.el-input,
   .day.el-date-editor--timerange.el-input__inner
   {
     width: 260px;
@@ -134,4 +134,17 @@
 .el-menu--horizontal .el-submenu>.el-menu{
   padding: 0 !important;
 }
+@media print {
 
+  #printView{
+    display: block !important;
+  }
+
+  .el-header,
+  .el-footer,
+  .el-aside,
+  .rechargePage>div{
+    display: none !important;
+  }
+
+}

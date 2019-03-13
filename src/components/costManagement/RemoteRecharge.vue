@@ -1,29 +1,45 @@
 <!-- 远程充值 -->
 <template>
-	<div v-loading="loading" element-loading-text="拼命加载中">
+	<div v-loading="loading" element-loading-text="拼命加载中" class="rechargePage">
+
+    <div style="display: none;" id="printView">
+      <div style="margin-bottom: 30px">{{communityName}}收费收据</div>
+      <div style="margin-bottom: 20px">*******************************************</div>
+      <div style="margin-bottom: 20px">流水号：{{printResult.TsOrder}}</div>
+      <div style="margin-bottom: 20px">费用类别：{{printResult.type}}</div>
+      <div style="margin-bottom: 20px">用户号：{{printResult.userNo}}</div>
+      <div style="margin-bottom: 20px">用户名：{{printResult.UserName}}</div>
+      <div style="margin-bottom: 20px">地址：{{printResult.Addr}}</div>
+      <div style="margin-bottom: 20px">操作类型：{{printResult.OprtType}}</div>
+      <div style="margin-bottom: 20px">操作金额：{{printResult.Money}}</div>
+      <div style="margin-bottom: 20px">操作时间：{{printResult.Time}}</div>
+      <div>*******************************************</div>
+      <div>注：此收据不可用于发票报销</div>
+    </div>
+
+
       <object id="MWRFATL" style="width:0px;height:0px" classid="CLSID:856964B5-F42F-447B-A37D-ED07E8973ED2" codebase="trjCab.CAB#version=1,0,0,1">
      </object>
 		<div>
-            <el-button type="primary" @click="btn0Click">查询状态</el-button> 
-            <el-button type="warning" :disabled = "disabled1" @click="btn1Click" >远程开户</el-button> 
-            <el-button type="warning" :disabled = 'disabled2' @click="btn2Click">远程充值</el-button> 
-            <el-button type="warning" :disabled = 'disabled3' @click="ReOprtByHouseCode">重写</el-button>
-        </div>
-        <!-- 读取状态 -->
+      <el-button type="primary" @click="btn0Click">查询状态</el-button>
+      <el-button type="warning" :disabled = "disabled1" @click="btn1Click" >远程开户</el-button>
+      <el-button type="warning" :disabled = 'disabled2' @click="btn2Click">远程充值</el-button>
+      <el-button type="warning" :disabled = 'disabled3' @click="ReOprtByHouseCode">重写</el-button>
+      <el-button type="primary" @click="QueryPrintRHInfo">打印</el-button>
+    </div>
+    <!-- 读取状态 -->
 		<div v-if='show0'>
             <div style="width:500px;margin:30px 0 0 60px">
-                
-              
 
               <el-form label-width="100px" class="demo-ruleForm" >
                   <div class="title">*用户基本信息</div>
 				          <el-form-item label='区域：' style='height:30px'>
-                    
+
                     <el-input v-model='FifthRegionName' disabled placeholder='请选择栋数'></el-input>
                   </el-form-item>
 
                   <el-form-item label='房间：' style='height:30px'>
-                    
+
                     <el-input v-model='HouseRegionName' disabled placeholder='请选择房间'></el-input>
                   </el-form-item>
                   <el-form-item label='表号：' style='height:30px'>
@@ -32,77 +48,74 @@
                   <el-form-item label='用户：' style='height:30px'>
                     {{CustomerInfo.CurrentUser}}
                   </el-form-item>
-                  
+
                    <div class="title">*最近一次操作</div>
-				
+
 					          <el-form-item label='操作：' style='height:30px'>
                     	{{LastRecord.Name}}
                   	</el-form-item>
-               
+
                   	<el-form-item label="金额：" style='height:30px'>
                       <b style="color:blue">
                         {{LastRecord.Money}}
                       </b>
-                    	
+
                   	</el-form-item>
 
                   	<el-form-item label="时间：" style='height:30px'>
                     	{{LastRecord.Time}}
                   	</el-form-item>
-				
+
                     <div class="title">*电表当前数据</div>
-                      
+
                     <div style="display: flex;">
                         <el-form-item label='剩余金额：' style='width:240px;height:30px'>
                           <span :style='style1'>
                             {{CurrentPara.RemainMoney}}
                           </span>
-                         
+
                         </el-form-item>
-               
+
                         <el-form-item label="余额状态：" style='height:30px'>
                           <span :style='style2'>
                             {{CurrentPara.BalanceStatu}}
                           </span>
-                          
+
                         </el-form-item>
                     </div>
-                    
+
                     <div style="display: flex;">
                       <el-form-item label="阀控状态：" style='width:240px;height:30px'>
                         <span :style='style3'>
                           {{CurrentPara.RelayStatu}}
                         </span>
-                        
+
                       </el-form-item>
                       <el-form-item label="抄读时间：" style='height:30px'>
                         {{CurrentPara.RemainMoneyTime}}
                       </el-form-item>
                     </div>
-                    
+
 
               </el-form>
-            <div style="text-align:center">
-            	<!-- <el-button type="primary" style="width:120px" @click='QueryEMSTSStatus'>确定</el-button>  -->
-            </div>
-              
-              
+
+
             </div>
         </div>
 
-         <!-- 远程开户 -->
+    <!-- 远程开户 -->
 		<div v-if='show1'>
             <div style="width:500px;margin:100px 0 0 120px">
-                
+
               <el-form label-width="100px" class="demo-ruleForm" >
-                    
+
 				  <el-form-item label='栋数：'>
-                    
+
                     <el-input v-model='FifthRegionName' disabled placeholder='请选择栋数'></el-input>
                   </el-form-item>
 
                   <el-form-item label='房间：'>
-                    
+
                     <el-input v-model='HouseRegionName' disabled placeholder='请选择房间'></el-input>
                   </el-form-item>
 
@@ -116,30 +129,31 @@
 
                   <el-form-item label="金额：" >
                     <el-input  v-model.trim="Amount"></el-input>
+                    <span style="color: red">*一次缴费超过16300的可以通过末位是24的方式进行充值，如18024</span>
                   </el-form-item>
-                  
+
               </el-form>
             <div style="text-align:center">
-            	<el-button type="primary" style="width:120px" @click='GetFrameOpenAccountyByHouseCode'>确定开户</el-button> 
+            	<el-button type="primary" style="width:120px" @click='GetFrameOpenAccountyByHouseCode'>确定开户</el-button>
             </div>
-              
-              
+
+
             </div>
         </div>
 
-        <!-- 远程充值 -->
-        <div v-if='show2'>
+    <!-- 远程充值 -->
+    <div v-if='show2'>
             <div style="width:500px;margin:100px 0 0 120px">
-                
+
               <el-form label-width="100px" class="demo-ruleForm" >
-                    
+
 				  <el-form-item label='栋数：'>
-                    
+
                     <el-input v-model='FifthRegionName' disabled placeholder='请选择栋数'></el-input>
                   </el-form-item>
 
                   <el-form-item label='房间：'>
-                    
+
                     <el-input v-model='HouseRegionName' disabled placeholder='请选择房间'></el-input>
                   </el-form-item>
 
@@ -153,16 +167,18 @@
 
                   <el-form-item label="金额：" >
                     <el-input  v-model.trim="Amount"></el-input>
+                    <span style="color: red">*一次缴费超过16300的可以通过末位是24的方式进行充值，如18024</span>
                   </el-form-item>
-                  
+
               </el-form>
             <div style="text-align:center">
-            	<el-button type="primary" style="width:120px" @click='GetFrameRechargeByHouseCode'>确定充值</el-button> 
+            	<el-button type="primary" style="width:120px" @click='GetFrameRechargeByHouseCode'>确定充值</el-button>
             </div>
-              
-              
+
+
             </div>
         </div>
+
 
 	</div>
 </template>
@@ -205,6 +221,7 @@ export default{
 			show1:false,//开户界面
 			show2:false,//充值界面
 
+
       style1:'',//样式
       style2:'',
       style3:'',
@@ -241,12 +258,55 @@ export default{
                 value:'9'
             },],//交易方式
 
-            type:'',//交易方式的值
-            Amount:0,//充值金额
+      type:'',//交易方式的值
+      Amount:0,//充值金额
+
+      /*要打印的参数*/
+      communityName:window.sessionStorage.getItem("id"),//打印的社区名
+      printResult:{},//打印的结果集
+      /***************/
 
 		}
 	},
 	methods:{
+
+	  //获取打印信息的内容
+    QueryPrintRHInfo:function(){
+      if (this.HouseRegionCode == ""){
+        this.$message.warning("请选择房间")
+        return
+      }
+
+      this.loading = true
+      var params = {
+        UserId:window.sessionStorage.getItem('id'),
+        RegionCode:window.sessionStorage.getItem('RegionCode'),
+        HouseRegionCode:this.HouseRegionCode,
+        time:this.dataUtil.formatTime1(new Date())
+      }
+      console.log(params)
+      var encryptParams = {
+        evalue:this.$encrypt(JSON.stringify(params))
+      }
+      console.log(this.api.baseUrl + this.api.QueryPrintRHInfo)
+      this.http.post(this.api.baseUrl + this.api.QueryPrintRHInfo,encryptParams).then(result=>{
+        this.loading = false
+
+        if (result.status == "成功"){
+          this.printResult = result.data[0]
+          console.log(this.printResult)
+          setTimeout(_=>{
+            window.print()
+          },500)
+
+        }else{
+          this.$message.warning(result.data)
+        }
+
+
+      })
+
+    },
 
 		// 查看用户状态（类似卡验证）
 		QueryEMSTSStatus(){
@@ -265,14 +325,14 @@ export default{
         this.loading = true
 
         var params = {
-            UserId:window.sessionStorage.getItem('id'),        
+            UserId:window.sessionStorage.getItem('id'),
             RegionCode:window.sessionStorage.getItem('RegionCode'),
             HouseRegionCode:this.HouseRegionCode,
-            time:this.dataUtil.formatTime1(new Date()) 
+            time:this.dataUtil.formatTime1(new Date())
         }
 
           console.log(JSON.stringify(params));
-      
+
           var encryptParams = {
             evalue:this.$encrypt(JSON.stringify(params))
           }
@@ -284,13 +344,13 @@ export default{
           	this.loading = false
           	console.log(JSON.stringify(result))
 
-          	
+
           	if (result.status == '成功') {
 
               if (result.LastRecord != '') {
                 this.LastRecord = result.LastRecord[0]
               }
-          		
+
 
           		this.CustomerInfo = result.CustomerInfo[0]
 
@@ -303,7 +363,7 @@ export default{
           			this.disabled3 = true
 
           		}else if (result.CardType == '开户卡') {
-          			
+
           			this.disabled1 = false
           			this.disabled2 = true
           			this.disabled3 = true
@@ -348,10 +408,10 @@ export default{
                     message: '金额必须不能为负数'
                  });
                   return
-              }else if (this.Amount > 16000) {
+              }else if (this.Amount > 16300 && !this.Amount.toString().endsWith('24')) {
                   this.$message({
                     type: 'warning',
-                    message: '一次开户金额不能大于16000'
+                    message: '金额输入有误'
                  });
                   return
               }
@@ -365,18 +425,18 @@ export default{
               this.loading = true
 
                 var params = {
-                    UserId:window.sessionStorage.getItem('id'),        
+                    UserId:window.sessionStorage.getItem('id'),
                     RegionCode:window.sessionStorage.getItem('RegionCode'),
                     HouseRegionCode:this.HouseRegionCode,
                     Amount:this.Amount,
                     TransactionType:'0',//充值
                     TransactionMode:'2',//远程
                     TransactionMethod:this.type,
-                    time:this.dataUtil.formatTime1(new Date()) 
+                    time:this.dataUtil.formatTime1(new Date())
                 }
 
                   console.log(JSON.stringify(params));
-              
+
                   var encryptParams = {
                     evalue:this.$encrypt(JSON.stringify(params))
                   }
@@ -399,7 +459,7 @@ export default{
 	                        message: '开户成功'
                     	});
 
-                    	
+
 
                   	}else{
                   		this.$message({
@@ -407,17 +467,17 @@ export default{
 	                        message: result.data
                     	});
                   	}
-                  
+
                   	this.resetShow()
                   	this.resetDisabled()
 					          this.show0 = true
-                 
+
 
                   })
             }).catch(()=>{
 
             })
-			
+
 		},
 
 		// 充值
@@ -443,12 +503,12 @@ export default{
                     message: '金额必须不能为负数'
                  });
                   return
-              }else if (this.Amount > 16000) {
-                  this.$message({
-                    type: 'warning',
-                    message: '一次开户金额不能大于16000'
-                 });
-                  return
+              }else if (this.Amount > 16300 && !this.Amount.toString().endsWith('24')) {
+                this.$message({
+                  type: 'warning',
+                  message: '金额输入有误'
+                });
+                return
               }
 
             this.$confirm(`确定要充值${this.Amount}元吗？`, '提示', {
@@ -461,18 +521,18 @@ export default{
               this.loading = true
 
                 var params = {
-                    UserId:window.sessionStorage.getItem('id'),        
+                    UserId:window.sessionStorage.getItem('id'),
                     RegionCode:window.sessionStorage.getItem('RegionCode'),
                     HouseRegionCode:this.HouseRegionCode,
                     Amount:this.Amount,
                     TransactionType:'0',//充值
                     TransactionMode:'2',//远程
                     TransactionMethod:this.type,
-                    time:this.dataUtil.formatTime1(new Date()) 
+                    time:this.dataUtil.formatTime1(new Date())
                 }
 
                   console.log(JSON.stringify(params));
-              
+
                   var encryptParams = {
                     evalue:this.$encrypt(JSON.stringify(params))
                   }
@@ -495,7 +555,7 @@ export default{
 	                        message: '充值成功'
                     	});
 
-                    	
+
 
                   	}else{
                   		this.$message({
@@ -513,7 +573,7 @@ export default{
 
             })
 
-			 
+
 		},
 
 		// 重写卡
@@ -527,18 +587,18 @@ export default{
 
           return
         }
-      
+
 		 	      this.loading = true
 
             var params = {
-                UserId:window.sessionStorage.getItem('id'),        
+                UserId:window.sessionStorage.getItem('id'),
                 RegionCode:window.sessionStorage.getItem('RegionCode'),
                 HouseRegionCode:this.HouseRegionCode,
-                time:this.dataUtil.formatTime1(new Date()) 
+                time:this.dataUtil.formatTime1(new Date())
             }
 
              console.log(JSON.stringify(params));
-          
+
               var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
@@ -561,7 +621,7 @@ export default{
 	                        message: '重写成功'
                     	});
 
-                    	
+
 
                   	}else{
                   		this.$message({
@@ -570,7 +630,7 @@ export default{
                     	});
                   	}
 
-                  	
+
                   	this.resetShow()
                   	this.resetDisabled()
 					this.show0 = true
@@ -587,9 +647,9 @@ export default{
           if (!this.ICCard.readerOpen()) {
               this.$message({
                   type: 'error',
-                  message: "连接读卡器失败"                
+                  message: "连接读卡器失败"
               });
-             
+
               this.ICCard.readerClose()
               return false
           }else{
@@ -611,9 +671,10 @@ export default{
 			this.show1 = false
 			this.show2 = false
 
+
       this.CustomerInfo.MeterAddr = ''
       this.CustomerInfo.CurrentUser = ''
-      
+
       this.CurrentPara.RemainMoney = ''
       this.CurrentPara.BalanceStatu = ''
       this.CurrentPara.RelayStatu = ''
@@ -622,7 +683,7 @@ export default{
       this.LastRecord.Name = ''
       this.LastRecord.Money = ''
       this.LastRecord.Time = ''
-      
+
 		},
 
 
@@ -630,6 +691,7 @@ export default{
 			this.show0 = false
 			this.show1 = false
 			this.show2 = false
+
 		},
 		resetDisabled(){
 			this.disabled1 = true
@@ -672,7 +734,7 @@ export default{
                             console.log('匹配到')
                             return fifthNames[j].label
                         }
-                        
+
                     }
                 }
             }
@@ -686,7 +748,7 @@ export default{
                 if (node.level == "6") {
                     this.HouseRegionName = node.label
                     this.HouseRegionCode = node.code
-                }  
+                }
 
             }
         },
@@ -749,7 +811,9 @@ export default{
 .el-input .is-disabled .el-input__inner{
   color: #000 !important
 }
-	
+
+
+
 </style>
 
 

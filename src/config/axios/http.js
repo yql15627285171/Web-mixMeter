@@ -21,6 +21,7 @@ axios.interceptors.request.use(config => {
   响应拦截器
 */
 axios.interceptors.response.use(response => {
+  // console.log("response"+response)
   return response
 }, error => {
   /*
@@ -28,13 +29,14 @@ axios.interceptors.response.use(response => {
     resolve函数的作用是，将Promise对象的状态从“未完成”变为“成功”（即从 pending 变为 resolved）
     并将异步操作的结果，作为参数传递出去；
   */
+  console.log("error"+error)
   return Promise.resolve(error.response)
 })
 
 
 
 function checkStatus (response) {
-  // console.log(response)
+  // console.log("response"+response)
   // 这里可以做一些动作，例如结束菊花
 
   /*
@@ -52,13 +54,14 @@ function checkStatus (response) {
   }
 
   // console.log(response.data)
-  
+
   // 如果http状态码正常，则直接返回数据
   if (response && (response.status === 200 || response.status === 304 || response.status === 400)) {
     if (response.data.msg=='ok') {
       return response
     }else{
-      return JSON.parse(response.data.replace(/<[^>]+>/g, "").replace(/[\r\n]/g,"")) 
+      console.log(response.data)
+      return JSON.parse(response.data.replace(/<[^>]+>/g, "").replace(/[\r\n]/g,""))
     }
         // 如果不需要除了data之外的数据，可以直接 return response.data
   }else {
@@ -72,7 +75,7 @@ function checkStatus (response) {
 
     }
   }
-  
+
 }
 
 function checkCode (res) {
@@ -96,8 +99,8 @@ export default {
         // 'X-Requested-With': 'XMLHttpRequest',
         // "Access-Control-Allow-Origin":"*",
         'content-type': 'application/x-www-form-urlencoded',
-  
-        
+
+
       }
     }).then(checkStatus).then(checkCode)
   },
@@ -115,6 +118,6 @@ export default {
         "Authorization":"APPCODE 459866317d8f4c48b62eb53c3e5d63bd"
 
       }
-    }).then(checkStatus).then(checkCode)  
+    }).then(checkStatus).then(checkCode)
   }
 }

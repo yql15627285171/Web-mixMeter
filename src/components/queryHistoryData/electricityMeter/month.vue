@@ -6,7 +6,7 @@
 			    <el-date-picker
 			      v-model="startMonth"
 			      type="month"
-			      placeholder="开始月份"			 
+			      placeholder="开始月份"
 			      value-format='yyyy-MM'>
 			    </el-date-picker>
 
@@ -22,7 +22,7 @@
 
 	  		<el-button type="primary" style="margin-left:20px;" @click='checkFreezingData'>查询</el-button>
 		</div>
-		
+
 		<div class="monthTable">
 			<el-table
 		    :data="showTableData"
@@ -37,7 +37,7 @@
 		          <el-form-item  v-for="(item,index) in tableHead" v-if="index > 7" :label="item.label" >
 		            <span>{{ props.row[item.id] }}</span>
 		          </el-form-item>
-		     
+
 		        </el-form>
 		      </template>
 		    </el-table-column>
@@ -53,8 +53,8 @@
 
 		  </el-table>
 		</div>
-		
-			
+
+
 
 		  <div class="block pagination">
 		    <el-pagination
@@ -65,7 +65,7 @@
 		      :total="partOfTableData.length">
 		    </el-pagination>
 	  	  </div>
-		
+
 
 
 	</div>
@@ -202,15 +202,15 @@ export default{
 
 			this.loading = true
 
-          var params = {           
+          var params = {
        		FourthRegionCode :window.sessionStorage.getItem('RegionCode'),
        		TimeStart:this.startMonth,
        		TimeEnd:this.endMonth,
-       		time:this.dataUtil.formatTime1(new Date())      
+       		time:this.dataUtil.formatTime1(new Date())
           }
 
           console.log(params);
-          
+
           var encryptParams = {
             evalue:this.$encrypt(JSON.stringify(params))
           }
@@ -222,7 +222,7 @@ export default{
             this.loading = false
             console.log(result)
             if (result.status == '成功') {
-            	
+
                 this.$message({
                   type: 'success',
                   message: '查询成功!'
@@ -239,20 +239,20 @@ export default{
                });
 
             }
-            
-            
-                    
+
+
+
           })
 		},
 
 		// 筛选数据
 		filterTableData(node){
       		if (window.sessionStorage.getItem('menuName') == 'QueryDayFreezingData') {
-      			
+
       			if(node.level == "4"){
       				this.partOfTableData = this.tableData;
       			}else if(node.level == "5"){
-      				
+
       				this.partOfTableData = this.tableData.filter(element=>{
       					return (element.FifthRegionCode == node.code)
       				})
@@ -266,7 +266,7 @@ export default{
       				this.partOfTableData[i].index = (i+1).toString()
       			}
       			this.showTableData = this.partOfTableData.slice(0, 10)
-      			
+
       		}
       	},
 
@@ -287,9 +287,9 @@ export default{
 		window.sessionStorage.setItem('freezingData','month')
 
 		this.loading = true
-		setTimeout(()=>{
+		// setTimeout(()=>{
 			this.checkFreezingData()
-		}, 2000)
+		// }, 2000)
 	}
 }
 </script>

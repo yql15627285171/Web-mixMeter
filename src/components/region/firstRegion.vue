@@ -9,15 +9,15 @@
 				<!-- <el-button type="primary" @click='doPrint'>打印</el-button> -->
 			</div>
 		</div>
-		
+
 		<!-- 弹出框,显示excel表格的内容 -->
 		<el-dialog  :visible.sync="excelVisible" >
 			<div style="overflow:hidden">
 				<span>要上传的excel表格的信息</span>
 				<el-button type="primary" style="float:right" @click='sureUploadExcel'>上传</el-button>
 			</div>
-			
-			<el-table 
+
+			<el-table
 				:data="excelData"
 				:header-cell-class-name="tableheaderClassName"
 				:cell-class-name="tableCellName"
@@ -26,38 +26,38 @@
 				stripe
 				>
 
-				<el-table-column 
+				<el-table-column
 		    	v-for="(item,index) in excelHead"
 		    	:prop="item"
 		    	:label="item"
 		    	width='150'
-		    	>		
+		    	>
 		   		</el-table-column>
-				
+
 			</el-table>
-			
-			
+
+
 		</el-dialog>
 		<!-- 单个导入弹出框 -->
-		
+
 		<el-dialog title="导入/修改 房间信息" :visible.sync="singleImportDialogVisible">
 	      <el-form :model="singleImportForm"  class="demo-ruleForm">
-			
+
 
 	        <el-form-item label="区域" prop="FifthRegionName" style='margin-left:30px'>
 		        <el-input
 				  v-model.trim="singleImportForm.FifthRegionName"
 				  placeholder="请输入内容"
 				  style='width:70%'
-				  :disabled='cannotabled'>	
+				  :disabled='cannotabled'>
 				</el-input>
-	          
+
 	        </el-form-item>
 	        <el-form-item label="房间"  prop="HouseRegionName" style='margin-left:30px'>
 	        	<el-input
 				  v-model.trim="singleImportForm.HouseRegionName"
 				  placeholder="请输入内容"
-				  style='width:70%'>	
+				  style='width:70%'>
 				</el-input>
 	        </el-form-item>
 	        <el-form-item label="面积"  prop="HouseAera" style='margin-left:30px'>
@@ -65,7 +65,7 @@
 				  v-model.trim="singleImportForm.HouseAera"
 				  placeholder="请输入内容"
 				  style='width:70%'
-				  :disabled='cannotabled'>	
+				  :disabled='cannotabled'>
 				</el-input>
 	        </el-form-item>
 	      </el-form>
@@ -82,28 +82,28 @@
 		    :data="showTableData"
 		    :header-cell-class-name="tableheaderClassName"
 		    stripe
-		 
+
 		    >
-		    <el-table-column 
+		    <el-table-column
 		    	v-for="item in tableHead"
 		    	:prop="item.id"
 		    	:label="item.label"
 		    	:width='item.width'
 
-		    	>		
+		    	>
 		    </el-table-column>
 
 
 		     <el-table-column
 				width='150'
-		    	label="操作">	
+		    	label="操作">
 				<template slot-scope="scope">
 					<el-button @click="UpdateHouse(scope.row)" type="text" size="small">修改</el-button>
 	       			<el-button @click="deleteHouse(scope.row)" type="text" size="small">删除</el-button>
-	       			
+
      			</template>
 		    </el-table-column>
-		   
+
 		</el-table>
 		<div class="block pagination">
 		    <!-- <span class="demonstration">显示总数</span> -->
@@ -117,14 +117,14 @@
 	  	</div>
 		</div>
 	</div>
-	
+
 </template>
 <script>
 export default{
 	data(){
 		return{
 			isSuper:'0',
-			//菊花 
+			//菊花
 			loading:false,
 			// dialogLoading:false,
 			// 对话框
@@ -133,7 +133,7 @@ export default{
 			excelData:null,
 
 			singleImportDialogVisible:false,//单个导入框是否显示
-			
+
 			singleImportForm:{
 				FifthRegionName:'',//栋数
 				HouseRegionName:'',//房间
@@ -154,17 +154,17 @@ export default{
 			{
 				label:'区域',
 				id:'FifthRegionName',
-			
+
 			},
 			{
 				label:'房间',
 				id:'HouseRegionName',
-			
+
 			},
 			{
 				label:'面积(㎡)',
 				id:'HouseAera',
-				
+
 			}],
 			tableData:[],
 			partOfTableData:[],//筛选完条件之后的数据源
@@ -204,12 +204,12 @@ export default{
       		var oldstr = document.body.innerHTML
       		document.body.innerHTML = newstr
       		window.print();
-      
+
       		window.location.reload()
       	}, 50)
-      		
-      		
-      
+
+
+
       	},
 
       	/**
@@ -226,9 +226,9 @@ export default{
 				this.excelHead = head
 				this.excelData = all //没有过滤过的所有数据
 				console.log(JSON.stringify(all))
-			
+
 				// console.log(typeof(JSON.stringify(all)))
-			
+
 				this.excelVisible = true
 				document.getElementById("upload").value=''
 
@@ -243,28 +243,28 @@ export default{
 			this.excelVisible = false
 			this.loading = true
 			var that = this
-      	
-  			var params = { 
+
+  			var params = {
   				UserId:window.sessionStorage.getItem('id'),
   				RegionCode:window.sessionStorage.getItem('RegionCode'),
   				jsonValue:JSON.stringify(this.excelData),
-          		time:this.dataUtil.formatTime1(new Date()) 
+          		time:this.dataUtil.formatTime1(new Date())
         	}
-  
+
 	        var encryptParams = {
 	          evalue:this.$encrypt(JSON.stringify(params))
 	        }
 
 	        console.log(this.$encrypt(JSON.stringify(params)))
-        	
+
         	this.http.post(this.api.baseUrl+this.api.AddHouseInfo,encryptParams)
 	        .then(result=>{
 	          this.loading = false
-	      
+
 	          console.log('添加房间')
 	           console.log(result)
 	          if (result.status=="成功") {
-	          	
+
 	          	this.$message({
             		type: 'success',
            			message: '操作成功!'
@@ -285,7 +285,7 @@ export default{
          		});
 
 	          }
-	        }) 			
+	        })
 		},
 
 		/**
@@ -293,7 +293,7 @@ export default{
 		*/
 		AddHouseInfoSingle(){
 			this.singleImportDialogVisible = false
-      		
+
       		this.loading = true
       		 var params = {
       		 	FifthRegionName:this.singleImportForm.FifthRegionName,
@@ -301,11 +301,11 @@ export default{
       		 	HouseAera:this.singleImportForm.HouseAera,
                 UserId:window.sessionStorage.getItem('id'),
                 RegionCode:window.sessionStorage.getItem('RegionCode'),
-                time:this.dataUtil.formatTime1(new Date()) 
+                time:this.dataUtil.formatTime1(new Date())
             }
 
               console.log(JSON.stringify(params));
-          
+
               var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
@@ -315,10 +315,10 @@ export default{
               this.http.post(this.api.baseUrl+this.api.AddHouseInfoSingle,encryptParams)
               .then(result=>{
 
-              	  this.loading = false			       
+              	  this.loading = false
 		          console.log(result)
 		          if (result.status=="成功") {
-		          	
+
 		          	this.$message({
 	            		type: 'success',
 	           			message: '操作成功!'
@@ -370,7 +370,7 @@ export default{
       	*/
       	UpdateHouseRegionName(){
       		this.singleImportDialogVisible = false
-      		
+
       		this.loading = true
       		 var params = {
       		 	NewHouseName:this.singleImportForm.HouseRegionName,
@@ -378,11 +378,11 @@ export default{
       		 	HouseRegionCode:this.updateItem.HouseRegionCode,//修改的房间码
                 UserId:window.sessionStorage.getItem('id'),
                 RegionCode:window.sessionStorage.getItem('RegionCode'),
-                time:this.dataUtil.formatTime1(new Date()) 
+                time:this.dataUtil.formatTime1(new Date())
             }
 
               console.log(JSON.stringify(params));
-          
+
               var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
@@ -392,10 +392,10 @@ export default{
               this.http.post(this.api.baseUrl+this.api.UpdateHouseRegionName,encryptParams)
               .then(result=>{
 
-              	  this.loading = false			       
+              	  this.loading = false
 		          console.log(result)
 		          if (result.status=="成功") {
-		          	
+
 		          	this.$message({
 	            		type: 'success',
 	           			message: '操作成功!'
@@ -438,12 +438,12 @@ export default{
 		*/
 		getRoomInfo(){
 			this.loading = true
-			var params = { 
+			var params = {
 				// RegionCode:"ALL",
-  				RegionCode:window.sessionStorage.getItem('RegionCode'), 				
-          		time:this.dataUtil.formatTime1(new Date()) 
+  				RegionCode:window.sessionStorage.getItem('RegionCode'),
+          		time:this.dataUtil.formatTime1(new Date())
         	}
-  
+
 	        var encryptParams = {
 	          evalue:this.$encrypt(JSON.stringify(params))
 	        }
@@ -453,7 +453,7 @@ export default{
         	this.http.post(this.api.baseUrl+this.api.QureyAllHouseInfoForForm,encryptParams)
 	        .then(result=>{
 	          this.loading = false
-	        
+
 	           console.log(result)
 	          if (result.status=="成功") {
 	          	this.tableData = result.Commmunity
@@ -462,7 +462,7 @@ export default{
 
 	          	this.currentPage = 1
 	          }
-	        }) 
+	        })
 		},
 
 		/*
@@ -496,9 +496,9 @@ export default{
 		        	var params = {
 		        		UserId:window.sessionStorage.getItem('id'),
 		        		HouseRegionCode:row.HouseRegionCode,
-		        		time:this.dataUtil.formatTime1(new Date()) 
+		        		time:this.dataUtil.formatTime1(new Date())
 		        	}
-		  
+
 			        var encryptParams = {
 			          evalue:this.$encrypt(JSON.stringify(params))
 			        }
@@ -508,18 +508,18 @@ export default{
 		        	this.http.post(this.api.baseUrl+this.api.DeleteHouseInfo,encryptParams)
 			        .then(result=>{
 			          this.loading = false
-			         
+
 			           console.log(result)
 			          if (result.status=="成功") {
 			          	this.$message({
 		            			type: 'success',
 		           			 	message: '操作成功!'
 		         			 });
-			            
+
 			            this.updateTreeData()
 			            setTimeout(function(){
 							that.getRoomInfo()
-						},500)              	          
+						},500)
 			        }else{
 			        	this.$message({
 		          			showClose: true,
@@ -527,10 +527,10 @@ export default{
 		          			type: 'error'
 		        		});
 			        }
-			      }) 
+			      })
 	         })
 	        .catch(()=> {});
-      	
+
       	},
 
 
@@ -541,13 +541,13 @@ export default{
       	*/
       	filterTableData(node){
       		if (window.sessionStorage.getItem('menuName') == 'firstRegion') {
-      			
+
       			if(node.level == "4"){
       				this.partOfTableData = this.tableData.filter(element=>{
       					return (element.FourthRegionCode == node.code)
       				});
       			}else if(node.level == "5"){
-      				
+
       				this.partOfTableData = this.tableData.filter(element=>{
       					return (element.FifthRegionCode == node.code)
       				})
@@ -561,7 +561,7 @@ export default{
       				this.partOfTableData[i].index = (i+1).toString()
       			}
       			this.showTableData = this.partOfTableData.slice(0, 10)
-      			
+
       		}
       	},
 	},
@@ -581,10 +581,10 @@ export default{
 
 		var that = this
 		this.loading = true
-		setTimeout(function(){
+		// setTimeout(function(){
 			that.getRoomInfo()
-		},2000)
-		
+		// },2000)
+
 	}
 }
 </script>

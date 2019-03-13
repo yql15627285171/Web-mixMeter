@@ -61,13 +61,13 @@
 		          <el-form-item  v-for="(item,index) in tableHead" v-if="index > 8" :label="item.label" >
 		            <span>{{ props.row[item.id] }}</span>
 		          </el-form-item>
-		     
+
 		        </el-form>
 		      </template>
-		    </el-table-column>		    
+		    </el-table-column>
 		    <el-table-column
 		    v-for="(item,index) in tableHead"
-		    v-if="index <= 8" 
+		    v-if="index <= 8"
 		      :label="item.label"
 		      :prop="item.id"
 		      >
@@ -200,7 +200,7 @@ export default{
 					return 'error'
 				}else{
 					return 'normal'
-				}				
+				}
 			}
 
 
@@ -212,7 +212,7 @@ export default{
 					return 'error'
 				}else{
 					return 'normal'
-				}				
+				}
 			}
 			if (columnIndex == 9) {
 				var status = this.showTableData[rowIndex][column.property]
@@ -220,7 +220,7 @@ export default{
 					return 'error'
 				}else{
 					return 'normal'
-				}				
+				}
 			}
 		},
 
@@ -235,8 +235,8 @@ export default{
 		*表格选中的行发生改变
 		*/
 		handleSelectionChange(val){
-			this.selectionData = val 
-	
+			this.selectionData = val
+
 			// if (val.length > 2 || (val.length == 2 && this.tableData.length ==2)) {
 			// 	alert('不能全选')
 			// 	this.$refs.multipleTable.clearSelection();
@@ -265,16 +265,16 @@ export default{
 			var params = {
 				UserId: window.sessionStorage.getItem('id'),
 				RegionCode :window.sessionStorage.getItem('RegionCode'),
-				MeterKindId:'1',	
-          		time:this.dataUtil.formatTime1(new Date()) 
+				MeterKindId:'1',
+          		time:this.dataUtil.formatTime1(new Date())
 			}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
 
             console.log(this.$encrypt(JSON.stringify(params)))
-            
+
         	this.http.post(this.api.baseUrl+this.api.QureyMeterCurrentStatusByRegionCode,encryptParams)
 	        .then(result=>{
 	          this.loading = false
@@ -287,24 +287,24 @@ export default{
 	    		console.log(this.partOfTableData)
 	          	this.showTableData = this.tableData.slice(0, 10)
 	          	this.currentPage = 1
-	          	
+
 
 	          }else{
-	        	
+
 	        	this.$message({
           			showClose: true,
           			message: result.data,
           			type: 'error'
         		});
 	          }
-	          
+
 	        })
 		},
 
 		/**
 	   	*读取当前值
 	   	*UserId             微信openid
-	   	*HouseRegionCode    房间编号     
+	   	*HouseRegionCode    房间编号
 	   	*ctrlType           指令类型：1当前电量，2剩余金额，3当前状态
 	   	*/
    		ReadEMCurrentPara(type){
@@ -336,16 +336,16 @@ export default{
 	   		var housename = selectData.HouseName
 
 
-	   		var params = {           
+	   		var params = {
 	            UserId :window.sessionStorage.getItem('id'),
-	   
+
 	       		HouseRegionCode:JSON.stringify(selectData),
 	       		ctrlType:type,
-	       		time:this.dataUtil.formatTime1(new Date())      
+	       		time:this.dataUtil.formatTime1(new Date())
 	          }
 
 	        console.log(params);
-	          
+
 	        var encryptParams = {
 	         	evalue:this.$encrypt(JSON.stringify(params))
 	         }
@@ -354,7 +354,7 @@ export default{
 
 	        this.http.post(this.api.baseUrl+this.api.ReadEMCurrentPara,encryptParams)
 	        .then(result=>{
-	           	
+
 	           	console.log(result)
 
 	           	if (this.requestCount < this.selectionData.length - 1) {
@@ -365,7 +365,7 @@ export default{
 	           		this.loading = false
 	           	}
 	            if (result.status == '成功') {
-	            	
+
 	            	this.resetData(this.tableData,result.data)
 	   				this.resetData(this.showTableData,result.data)
 	   				this.resetData(this.partOfTableData,result.data)
@@ -377,38 +377,38 @@ export default{
 			          })
 
 	            }else{
-	            	
+
 	              	this.$notify({
 			          title: housename,
 			          message: result.data,
 			          type: 'error'
 			       })
-	            }	
-	            	                       
+	            }
+
 	        })
 
-	   		   
+
    		},
 
 		/**
 	   	*读取当前值
 	   	*UserId             微信openid
-	   	*HouseRegionCode    房间编号     
+	   	*HouseRegionCode    房间编号
 	   	*ctrlType           指令类型：1当前电量，2剩余金额，3当前状态
 	   	*/
 	 //   	readEM(selectData,type){
 	 //   		this.loading = true
 	 //   		var housename =  selectData.HouseName
-	 //   		var params = {           
+	 //   		var params = {
 		//             UserId :window.sessionStorage.getItem('id'),
 		//        		// HouseRegionCode:this.selectionData.HouseRegionCode,
 		//        		HouseRegionCode:JSON.stringify(selectData),
 		//        		ctrlType:type,
-		//        		time:this.dataUtil.formatTime1(new Date())      
+		//        		time:this.dataUtil.formatTime1(new Date())
 		//           }
 
 		//           console.log(params);
-		          
+
 		//           var encryptParams = {
 		//             evalue:this.$encrypt(JSON.stringify(params))
 		//           }
@@ -420,7 +420,7 @@ export default{
 		//             this.loading = false
 		//             console.log(result)
 		//             if (result.status == '成功') {
-		            	
+
 		//             	this.resetData(this.tableData,result.data)
 		//    				this.resetData(this.showTableData,result.data)
 		//    				this.resetData(this.partOfTableData,result.data)
@@ -432,20 +432,20 @@ export default{
 		// 		          })
 
 		//             }else{
-		            	
+
 		//               	this.$notify({
 		// 		          title: housename,
 		// 		          message: result.data,
 		// 		          type: 'error'
 		// 		       })
-		//             }	
+		//             }
 
 		//           })
 		// },
 		/**
 	   *费控接口 用于电表拉合闸、报警、保电
 	   *UserId             用户号
-	   *HouseRegionCode    房间编号     
+	   *HouseRegionCode    房间编号
 	   *ctrlType           指令类型：1拉闸，2合闸，3报警，4报警解除，5保电，6保电解除
 	   */
 	   	CtrlEMRelayStatu(code){
@@ -464,16 +464,16 @@ export default{
 
 	   		// this.selectionData.HouseRegionCode = '0101001002004005'
 
-          var params = {           
+          var params = {
             UserId :window.sessionStorage.getItem('id'),
        		// HouseRegionCode:this.selectionData.HouseRegionCode,
        		HouseRegionCode:JSON.stringify(this.selectionData[0]),
        		ctrlType:code,
-       		time:this.dataUtil.formatTime1(new Date())      
+       		time:this.dataUtil.formatTime1(new Date())
           }
 
           console.log(params);
-          
+
           var encryptParams = {
             evalue:this.$encrypt(JSON.stringify(params))
           }
@@ -500,19 +500,19 @@ export default{
                });
 
             }
-            
-            
-                    
+
+
+
           })
 	   	},
 
-		
+
 		 /**
       	*数据源条件筛选
       	*/
       	filterTableData(node){
 			if (window.sessionStorage.getItem('menuName') == 'MeterReadAndSet') {
-      
+
       			if(node.level == "4"){
       				console.log(node.code)
       				this.partOfTableData = this.tableData
@@ -521,13 +521,13 @@ export default{
       					return (element.FifthRegionCode == node.code)
       				});
       			}else if (node.level == "6") {
-      				
+
       				this.partOfTableData = this.tableData.filter(element=> {
       					return (element.HouseRegionCode == node.code)
       				});
 
       			} else if(node.level == "GW"){
-      				
+
       				this.partOfTableData = this.tableData.filter(element=>{
       					return (element.LogicAddr == node.label)
       				})
@@ -538,9 +538,9 @@ export default{
       			}
 
 
-      			
+
       			this.showTableData = this.partOfTableData.slice(0, 10)
-      			
+
       		}
 		},
 
@@ -563,12 +563,12 @@ export default{
 				}
 			});
 		}
-	
+
 
 
 	},
 
-		
+
 
 
 	computed:{
@@ -581,14 +581,14 @@ export default{
 			this.filterTableData(newVal)
 		}
 	},
-	
+
 	mounted(){
 		var that = this
 		this.loading = true
-		setTimeout(function(){
+		// setTimeout(function(){
 			that.qureyMeterCurrentStatusByRegionCode()
-		},2000)
-		
+		// },2000)
+
 	}
 }
 </script>
@@ -615,5 +615,5 @@ export default{
 }
 
 
-	
+
 </style>

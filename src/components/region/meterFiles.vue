@@ -2,24 +2,24 @@
 <template>
 	<div v-loading="allLoading" :element-loading-text="loadingTitle">
 		<div class="condition">
-			
+
 			<div class="right">
 				<input id="upload" type="file" @change="importExcel($event)"  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" style="display:none" />
 				<el-button type="primary" @click="singleImportBtnClick">单个添加</el-button>
 				<el-button type="primary" @click="choseFile">一键添加</el-button>
 				<el-button type="primary" @click="setFileToGW">档案下发</el-button>
 			</div>
-			
+
 		</div>
-		
+
 		<!-- excel表格导入对话框 -->
 		<el-dialog  :visible.sync="excelVisible" class='excelDialog'>
 			<div style="overflow:hidden">
 				<el-button type="primary" style="float:right" @click="sureUpload">上传</el-button>
 			</div>
-			
-			
-				<el-table 
+
+
+				<el-table
 				:data="excelData"
 				:header-cell-class-name="tableheaderClassName"
 				style="width: 100%;"
@@ -27,18 +27,18 @@
 				stripe
 				>
 
-				<el-table-column 
+				<el-table-column
 		    	v-for="(item,index) in excelHead"
 		    	:prop="item"
 		    	:label="item"
 		    	width='150'
-		    	>		
+		    	>
 		   		 </el-table-column>
-				
+
 			</el-table>
-		
+
 		</el-dialog>
-		
+
 		<!-- 修改对话框 -->
 		<el-dialog :title='changeTitle' :visible.sync="changeDialogVisible">
 		  <el-form :model="changeForm">
@@ -52,7 +52,7 @@
 		      <el-switch v-model="changeForm.RunStatus">
 			  </el-switch>
 			</el-form-item>
-		
+
 
 		  </el-form>
 	      <div slot="footer" class="dialog-footer">
@@ -64,7 +64,7 @@
 		<!-- 单个导入 -->
 		<el-dialog title="导入/修改 表计" :visible.sync="singleImportDialogVisible" label-position='right' >
 	      <el-form :model="singleImportForm"  class="demo-ruleForm">
-			
+
 
 	        <el-form-item label="资产编号" prop="MeterAssetsCode" label-width='90px'>
 	        	<el-input 	v-model.trim="singleImportForm.MeterAssetsCode"
@@ -72,8 +72,8 @@
 	        				style='width:70%'
 	        				:disabled='noChangeMeterAssetsCode'
 	        	></el-input>
-		       
-	          
+
+
 	        </el-form-item>
 	        <el-form-item label="区域"  prop="FifthRegionName" label-width='90px'>
 	        	<el-autocomplete
@@ -81,7 +81,7 @@
 				  :fetch-suggestions="queryFifthRegionName"
 				  placeholder="请输入内容"
 				  style='width:70%'
-				  @select="handleSelect">	
+				  @select="handleSelect">
 				</el-autocomplete>
 	        </el-form-item>
 	        <el-form-item label="房间"  prop="HouseRegionName" label-width='90px'>
@@ -89,7 +89,7 @@
 				  v-model.trim="singleImportForm.HouseRegionName"
 				  :fetch-suggestions="queryHouseRegionName"
 				  placeholder="请输入内容"
-				  style='width:70%'>	
+				  style='width:70%'>
 				</el-autocomplete>
 	        </el-form-item>
 	        <el-form-item label="集中器地址"  prop="LogicAddr" label-width='90px'>
@@ -97,7 +97,7 @@
 				  v-model.trim="singleImportForm.LogicAddr"
 				  :fetch-suggestions="queryLogicAddr"
 				  placeholder="请输入内容"
-				  style='width:70%'>	
+				  style='width:70%'>
 				</el-autocomplete>
 	        </el-form-item>
 
@@ -106,14 +106,14 @@
 	        				placeholder="请输入内容"
 	        				style='width:70%'
 	        	></el-input>
-		       
-	          
+
+
 	        </el-form-item>
 
 
 	      </el-form>
 
-		 	
+
 	      <div slot="footer" class="dialog-footer">
 	        <el-button @click="singleImportDialogVisible = false">取 消</el-button>
 	        <el-button type="primary" @click="AddMeterInfoSingle">确认</el-button>
@@ -123,20 +123,20 @@
 
 
 		<!-- 表格 -->
-			<el-table			
+			<el-table
 		    :data="showTableData"
 		    :header-cell-class-name="tableheaderClassName"
 		    :cell-class-name="tableCellName"
 		    stripe
 		    style="width: 100%">
-		   
+
 		    <el-table-column type="expand">
 		      <template slot-scope="props">
 		        <el-form label-position="left" inline class="demo-table-expand" >
 		          <el-form-item  v-for="(item,index) in tableHead" v-if="index >=6" :label="item.label" >
 		            <span>{{ props.row[item.id] }}</span>
 		          </el-form-item>
-		     
+
 		        </el-form>
 		      </template>
 		    </el-table-column>
@@ -149,22 +149,22 @@
 		      >
 		    </el-table-column>
 
-		   <!--   <el-table-column label="运行状态">	
+		   <!--   <el-table-column label="运行状态">
 				<template slot-scope="scope">
 	       			<span v-if="scope.row.RunStatus == '0'" style="color:red">停用</span>
 	       			<span v-if="scope.row.RunStatus == '1'" style="color:green">运行</span>
      			</template>
 	    	 </el-table-column>
- -->	  <el-table-column label="操作">	
+ -->	  <el-table-column label="操作">
 				<template slot-scope="scope" >
 					<div>
 						<el-button
 
-							@click="changeClick(scope.row)" 
-							type="text" 
+							@click="changeClick(scope.row)"
+							type="text"
 							size="small">修改</el-button>
 	        			<el-button type="text" size="small" @click="DeleteMeterInfo(scope.row)">删除</el-button>
-					</div>	
+					</div>
      			</template>
 	    	 </el-table-column>
 		  </el-table>
@@ -213,8 +213,8 @@ export default{
 				FifthRegionName:'',//栋数
 				HouseRegionName:'',//房间名
 				LogicAddr:'',//集中器逻辑地址
-				MeasureId:'',//测量点号：新增表：0，修改表传当前测量点 
-				InstallAddr:'',//安装地址 
+				MeasureId:'',//测量点号：新增表：0，修改表传当前测量点
+				InstallAddr:'',//安装地址
 			},
 			noChangeMeterAssetsCode:false,//资产编号能否进行编辑
 
@@ -251,7 +251,7 @@ export default{
 				label:'表计类型',
 				id:'MeterKindId'
 			},
-			
+
 			{
 				label:'资产编号',
 				id:'MeterAssetsCode'
@@ -264,7 +264,7 @@ export default{
 				label:'测量点符号',
 				id:'MeasureId',
 			},
-			
+
 			{
 				label:'波特率',
 				id:'BaudRate',
@@ -369,9 +369,9 @@ export default{
 					return 'error'
 				}else{
 					return 'warning'
-				}				
+				}
 			}
-	
+
 		},
 
 		//输入框筛选内容-----栋
@@ -397,16 +397,16 @@ export default{
 				cb([])
 				return
 			}
-        	
+
         	var results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants;
 
           	cb(results);
-       
+
         },
 
         // 房间筛选
         queryHouseRegionName(queryString, cb) {
-		
+
 
 
 			var Commmunity = this.$store.state.treeData.Commmunity[0]
@@ -414,7 +414,7 @@ export default{
 			var houseName = Commmunity.children.filter(element=> {
 			return	(element.label == this.singleImportForm.FifthRegionName)
 			})[0];
-			
+
 			if (houseName == null) {
 				cb([])
 				return
@@ -432,13 +432,13 @@ export default{
 				return
 			}
 
-        	
+
         	var results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants;
 
-      
+
 
           	cb(results);
-       
+
         },
 
         // 集中器
@@ -466,7 +466,7 @@ export default{
         	var results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants;
 
           	cb(results);
-       
+
         },
 
 
@@ -517,7 +517,7 @@ export default{
       			this.singleImportForm.InstallAddr = row.InstallAddr
 
       		}
-      		
+
       	},
 
       	// 点击单个导入按钮
@@ -561,7 +561,7 @@ export default{
       		}
 
       		this.singleImportDialogVisible = false
-      		
+
       		this.allLoading = true
       		 var params = {
       		 	FifthRegionName:this.singleImportForm.FifthRegionName,
@@ -572,10 +572,10 @@ export default{
       		 	InstallAddr:this.singleImportForm.InstallAddr,
                 UserId:window.sessionStorage.getItem('id'),
                 RegionCode:window.sessionStorage.getItem('RegionCode'),
-                time:this.dataUtil.formatTime1(new Date()) 
+                time:this.dataUtil.formatTime1(new Date())
             }
 
-          
+
               var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
@@ -585,10 +585,10 @@ export default{
               this.http.post(this.api.baseUrl+this.api.AddMeterInfoSingle,encryptParams)
               .then(result=>{
 
-              	  this.allLoading = false			       
+              	  this.allLoading = false
 		          console.log(result)
 		          if (result.status=="成功") {
-		          	
+
 		          	this.$message({
 	            		type: 'success',
 	           			message: '操作成功!'
@@ -639,7 +639,7 @@ export default{
 		*/
 		sureUpload(){
 			this.excelVisible = false
-			this.updateInfo(this.excelData)	
+			this.updateInfo(this.excelData)
 		},
 
 		/**
@@ -650,26 +650,26 @@ export default{
 			this.allLoading = true
 			this.loadingTitle="拼命加载中"
 			var that = this
-      	
-  			var params = { 
+
+  			var params = {
   				UserId:window.sessionStorage.getItem('id'),
   				RegionCode:window.sessionStorage.getItem('RegionCode'),
   				jsonValue:JSON.stringify(jsonVal),
-          		time:this.dataUtil.formatTime1(new Date()) 
+          		time:this.dataUtil.formatTime1(new Date())
 			}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
 
             console.log(this.$encrypt(JSON.stringify(params)))
-        
-        	
+
+
         	this.http.post(this.api.baseUrl+this.api.InputMeterInfo,encryptParams)
 	        .then(result=>{
 	          this.allLoading = false
-	          
-	          
+
+
 	           console.log(result)
 	          if (result.status=="成功") {
 
@@ -677,8 +677,8 @@ export default{
             		type: 'success',
            			message: '操作成功!'
          		});
-	           
-	
+
+
 	            this.queryMeterInfo()
 
 	          }else{
@@ -700,23 +700,23 @@ export default{
 			this.allLoading = true
 			this.loadingTitle="拼命加载中"
 			var that = this
-      	
-  			var params = { 
+
+  			var params = {
   				// RegionCode:'ALL',
   				RegionCode:window.sessionStorage.getItem('RegionCode'),
-          		time:this.dataUtil.formatTime1(new Date()) 
+          		time:this.dataUtil.formatTime1(new Date())
 			}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
 
             console.log(this.$encrypt(JSON.stringify(params)))
-        	
+
         	this.http.post(this.api.baseUrl+this.api.QureyAllMeterInfoByRegionCode,encryptParams)
 	        .then(result=>{
 	          this.allLoading = false
-	       
+
 	          console.log('查询表计')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -726,7 +726,7 @@ export default{
 
 	          	this.currentPage = 1
 	          }
-	        }) 
+	        })
 		},
 
 		/**
@@ -741,24 +741,24 @@ export default{
             	this.allLoading = true
 				this.loadingTitle="拼命加载中"
 				var that = this
-	      	
+
 	  			var params = {
 	  				UserId:window.sessionStorage.getItem("id"),
 	  				LogicAddr:row.LogicAddr,
 	  				MeasureId:row.MeasureId,
-	          		time:this.dataUtil.formatTime1(new Date()) 
+	          		time:this.dataUtil.formatTime1(new Date())
 			}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
 
-            console.log(this.$encrypt(JSON.stringify(params)))	 
+            console.log(this.$encrypt(JSON.stringify(params)))
 
 	        this.http.post(this.api.baseUrl+this.api.DeleteMeterInfo,encryptParams)
 		        .then(result=>{
 		          this.allLoading = false
-		     
+
 		          console.log('删除表计')
 		           console.log(result)
 		          if (result.status=="成功") {
@@ -770,9 +770,9 @@ export default{
 
 		          	this.queryMeterInfo()
 		          }
-		        }) 
+		        })
             }).catch();
-			
+
 		},
 
 		/**
@@ -781,23 +781,23 @@ export default{
 		setFileToGW(){
 			this.allLoading = true
 			var that = this
-      	
+
   			var params = {
   				UserId:window.sessionStorage.getItem("id"),
   				RegionCode:window.sessionStorage.getItem("RegionCode"),
-          		time:this.dataUtil.formatTime1(new Date()) 
+          		time:this.dataUtil.formatTime1(new Date())
             }
 
-          
+
               var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
 
               console.log(this.$encrypt(JSON.stringify(params)))
-        	
+
         	this.http.post(this.api.baseUrl+this.api.SetMeterFilesByDataBaseToGW,encryptParams)
 	        .then(result=>{
-	       
+
 
 	          	this.loadingTitle=`下发档案中,总数${result.Total},剩余${result.Last}`
 	           if (result.Last != '0') {
@@ -818,7 +818,7 @@ export default{
 	           		var failResult = result.fail
 	           		if (typeof(failResult) != "undefined") {
 	          			for (var i = 0; i < failResult.length; i++) {
-	          				
+
 	          				this.$notify({
 				          		title: failResult[i].LogicAddr,
 				          		message: failResult[i].Exception,
@@ -830,10 +830,10 @@ export default{
 
 
 	           }
-	   
 
-	           
-	        }) 
+
+
+	        })
 		},
 
 		/**
@@ -841,7 +841,7 @@ export default{
 		*/
 		filterTableData(node){
 			if (window.sessionStorage.getItem('menuName') == 'meterFiles') {
-      			
+
       			if(node.level == "4"){
       				this.partOfTableData = this.tableData.filter(element=> {
       					return (element.FourthRegionCode == node.code)
@@ -851,13 +851,13 @@ export default{
       					return (element.FifthRegionCode == node.code)
       				});
       			}else if (node.level == "6") {
-      				
+
       				this.partOfTableData = this.tableData.filter(element=> {
       					return (element.HouseRegionCode == node.code)
       				});
 
       			} else if(node.level == "GW"){
-      				
+
       				this.partOfTableData = this.tableData.filter(element=>{
       					return (element.LogicAddr == node.label)
       				})
@@ -868,9 +868,9 @@ export default{
       			}
 
 
-      			
+
       			this.showTableData = this.partOfTableData.slice(0, 10)
-      			
+
       		}
 		},
 	},
@@ -899,9 +899,9 @@ export default{
 
 		this.isSuper = window.sessionStorage.getItem('isSuper')
 		this.allLoading = true
-		setTimeout(function(){
+		// setTimeout(function(){
 			that.queryMeterInfo()
-		},2000)
+		// },2000)
 	}
 }
 </script>

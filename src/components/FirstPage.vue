@@ -37,13 +37,13 @@
 		  <el-col :xs='20' :sm='12' :md='12' :lg='8'>
 		  	<div class="area" style='min-width:300px'>
 		  		<div class="title moneyTitle">
-		  			<div>营收比</div>	
+		  			<div>营收比</div>
 					<div>
 						<el-button round size='mini' :class="{'actived':active1}" @click="choseDate(1)">日</el-button>
 		  				<el-button round size='mini' :class="{'actived':active2}" @click="choseDate(2)">周</el-button>
 		  				<el-button round size='mini' :class="{'actived':active3}" @click="choseDate(3)">月</el-button>
 					</div>
-		  			
+
 		  		</div>
 		  		<div id="Pie" style="width:100%; height:230px; margin-top:10px" >
 		  			没有相关内容
@@ -67,25 +67,23 @@
 		  	</div>
 		  </el-col>
 
-			
+
 
 		</el-row>
 
-
-
 		<el-row :gutter="20">
-			
+
 			<el-col :xs='24' :sm='18' :md='12' :lg='12'>
 				<div class="area" style="height:350px;min-width:400px">
 
 					<div class="title moneyTitle">
-		  				<div>用电量折线图（kwh）</div>	
+		  				<div>用电量折线图（kwh）</div>
 						<div>
 							<el-button round size='mini' :class="{'actived':active4}" @click="choseDate(4)">日</el-button>
 			  				<el-button round size='mini' :class="{'actived':active5}" @click="choseDate(5)">月</el-button>
 			  				<el-button round size='mini' :class="{'actived':active6}" @click="choseDate(6)">年</el-button>
 						</div>
-		  			
+
 		  			</div>
 
 					<div id="line" style="width:100%; height:300px"></div>
@@ -96,19 +94,19 @@
 				<div class="area" style="height:350px;min-width:400px">
 
 					<div class="title moneyTitle">
-		  				<div>用电量柱形图（kwh）</div>	
+		  				<div>用电量柱形图（kwh）</div>
 					<div>
 						<el-button round size='mini' :class="{'actived':active7}" @click="choseDate(7)">日</el-button>
 		  				<el-button round size='mini' :class="{'actived':active8}" @click="choseDate(8)">月</el-button>
 		  				<el-button round size='mini' :class="{'actived':active9}" @click="choseDate(9)">年</el-button>
 					</div>
-			  			
+
 			  		</div>
 
 					<div id="bar" style="width:100%; height:300px"></div>
 				</div>
 			</el-col>
-			
+
 		</el-row>
 	</div>
 </template>
@@ -166,13 +164,13 @@ export default{
 		}
 	},
 	methods:{
-		
+
 
 
 
 		dayPie(){
 			this.pie.setOption({
-				
+
 				legend: {
                     // right: 'center',
                     // bottom: 0,
@@ -188,14 +186,14 @@ export default{
 	            	// name:'营收比',
 	            	type: 'pie',
 	            	radius: '60%',
-	            	center: ['50%','60%'], 
+	            	center: ['50%','60%'],
 	                data: [
 	                    // {name: '现金', value: 5000},
 	                    // {name: '微信', value: 3000},
 	                    // {name: '支付宝', value: 3000},
 	                    // {name: '其他', value: 1000},
 	                ],
-	                
+
 	            }
 
 	      });
@@ -203,7 +201,7 @@ export default{
 
 		electricityLine(){
 			this.line.setOption({
-		     
+
 		        xAxis: {
 		            data: []
 		        },
@@ -262,7 +260,7 @@ export default{
 					this.active1 = false
 					this.setPie('month')
 					break;
-					
+
 				case 4:
 					// statements_1
 					this.active4 = true
@@ -286,7 +284,7 @@ export default{
 					this.active4 = false
 					this.setLine('year')
 					break;
-					
+
 				case 7:
 					// statements_1
 					this.active7 = true
@@ -323,7 +321,7 @@ export default{
 			this.loading = true
 			var params = {
 				RegionCode:window.sessionStorage.getItem('RegionCode'),
-				time:this.dataUtil.formatTime1(new Date()) 
+				time:this.dataUtil.formatTime1(new Date())
 			}
 
 			var encryptParams = {
@@ -335,7 +333,9 @@ export default{
             this.http.post(this.api.baseUrl+this.api.QueryHomePageData,encryptParams)
             .then(result=>{
             	this.loading = false
-            	console.log(result)
+
+              console.log(result)
+
             	if (result.status == '成功') {
             		var data = result.data[0]
             		// 小区总用能数据
@@ -359,18 +359,19 @@ export default{
 
             		this.warnUser = this.tz
 
-            	}else{
-            		
-            		if (this.requestAgian) {
-            			console.log('再请求主页')
-            			this.requestAgian = false
-            			setTimeout(()=>{
-	            			this.QueryHomePageData()
-	            		},1000)
-            		}
-            		
-            		
             	}
+            	// else{
+                //
+            	// 	if (this.requestAgian) {
+            	// 		console.log('再请求主页')
+            	// 		this.requestAgian = false
+            	// 		setTimeout(()=>{
+	            // 			this.QueryHomePageData()
+	            // 		},1000)
+            	// 	}
+                //
+                //
+            	// }
             })
 		},
 
@@ -493,16 +494,16 @@ export default{
 		this.electricityLine()
 		this.electricityBar()
 		this.loading = true
-		setTimeout(()=>{
+		// setTimeout(()=>{
           this.QueryHomePageData()
-		},2000)
+		// },2000)
 	}
-}	
+}
 </script>
 <style scoped>
 .area{
 	border: 1px solid #bbb;
-	height: 300px;	
+	height: 300px;
 	margin-bottom: 20px;
 }
 
@@ -515,14 +516,14 @@ export default{
 	display: flex;
 	align-content: center;
 	padding: 10px 0 10px 20px;
-	border-bottom: 1px dashed silver;	
+	border-bottom: 1px dashed silver;
 
 }
 
 .info{
 	line-height: 34px;
 	margin-left: 20px;
-	
+
 }
 
 
@@ -557,7 +558,7 @@ export default{
 	height: 30px;
 	line-height: 30px;
 	font-size: 12px
-	
+
 }
 
 .userItem span:first-child{

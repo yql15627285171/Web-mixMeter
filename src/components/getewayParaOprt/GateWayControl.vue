@@ -31,7 +31,7 @@
 					<span>心跳：</span>
 					<el-input v-model.trim="heartTime" auto-complete="off"></el-input>
 				</div>
-				
+
 			</div>
 		</div>
 		<div class="operation">
@@ -47,7 +47,7 @@
 						<i class="el-icon-edit-outline"></i>
 						<span>设时钟</span>
 					</div>
-					
+
 				</div>
 				<div class="ope">
 					<span>心跳操作：</span>
@@ -59,7 +59,7 @@
 						<i class="el-icon-edit-outline"></i>
 						<span>设心跳</span>
 					</div>
-					
+
 				</div>
 				<div class="ope special">
 					<span>复位操作：</span>
@@ -67,22 +67,22 @@
 						<i class="el-icon-edit-outline"></i>
 						<span>硬件初始化</span>
 					</div>
-					
+
 					<div @click="resetGW('F2')">
 						<i class="el-icon-edit-outline"></i>
 						<span>数据区初始化</span>
 					</div>
-					
+
 					<div @click="resetGW('F4')">
 						<i class="el-icon-edit-outline"></i>
 						<span>参数及数据区初始化</span>
 					</div>
-					
+
 					<!-- <div @click="resetGW('F3')">
 						<i class="el-icon-edit-outline"></i>
 						<span>恢复至出厂</span>
 					</div> -->
-					
+
 				</div>
 				<div class="ope">
 					<span>档案操作：</span>
@@ -90,7 +90,7 @@
 						<i class="el-icon-edit-outline"></i>
 						<span>重新下发</span>
 					</div>
-						
+
 				</div>
 			</div>
 		</div>
@@ -100,17 +100,11 @@
 export default{
 	data(){
 		return{
-			
 			loading:false,//菊花
-
 			dataSource:[],//数据源
-
 			gateInfo:{},//要显示的网关的信息
-
 			clock:'',//时钟
-
 			heartTime:'',//心跳
-
 		}
 	},
 	methods:{
@@ -120,26 +114,22 @@ export default{
 		 tableheaderClassName({ row, rowIndex }) {
           return "table-head-th";
         },
-
-        
 		/**
 		*获取网关信息作为数据源
 		*/
 		getGateInfo(){
 			this.loading = true
-			var params = { 
-  				RegionCode:window.sessionStorage.getItem('RegionCode'), 				
-          		time:this.dataUtil.formatTime1(new Date()) 
-				
+			var params = {
+  				RegionCode:window.sessionStorage.getItem('RegionCode'),
+          		time:this.dataUtil.formatTime1(new Date())
 			}
-		
 
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
 
             console.log(this.$encrypt(JSON.stringify(params)))
-        	
+
         	this.http.post(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode,encryptParams)
 	        .then(result=>{
 
@@ -150,14 +140,12 @@ export default{
 	           console.log(result)
 	          if (result.status=="成功") {
 	          		if (result.data.length !=0) {
-	          			this.dataSource = result.data 
-	          			this.gateInfo = result.data[0] 
+	          			this.dataSource = result.data
+	          			this.gateInfo = result.data[0]
 	          		}
-	          			
-	          	
-	          	
+
 	          }
-	        }) 
+	        })
 		},
 
 		/**
@@ -166,14 +154,14 @@ export default{
       	filterTableData(node){
       		if (window.sessionStorage.getItem('menuName') == 'GateWayControl') {
       			if (node.level == 'GW') {
-      				
+
       				var temp = this.dataSource.filter(element=>{
       					return (element.LogicAddr == node.label)
       				});
       				 this.gateInfo = temp[0]
       			}
-      			
-      			
+
+
       		}
       	},
 
@@ -190,12 +178,12 @@ export default{
 	          	this.loading = true
 				var params = {
 					UserId: window.sessionStorage.getItem('id'),
-	  		 		LogicAddr:this.gateInfo.LogicAddr, 	
-	  				resetType:type,			
-	          		time:this.dataUtil.formatTime1(new Date()) 
-				
+	  		 		LogicAddr:this.gateInfo.LogicAddr,
+	  				resetType:type,
+	          		time:this.dataUtil.formatTime1(new Date())
+
 				}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
@@ -205,12 +193,12 @@ export default{
 	        this.http.post(this.api.baseUrl+this.api.ResetGW,encryptParams)
 		        .then(result=>{
 		          this.loading = false
-		 
+
 		          console.log('复位')
 		           console.log(result)
 		          if (result.status=="成功") {
 		          	// this.clock = result.data
-		          	
+
 		          	this.$message({
             			type: 'success',
            			 	message: '复位成功!'
@@ -228,37 +216,37 @@ export default{
 	          	this.$message({
 	            	type: 'info',
 	            	message: '已取取消操作'
-	          	});          
+	          	});
 	         });
 
-  
+
       	},
 
-		
+
       	/**
       	*抄时钟
       	*/
       	getGWTime(){
       		this.loading = true
-      		
+
 			var params = {
 				UserId: window.sessionStorage.getItem('id'),
-  		 		LogicAddr:this.gateInfo.LogicAddr, 	
-  				// LogicAddr:'01010876',			
-          		time:this.dataUtil.formatTime1(new Date()) 
-				
+  		 		LogicAddr:this.gateInfo.LogicAddr,
+  				// LogicAddr:'01010876',
+          		time:this.dataUtil.formatTime1(new Date())
+
 			}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
 
             console.log(this.$encrypt(JSON.stringify(params)))
-        
+
         	this.http.post(this.api.baseUrl+this.api.GetGWTime,encryptParams)
 	        .then(result=>{
 	          this.loading = false
-	         
+
 	          console.log('获取时钟')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -271,14 +259,14 @@ export default{
          			 });
 
 	          }else{
-	        	
+
 	        	this.$message({
           			showClose: true,
           			message: result.data,
           			type: 'error'
         		});
 	          }
-	          
+
 	        })
       	},
 
@@ -290,12 +278,12 @@ export default{
       		this.loading = true
 			var params = {
 				UserId: window.sessionStorage.getItem('id'),
-  				LogicAddr:this.gateInfo.LogicAddr, 	
-  				// LogicAddr:'01010876',			
-          		time:this.dataUtil.formatTime1(new Date()) 
-				
+  				LogicAddr:this.gateInfo.LogicAddr,
+  				// LogicAddr:'01010876',
+          		time:this.dataUtil.formatTime1(new Date())
+
 			}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
@@ -306,11 +294,11 @@ export default{
         	this.http.post(this.api.baseUrl+this.api.SetGWTime,encryptParams)
 	        .then(result=>{
 	          this.loading = false
-	      
+
 	          console.log('设置时钟')
 	           console.log(result)
 	          if (result.status=="成功") {
-	          	
+
 
 	          	this.$message({
             			type: 'success',
@@ -325,8 +313,8 @@ export default{
         		});
 	          }
 	        })
-      
-	
+
+
       	},
 
       	/**
@@ -336,22 +324,22 @@ export default{
       		this.loading = true
 			var params = {
 				UserId: window.sessionStorage.getItem('id'),
-  				LogicAddr:this.gateInfo.LogicAddr, 	
-  				time:this.dataUtil.formatTime1(new Date()) 
-				
+  				LogicAddr:this.gateInfo.LogicAddr,
+  				time:this.dataUtil.formatTime1(new Date())
+
 			}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
 
             console.log(this.$encrypt(JSON.stringify(params)))
-        	
-        
+
+
         	this.http.post(this.api.baseUrl+this.api.GetGWHeartTime,encryptParams)
 	        .then(result=>{
 	          this.loading = false
-	         
+
 	          console.log('获取心跳')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -369,7 +357,7 @@ export default{
           			type: 'error'
         		});
 	          }
-	        }) 
+	        })
       	},
 
       	/**
@@ -379,18 +367,18 @@ export default{
       		this.loading = true
 			var params = {
 				UserId: window.sessionStorage.getItem('id'),
-  				LogicAddr:this.gateInfo.LogicAddr, 	
-  				hTime:this.heartTime,//心跳时间			
-          		time:this.dataUtil.formatTime1(new Date()) 
-				
+  				LogicAddr:this.gateInfo.LogicAddr,
+  				hTime:this.heartTime,//心跳时间
+          		time:this.dataUtil.formatTime1(new Date())
+
 			}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
 
             console.log(this.$encrypt(JSON.stringify(params)))
-        	
+
         	this.http.post(this.api.baseUrl+this.api.SetGWHeartTime,encryptParams)
 	        .then(result=>{
 	          this.loading = false
@@ -398,7 +386,7 @@ export default{
 	          console.log('设置心跳')
 	           console.log(result)
 	          if (result.status=="成功") {
-	          	
+
 
 	          	this.$message({
             			type: 'success',
@@ -424,8 +412,8 @@ export default{
       		var params = {
       			UserId: window.sessionStorage.getItem('id'),
       			RegionCode:window.sessionStorage.getItem('RegionCode'),
-      			LogicAddr:this.gateInfo.LogicAddr, 
-      			time:this.dataUtil.formatTime1(new Date()) 
+      			LogicAddr:this.gateInfo.LogicAddr,
+      			time:this.dataUtil.formatTime1(new Date())
       		}
 
       		var encryptParams = {
@@ -440,7 +428,7 @@ export default{
 
             	console.log(result)
 	          if (result.status=="成功") {
-	          	
+
 	          	this.$message({
             			type: 'success',
            			 	message: result.data
@@ -458,15 +446,15 @@ export default{
             })
       	}
 
-		
+
 	},
 	mounted(){
 		var that = this
 		// 获取社区网关信息
 		this.loading = true
-		setTimeout(function(){
+		// setTimeout(function(){
 			that.getGateInfo()
-		},2000) 
+		// },2000)
 	},
 
 	computed:{

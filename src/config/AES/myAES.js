@@ -2,9 +2,9 @@ import CryptoJS from './AES'
 import dataUtil from './Date'
 
 function encrypt(data){
-	 var key = CryptoJS.enc.Latin1.parse('j>r%T.w8#7*6J\"t%i#o8#7*6');
-	    var iv = CryptoJS.enc.Latin1.parse('T@Rj<_2io.T^&t\"j');
-	    
+	 var key = CryptoJS.enc.Latin1.parse('j>s%T.m8#2*6J\"t%r#a2#0*6');
+	    var iv = CryptoJS.enc.Latin1.parse('s@ma<_2ro.T^&t\"j');
+
 	    var ADEData
 	    if(data == null){
 	      ADEData = dataUtil.formatTime1(new Date())
@@ -20,10 +20,10 @@ export default{
   encrypt:encrypt,
   install(Vue,options){
      Vue.prototype.$encrypt =  function(data) {
-   
-	    var key = CryptoJS.enc.Latin1.parse('j>r%T.w8#7*6J\"t%i#o8#7*6');
-	    var iv = CryptoJS.enc.Latin1.parse('T@Rj<_2io.T^&t\"j');
-	    
+
+	    var key = CryptoJS.enc.Latin1.parse('j>s%T.m8#2*6J\"t%r#a2#0*6');
+	    var iv = CryptoJS.enc.Latin1.parse('s@ma<_2ro.T^&t\"j');
+
 	    var ADEData
 	    if(data == null){
 	      ADEData = dataUtil.formatTime1(new Date())
@@ -37,18 +37,18 @@ export default{
 
 
 		Vue.prototype.$encryptPsd =  function(data) {
-   
+
 	    var key = CryptoJS.enc.Latin1.parse('j>r%T.w8#8*8J\"t%i#o8#8*8');
 	    var iv = CryptoJS.enc.Latin1.parse('T@Rj<_2sb.T^&t\"j');
-	    
-	  
+
+
 	    return CryptoJS.AES.encrypt(data, key, { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.ZeroPadding }).toString();
 		}
-		
-	
 
 
-		
+
+
+
 	 }
-	
+
 }

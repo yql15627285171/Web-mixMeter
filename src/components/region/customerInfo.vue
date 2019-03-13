@@ -18,19 +18,19 @@
 		    :cell-class-name="tableCellName"
 		    style="width: 100%">
 
-		    <el-table-column 
+		    <el-table-column
 		      v-for="item in tableHead"
 		      :label="item.label"
 		      :prop="item.id"
 		      :width='item.width'>
 		    </el-table-column>
 
-	         <el-table-column label="操作">	
+	         <el-table-column label="操作">
 				<template slot-scope="scope" >
 					<div v-if="scope.row.Memo == '0'">
 						<el-button @click="ReviewAccessHouseInfo(scope.row)" type="text" size="small">审核</el-button>
 	        			<el-button type="text" size="small" @click="ApplyForRemoveHouseInfo(scope.row)">取消</el-button>
-					</div>	
+					</div>
      			</template>
 	    	 </el-table-column>
 		  </el-table>
@@ -44,7 +44,7 @@
 		      layout="total, prev, pager, next,jumper"
 		      :total="tableData.length">
 		    </el-pagination>
-	  	</div>	
+	  	</div>
 	</div>
 </template>
 <script>
@@ -53,7 +53,7 @@ export default{
 		return{
 			loading:false,
 			currentPage:1,//当前页
-		
+
 			// 表格信息
 			tableHead:[
 			{
@@ -98,9 +98,9 @@ export default{
 					return 'normal'
 				}else {
 					return 'error'
-				}			
+				}
 			}
-	
+
 		},
 		/**
 		*分页控制器的方法
@@ -114,13 +114,13 @@ export default{
       	*/
       	filterTableData(node){
       		if (window.sessionStorage.getItem('menuName') == 'customerInfo') {
-      			
+
       			if(node.level == "4"){
       				this.areaTableData = this.tableData.filter(element=>{
       					return (element.FourthRegionCode == node.code)
       				});
       			}else if(node.level == "5"){
-      				
+
       				this.areaTableData = this.tableData.filter(element=>{
       					return (element.FifthRegionCode == node.code)
       				})
@@ -136,7 +136,7 @@ export default{
       				this.partOfTableData[i].index = (i+1).toString()
       			}
       			this.showTableData = this.partOfTableData.slice(0, 10)
-      			
+
       		}
       	},
 
@@ -153,7 +153,7 @@ export default{
 		      }
 
 		      console.log(params);
-		      
+
 		      var encryptParams = {
 		        evalue:this.$encrypt(JSON.stringify(params))
 		      }
@@ -171,9 +171,9 @@ export default{
 		      		this.showTableData = this.partOfTableData.slice(0,10)
 		      		this.currentPage = 1
 		      	}
-		        
-		        
-		                
+
+
+
 		      })
       	},
 
@@ -190,7 +190,7 @@ export default{
 		      }
 
 		      console.log(params);
-		      
+
 		      var encryptParams = {
 		        evalue:this.$encrypt(JSON.stringify(params))
 		      }
@@ -216,8 +216,8 @@ export default{
 	          			message: result.data,
 	          			type: 'error'
 	        		});
-		      	}		        
-		                
+		      	}
+
 		      })
       	},
 
@@ -234,7 +234,7 @@ export default{
 
 		      console.log('取消审核')
 		      console.log(params);
-		      
+
 		      var encryptParams = {
 		        evalue:this.$encrypt(JSON.stringify(params))
 		      }
@@ -260,14 +260,14 @@ export default{
 	          			message: result.data,
 	          			type: 'error'
 	        		});
-		      	}		        
-		                
+		      	}
+
 		      })
       	},
 
 	},
 
-	
+
 
 	computed:{
 		treeNode(){
@@ -280,13 +280,13 @@ export default{
 		}
 	},
 	mounted(){
-		var that = this 
+		var that = this
 		this.loading = true
-		setTimeout(function(){
+		// setTimeout(function(){
 			that.QureyHouseApplyInfo()
-		},2000)
+		// },2000)
 	}
-}	
+}
 </script>
 <style scoped>
 

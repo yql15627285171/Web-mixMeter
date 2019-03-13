@@ -8,7 +8,7 @@
 				<el-button type="primary" @click="choseFile">一键添加</el-button>
 				<!-- <el-button type="primary">导出</el-button> -->
 			</div>
-			
+
 		</div>
 
 		<!-- 弹出框,显示excel表格的内容 -->
@@ -17,63 +17,63 @@
 				<span>要上传的excel表格的信息</span>
 				<el-button type="primary" style="float:right" @click='sureUploadExcel'>上传</el-button>
 			</div>
-			
-				<el-table 
+
+				<el-table
 				:data="excelData"
 				:header-cell-class-name="tableheaderClassName"
 				style="width: 100%;"
 				height="350"
 				stripe
-			
+
 				>
-				
 
 
-				<el-table-column 
+
+				<el-table-column
 		    	v-for="(item,index) in excelHead"
 		    	:prop="item"
 		    	:label="item"
 		    	width='150'
-		    	>		
+		    	>
 		   		 </el-table-column>
-				
+
 			</el-table>
-	
-				
+
+
 			</el-table>
 		</el-dialog>
 
 		<!-- 单个导入 -->
 		<el-dialog title="导入集中器" :visible.sync="singleImportDialogVisible" label-position='right' >
 	      <el-form :model="singleImportForm"  class="demo-ruleForm">
-			
+
 
 	        <el-form-item label="资产编号" prop="ConAssetsCode" label-width='80px'>
 		        <el-input
 				  v-model.trim="singleImportForm.ConAssetsCode"
 				  placeholder="请输入内容"
-				  style='width:70%'>	
+				  style='width:70%'>
 			</el-input>
-	          
+
 	        </el-form-item>
 	        <el-form-item label="SIM卡"  prop="SIM" label-width='80px'>
 	        	<el-input
 				  v-model.trim="singleImportForm.SIM"
 				  placeholder="请输入内容"
-				  style='width:70%'>	
+				  style='width:70%'>
 				</el-input>
 	        </el-form-item>
 	        <el-form-item label="安装地址"  prop="InstallAddr" label-width='80px'>
 	        	<el-input
 				  v-model.trim="singleImportForm.InstallAddr"
 				  placeholder="请输入内容"
-				  style='width:70%'>	
+				  style='width:70%'>
 				</el-input>
 	        </el-form-item>
 	        <el-form-item label="备注"  prop="Memo" label-width='80px'>
-	        	<el-input  v-model.trim="singleImportForm.Memo" 
+	        	<el-input  v-model.trim="singleImportForm.Memo"
 	        			   style='width:70%'
-	        			   placeholder="请输入内容">	        			   	
+	        			   placeholder="请输入内容">
 	        	</el-input>
 	        </el-form-item>
 	      </el-form>
@@ -143,13 +143,13 @@
 		      :width="item.width"
 		      >
 		    </el-table-column>
-		    
-	  	     <el-table-column label="操作">	
+
+	  	     <el-table-column label="操作">
 				<template slot-scope="scope" >
 					<div>
 						<el-button @click="changeGateInfo(scope.row)" type="text" size="small">修改</el-button>
 	        			<el-button type="text" size="small" @click="delGateInfo(scope.row)">删除</el-button>
-					</div>	
+					</div>
      			</template>
 	    	 </el-table-column>
 
@@ -219,7 +219,7 @@ export default{
 			{
 				label:'状态',
 				id:'UseStatus'
-			},	
+			},
 			{
 				label:'安装时间',
 				id:'InstallTime'
@@ -269,11 +269,11 @@ export default{
 					return 'error'
 				}else{
 					return 'warning'
-				}				
+				}
 			}else{
 				// return 'tableRow'
 			}
-	
+
 		},
 
 		/**
@@ -305,12 +305,12 @@ export default{
 		*/
 		getAllGWInfo(){
 			this.allLoading = true
-			var params = { 
-  				RegionCode:window.sessionStorage.getItem('RegionCode'), 				
-          		time:this.dataUtil.formatTime1(new Date()) 
-				
+			var params = {
+  				RegionCode:window.sessionStorage.getItem('RegionCode'),
+          		time:this.dataUtil.formatTime1(new Date())
+
 			}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
@@ -319,11 +319,11 @@ export default{
 
 
         	console.log(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode)
-     
+
         	this.http.post(this.api.baseUrl+this.api.QureyAllGWInfoByRegionCode,encryptParams)
 	        .then(result=>{
 	          this.allLoading = false
-	        
+
 	          console.log('获取网关信息')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -332,7 +332,7 @@ export default{
 
 	          	this.currentPage = 1
 	          }
-	        }) 
+	        })
 		},
 
 		/**
@@ -347,8 +347,8 @@ export default{
 				UserId: window.sessionStorage.getItem('id'),
   				RegionCode:window.sessionStorage.getItem('RegionCode'),
   				jsonValue:JSON.stringify(jsonVal),
-          		time:this.dataUtil.formatTime1(new Date()) 
-				
+          		time:this.dataUtil.formatTime1(new Date())
+
 			}
 			console.log(params)
 
@@ -363,7 +363,7 @@ export default{
         	this.http.post(this.api.baseUrl+this.api.InputGWInfo,encryptParams)
 	        .then(result=>{
 	          this.allLoading = false
-	        
+
 	          console.log('上传文件')
 	           console.log(result)
 	          if (result.status=="成功") {
@@ -372,7 +372,7 @@ export default{
             		type: 'success',
            			message: '操作成功!'
          		});
-	          	
+
 	          	this.updateTreeData()
 
 	          	setTimeout(function(){
@@ -384,7 +384,7 @@ export default{
            			message: JSON.stringify(result.data)
          		});
 	          }
-	        }) 
+	        })
 		},
 
 		/**
@@ -409,20 +409,20 @@ export default{
 
 			var that = this
 			this.singleImportDialogVisible = false
-      		
+
       		this.allLoading = true
       		 var params = {
       		 	ConAssetsCode:this.singleImportForm.ConAssetsCode,
       		 	InstallAddr:this.singleImportForm.InstallAddr,
-      		 	SIM:this.singleImportForm.SIM,  
-      		 	Memo:this.singleImportForm.Memo,     		
+      		 	SIM:this.singleImportForm.SIM,
+      		 	Memo:this.singleImportForm.Memo,
                 UserId:window.sessionStorage.getItem('id'),
                 RegionCode:window.sessionStorage.getItem('RegionCode'),
-                time:this.dataUtil.formatTime1(new Date()) 
+                time:this.dataUtil.formatTime1(new Date())
             }
 
               console.log(JSON.stringify(params));
-          
+
               var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
@@ -432,10 +432,10 @@ export default{
               this.http.post(this.api.baseUrl+this.api.AddInputGWInfoSingle,encryptParams)
               .then(result=>{
 
-              	  this.allLoading = false			       
+              	  this.allLoading = false
 		          console.log(result)
 		          if (result.status=="成功") {
-		          	
+
 		          	this.$message({
 	            		type: 'success',
 	           			message: '操作成功!'
@@ -444,7 +444,7 @@ export default{
 		          	this.updateTreeData()
 		            setTimeout(function(){
 						that.getAllGWInfo()
-					},500) 
+					},500)
 
 		          }else{
 
@@ -462,7 +462,7 @@ export default{
 		*删除网关信息
 		*/
 		delGateInfo(row){
-			
+
 			this.$confirm('确定要删除该网关吗？', '警告', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
@@ -473,10 +473,10 @@ export default{
 				var params = {
 					UserId: window.sessionStorage.getItem('id'),
 	  				LogicAddr:row.LogicAddr,
-	          		time:this.dataUtil.formatTime1(new Date()) 
-				
+	          		time:this.dataUtil.formatTime1(new Date())
+
 			}
-	
+
 			var encryptParams = {
                 evalue:this.$encrypt(JSON.stringify(params))
               }
@@ -486,7 +486,7 @@ export default{
 	        this.http.post(this.api.baseUrl+this.api.DeleteGWInfo,encryptParams)
 		        .then(result=>{
 		          this.allLoading = false
-		      
+
 		          console.log('删除成功')
 		           console.log(result)
 		          if (result.status=="成功") {
@@ -517,11 +517,11 @@ export default{
 
       	//确定修改网关信息
       	sureChangeGateInfo(){
-      		
+
       		this.changeRow.SIM = this.changeForm.SIM
       		this.changeRow.InstallAddr = this.changeForm.InstallAddr
       		this.changeRow.Memo = this.changeForm.Memo
-      		
+
 
       		this.undateGateInfo([this.changeRow])
       	},
@@ -543,9 +543,9 @@ export default{
 		var that = this
 		this.isSuper = window.sessionStorage.getItem('isSuper')
 		this.allLoading = true
-		setTimeout(function(){
+		// setTimeout(function(){
 			that.getAllGWInfo()
-		}, 2000)
+		// }, 2000)
 	}
 }
 
@@ -557,7 +557,7 @@ export default{
 .right{
 	float: right;
 }
- 
+
 .condition{
 	overflow: hidden
 }

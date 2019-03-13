@@ -321,7 +321,6 @@ export default{
       		var params = {
 				parentid:0,
 
-
 			}
 
 			this.http.get(this.api.remote_area_url,params).then(res=>{
@@ -583,16 +582,16 @@ export default{
 	mounted(){
 		console.log('请求省')
 		if (this.FirstRegion.length==0) {
-			setTimeout(()=>{
+			// setTimeout(()=>{
 				// this.FirstRegionRequest()
-			},1000)
+			// },1000)
 		}
 		// 获取所有社区管理员信息
 
 		var that = this
-		setTimeout(function(){
+		// setTimeout(function(){
 			that.getAllAdminInfo()
-		}, 500)
+		// }, 500)
 	}
 }
 </script>
@@ -609,3 +608,6 @@ export default{
 
 
 </style>
+
+
+

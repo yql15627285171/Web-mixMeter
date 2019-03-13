@@ -4,18 +4,19 @@ export default {
 	/**
 	*基本路径
 	*/
-   // 申特
+   // 申特1
 	// baseUrl:'https://www.trjiot.com/webiot.asmx',
-
-   //  自己测试
+  // 申特2
+  // baseUrl:'http://10.153.51.140:8002/webiot.asmx',
+  baseUrl:'http://106.74.18.195:8002/webiot.asmx',
+    // 自己测试
    // baseUrl:'http://172.0.41.56/webiot.asmx',
 
    //1楼测试
    // baseUrl:'http://api.smart.trjiot.com/webiot.asmx',
 
    //物兴
-   baseUrl:'http://parks.api.stsidea.com:8003/webiot.asmx',
-
+   // baseUrl:'http://172.0.0.9:8002/webiot.asmx',
 
 
 	/**
@@ -782,6 +783,24 @@ export default {
          *****TotalTransactionAmount 充值金额
    */
    QueryHomePageData:'/QueryHomePageData',
+
+  /**
+   *打印交易信息
+   *UserId       用户ID
+   *RegionCode        四级区域码
+   *HouseRegionCode   房间码
+   *time        时间
+   **返回参数**
+   **type  费用类别
+   **userNo  用户号（目前是表号）
+   **UserName 用户名（关联用户为空时返回房间名）
+   **Addr    地址
+   **OprtType  操作类型
+   **Money   金额
+   **Time   抄读时间
+   **TsOrder   流水号
+   */
+  QueryPrintRHInfo:'/QueryPrintRHInfo',
 
 }
 
